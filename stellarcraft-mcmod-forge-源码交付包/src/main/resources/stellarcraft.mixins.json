@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "dev.stellarcraft.world",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "EntityCollisionMixin",
+    "ExplosionMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

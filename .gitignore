@@ -1,0 +1,88 @@
+
+# ====================================
+# StellarCraft Git Ignore
+# ====================================
+
+# Gradle caches
+**/.gradle/
+**/build/
+
+# CMake build directories
+**/cmake-build-*/
+**/CMakeFiles/
+CMakeCache.txt
+
+# IDE configuration
+**/.vs/
+**/.idea/
+*.suo
+*.user
+
+# C++ build artifacts
+*.obj
+*.o
+*.pch
+*.ilk
+*.idb
+*.pdb
+
+# Java build artifacts
+*.class
+
+# Debug logs and crash dumps
+*.log
+*.dmp
+*.mdmp
+*.tmp
+*.bak
+
+# Game saves
+*.sav
+steam_autocloud.vdf
+
+# Local secrets
+.env
+.env.*
+
+# Temporary files
+*.swp
+*.swo
+
+
+# ==========================================
+# StellarCraft - GitHub publishing cleanup
+# ==========================================
+
+# Deployment backups
+**/deployment-backups/
+
+# Crash and diagnostic snapshots
+/docs/player-damage-*/
+/docs/desert-crash-*/
+/docs/texture-knockback-*/
+
+# Xmake local state
+/sb-mod/.xmake/
+
+# Bundled Gradle distributions
+# Keep gradle/wrapper/gradle-wrapper.jar
+**/gradle-8.8/
+**/gradle-8.8-bin.zip
+
+# Duplicate downloaded Lua source archive
+/sb-mod/lua-5.4.7.tar.gz
+
+# Generated binaries
+/sb-mod/stellarcraft_shm.dll
+/sb-mod/reshade-addon/StellarCraft.exp
+/sb-mod/reshade-addon/StellarCraft.lib
+**/StellarCraft.addon
+
+# Generated game SDK
+# Keep private until redistribution rights
+# and build dependencies are reviewed
+/sb-mod/src/SDK/
+
+
+# Local reference repository
+/tools/stellar-blade-control-panel-reference/

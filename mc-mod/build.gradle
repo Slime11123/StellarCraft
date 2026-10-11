@@ -1,0 +1,78 @@
+plugins {
+    id 'fabric-loom' version '1.7.4'
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    // Loom adds the essential maven repositories (Fabric, Mojang) automatically.
+    // Add mirrors first for faster downloads in restricted networks.
+    // Use content filters so standard libraries resolve from fast mirrors instead of
+    // the slow fabric maven (which Loom auto-adds with highest priority).
+    maven {
+        name = 'AliyunCentral'
+        url = 'https://maven.aliyun.com/repository/central'
+        content {
+            // Everything EXCEPT net.fabricmc resolves from here.
+            excludeGroup 'net.fabricmc'
+        }
+    }
+    maven {
+        name = 'BMCLAPI'
+        url = 'https://bmclapi2.bangbang93.com/maven/'
+        content {
+            excludeGroup 'net.fabricmc'
+        }
+    }
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
+    // java.lang.foreign (FFM API) is still preview in Java 21 (stable in 22+).
+    it.options.compilerArgs += ['--enable-preview']
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
+}
+
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            artifactId = project.archives_base_name
+            from components.java
+        }
+    }
+    repositories {
+    }
+}

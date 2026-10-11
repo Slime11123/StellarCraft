@@ -1,0 +1,17 @@
+[
+  {
+    "File": "main.lua",
+    "SHA256": "6152D70E66B9063205DCBCE2A393595D3CEC42164E1B7F23BD8F37912D3DDC97",
+    "Installed": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\main.lua"
+  },
+  {
+    "File": "block_visuals.lua",
+    "SHA256": "052AD6CA12F0E65DDADA9797D0B32958D7C9635CA3A6650384299F633C88B90F",
+    "Installed": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\block_visuals.lua"
+  },
+  {
+    "File": "stellarcraft-0.1.0-dx12.jar",
+    "SHA256": "92DCC2E0172F2F1AF9AEB3DB226D6F48C72C40B4941CA11334687AF6D8C66293",
+    "Installed": "D:\\Release 2.7.4\\.minecraft\\versions\\1.20.1-Fabric 0.19.5\\mods\\stellarcraft-0.1.0.jar"
+  }
+]
