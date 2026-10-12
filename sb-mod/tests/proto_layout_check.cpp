@@ -17,6 +17,9 @@ static_assert(offsetof(McState,motionMode)==0xBC);
 static_assert(offsetof(McState,velocityX)==0xC0);
 static_assert(offsetof(McState,velocityY)==0xC8);
 static_assert(offsetof(McState,velocityZ)==0xD0);
+static_assert(offsetof(McState,worldId)==0xD8);
+static_assert(offsetof(NativePoseHeader,uuidHigh)==24);
+static_assert(offsetof(NativePoseHeader,timeMs)==40);
 
 // The header's own static_asserts already run here; add offset checks for the new fields.
 static_assert(offsetof(OverlaySlotHdr, width) == 0x00);
@@ -48,11 +51,22 @@ static_assert(kOffOverlayDepth == kOffOverlayPixels + kOverlaySlotBytes * kOverl
 static_assert(kOffRenderRing == kOffOverlayDepth + kOverlayDepthBytes);
 static_assert(kOverlayDepthSlotBytes == kOverlaySlotBytes);  // both are 4 bytes/pixel
 
+static_assert(offsetof(ActorRecord,nativeGuid)==40);
+static_assert(offsetof(ActorRecord,world)==48);
+static_assert(offsetof(CombatHit,id)==8);
+static_assert(offsetof(CombatHit,x)==48);
+static_assert(kOffActorTable>=kOffAppearance+kAppearanceBytes);
+static_assert(kOffCombat>=kOffActorTable+sizeof(ActorTable));
 int main()
 {
     // Exact decimal values, so tools/check_proto_parity.py can compare them against the
     // Java mirror (Proto.java) without reimplementing the layout.
     std::printf("kVersion=%u\n", kVersion);
+    std::printf("kOffActorTable=%llu\n", (unsigned long long)kOffActorTable);
+    std::printf("kOffCombat=%llu\n", (unsigned long long)kOffCombat);
+    std::printf("kCombatBytes=%llu\n", (unsigned long long)kCombatBytes);
+    std::printf("kCombatSlots=%u\n",kCombatSlots);
+    std::printf("CombatHit=%u\n",(unsigned)sizeof(CombatHit));
     std::printf("OverlaySlotHdr=%u\n", (unsigned)sizeof(OverlaySlotHdr));
     std::printf("OverlayCtl=%u\n", (unsigned)sizeof(OverlayCtl));
     std::printf("kOffOverlayCtl=%llu\n", (unsigned long long)kOffOverlayCtl);

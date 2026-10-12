@@ -31,6 +31,35 @@ import java.nio.ByteOrder;
  */
 public final class ExplosionDamageSink {
 
+    private static final java.util.LinkedHashSet<java.util.UUID> completed=new java.util.LinkedHashSet<>();
+    public static void blast(java.util.UUID id,net.minecraft.world.level.Level level,net.minecraft.world.phys.Vec3 center) {
+        if(!completed.add(id)) return;
+        while(completed.size()>256) completed.remove(completed.iterator().next());
+        for(var actor:level.getEntitiesOfClass(ActorProxy.class,new net.minecraft.world.phys.AABB(center,center).inflate(40))) {
+            if(!NativeActors.current(actor)) continue;
+            double distance=actor.position().distanceTo(center)/8;
+            if(distance>=1) continue;
+            // Only registered MC block shapes may attenuate a native explosion.
+            int visible=0;
+            var box=actor.getBoundingBox();
+            for(int ix=0;ix<2;ix++) for(int iy=0;iy<3;iy++) for(int iz=0;iz<2;iz++) {
+                var end=new net.minecraft.world.phys.Vec3(ix==0?box.minX:box.maxX,box.minY+(box.maxY-box.minY)*iy/2,iz==0?box.minZ:box.maxZ);
+                boolean blocked=false;
+                for(long packed:PlacedBlocks.positions()) {
+                    var state=PlacedBlocks.state(packed);if(state==null) continue;
+                    var pos=net.minecraft.core.BlockPos.of(packed);double offset=PlacedBlocks.offset(packed);
+                    if(state.getCollisionShape(level,pos).clip(center.add(0,-offset,0),end.add(0,-offset,0),pos)!=null) {blocked=true;break;}
+                }
+                if(!blocked) visible++;
+            }
+            double exposure=(1-distance)*visible/12.0;
+            if(exposure>0) {
+                float damage=(float)((exposure*exposure+exposure)*28+1);
+                net.minecraft.client.Minecraft.getInstance().execute(()->forwardHit(actor.sbUid(),damage,center.x,center.y,center.z,(float)exposure));
+            }
+        }
+    }
+
     private ExplosionDamageSink() {}
 
     /**
@@ -72,9 +101,9 @@ public final class ExplosionDamageSink {
         ev.putInt(uid);
         ev.putFloat(damage);           // a = scaled damage
         ev.putFloat((float) cx);       // b = centre x
-        ev.putFloat((float) cz);       // c = centre z
-        ev.putFloat(knockback);        // d = knockback strength (falloff)
-        ev.putInt(0);                  // flags
+        ev.putFloat((float) cy);       // c = centre y
+        ev.putFloat((float) cz);       // d = centre z (native exposure check)
+        ev.putInt(DamageBridge.nextEventId()); // unique damage publication
         ev.putInt(0);                  // weapon
         ev.flip();
 

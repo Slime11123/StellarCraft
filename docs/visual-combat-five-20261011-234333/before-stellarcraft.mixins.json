@@ -1,0 +1,37 @@
+{
+  "required": true,
+  "package": "dev.stellarcraft.world.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "stellarcraft-refmap.json",
+  "client": [
+    "EntityCollisionMixin",
+    "NativePlayerMixin",
+    "NativeLocalPlayerMixin",
+    "NativeServerMovementMixin",
+    "NativeClientPositionMixin",
+    "NativeBlockUseMixin",
+    "NativeBlockItemMixin",
+    "GuiAlphaMixin",
+    "NativeHudMixin",
+    "NativeProjectileMixin",
+    "NativeFireworkMixin",
+    "NativeBoatMixin",
+    "NativeEntityDamageMixin",
+    "NativeLightSupportMixin",
+    "ExplosionMixin",
+    "WindowMixin",
+    "WorldLayerMixin",
+    "GameRendererMixin",
+    "ScreenBackgroundMixin",
+    "TerrainTargetMixin",
+    "ClientLevelMixin",
+    "MouseHandlerAccessor",
+    "KeyboardHandlerAccessor",
+    "GameRendererAccessor",
+    "KeyboardMixin",
+    "MouseMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

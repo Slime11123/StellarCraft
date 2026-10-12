@@ -6,6 +6,12 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public abstract class NativeEntityDamageMixin {
+    @Inject(method="method_29242",remap=false,at=@At("HEAD"),cancellable=true)
+    private void stellarcraft$nativeWalkPhase(boolean flying,org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
+        LivingEntity self=(LivingEntity)(Object)this;
+        // END_CLIENT_TICK advances registered entities once from their native snapshot.
+        if(self.level().isClientSide&&dev.stellarcraft.world.NativeEntities.owns(self)) ci.cancel();
+    }
     @Inject(method="method_5643",remap=false,at=@At("HEAD"),cancellable=true)
     private void stellarcraft$nativeDamage(DamageSource source,float damage,CallbackInfoReturnable<Boolean> cir) {
         LivingEntity self=(LivingEntity)(Object)this;

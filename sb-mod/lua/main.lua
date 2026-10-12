@@ -76,6 +76,7 @@ local read_events = nil
 local read_mc_state = nil
 local native_enemy_damage = nil
 local native_player_guard = nil
+local nativeHits,publishHit
 
 -- Forward declaration for the native-block plumbing, which is defined further down (it needs
 -- helpers declared later in the file) but has to be reachable from the event pump above it.
@@ -99,6 +100,8 @@ local mcInput = false
 local function load_bridge()
     -- package.loadlib(path, name) returns the C function with the given name, which
     -- must be a lua_CFunction (int (*)(lua_State*)). Our DLL exports those.
+    nativeHits=package.loadlib(DLL_PATH,"sc_native_hits_lua")
+    publishHit=package.loadlib(DLL_PATH,"sc_combat_hit_lua")
     write_player     = package.loadlib(DLL_PATH, "sc_write_player_lua")
     write_actor      = package.loadlib(DLL_PATH, "sc_write_actor_lua")
     set_actor_count  = package.loadlib(DLL_PATH, "sc_set_actor_count_lua")
@@ -336,7 +339,9 @@ end
 -- True when a class name looks like a Naytiba / enemy character.
 local function is_enemy_class(name)
     if not name then return false end
+    local lower=string.lower(name)
     return string.find(name, "CH_M_NA", 1, true) ~= nil
+        or lower=="ch_npc_raven_blueprint_c" or lower=="ch_npc_raven_c" or lower=="ch_npc_raven"
 end
 
 -- Read a float/number field defensively (returns fallback when missing).
@@ -526,12 +531,46 @@ local function enemy_stats(actor,damage,budget,cause)
     if not native_enemy_damage then return nil end
     local ok,result=pcall(function()
         local info=actor.BroadcastSpawnInfo
-        return native_enemy_damage(info.ActorGuid,info.CharacterDataId,damage or 0,budget or 1,cause or 0)
+        return native_enemy_damage(info.ActorGuid,info.CharacterDataId,damage or 0,budget or 1,cause or 0,actor:GetAddress())
     end)
     return ok and result or nil
 end
 local gLastActorSample = -1
 local gActorCandidates, gActorWorld, gActorRefresh = nil, nil, -10
+local gCombatSources={}
+local gActorDiagnosticAt=-10
+local function enemy_bounds(actor)
+    local radius,half
+    for _,name in ipairs({"BodyCollision","CapsuleComponent"}) do
+        local ok,r,h=pcall(function()
+            local component=actor[name]
+            return component:GetScaledCapsuleRadius(),component:GetScaledCapsuleHalfHeight()
+        end)
+        if ok and type(r)=="number" and type(h)=="number" and r>0 and r<=1600 and h>0 and h<=1600 then radius,half=r,h;break end
+    end
+    return radius and radius*2/100 or .6,half and half*2/100 or 1.8,half or 90
+end
+local function consume_native_hits()
+    if not nativeHits or not publishHit then return end
+    local rows=nativeHits()
+    for _,hit in ipairs(rows) do
+        if hit.world==gBuildWorldId then
+            local source=gCombatSources[hit.source]
+            local x,y,z,guid,flags=0,0,0,0,0
+            if source and source~=false and os.clock()-source.time<.5 then
+                -- +0x104 source keys are certified in the executable. Revalidate
+                -- the corresponding server identity; the integer is never treated as a GUID.
+                local stats=enemy_stats(source.actor)
+                if stats and stats.ready and stats.guid==source.guid and stats.sourceKey==hit.source then
+                    local loc=source.actor:K2_GetActorLocation()
+                    x,y,z=-loc.X/100+gFrameOff.X,loc.Z/100+gFrameOff.Y,-loc.Y/100+gFrameOff.Z
+                    guid,flags=source.guid,1
+                end
+            end
+            publishHit(hit.id,hit.time,hit.player,hit.source,hit.damage,guid,x,y,z,flags,hit.world)
+        end
+    end
+end
 local function mirror_actors(center, world)
     if not write_actor or not set_actor_count then return end
     local now = os.clock()
@@ -563,8 +602,10 @@ local function mirror_actors(center, world)
     local oy = off and off.Y or 0.0
     local oz = off and off.Z or 0.0
 
-    local count = 0
+    local count,nearby,rejected = 0,0,nil
+    set_actor_count(0)
     gActorsByName = {}
+    gCombatSources={}
 
     for _, actor in ipairs(all) do
         local okValid, valid = pcall(function() return actor:IsValid() end)
@@ -585,12 +626,15 @@ local function mirror_actors(center, world)
 
                     local dx, dy, dz = mx - center.X, my - center.Y, mz - center.Z
                     if (dx * dx + dy * dy + dz * dz) <= (MIRROR_RADIUS_BLOCKS * MIRROR_RADIUS_BLOCKS) then
+                        nearby=nearby+1
                         -- Stable key: class name + the actor's address, so the same actor
                         -- keeps its uid every frame.
                         local addr = "?"
                         local okAddr, a = pcall(function() return actor:GetAddress() end)
                         if okAddr and a then addr = tostring(a) end
-                        local name = clsName .. "@" .. addr
+                        local stats=enemy_stats(actor)
+                        local info={ActorGuid=stats and stats.guid or 0,CharacterDataId=stats and stats.type or 0}
+                        local name = tostring(worldAddress)..":"..tostring(gBuildWorldId)..":"..clsName .. "@" .. addr..":"..info.ActorGuid..":"..info.CharacterDataId
                         local uid = uid_for(name)
 
                         local yaw = 0.0
@@ -600,12 +644,29 @@ local function mirror_actors(center, world)
                         -- Health fraction, when the actor exposes it (several SB enemy
                         -- blueprints do; fall back to 1.0 so the proxy still spawns).
                         local healthFrac = actor_num(actor, "HealthPercent", 1.0)
-                        local stats=enemy_stats(actor)
+                        if not stats or not stats.ready then
+                            rejected=clsName..":"..tostring(stats and stats.reason or "Lua identity unavailable")
+                                .." guid="..tostring(info.ActorGuid).."("..type(info.ActorGuid)..") type="
+                                ..tostring(info.CharacterDataId).."("..type(info.CharacterDataId)..")"
+                        end
                         if stats and stats.ready and stats.maximum>0 then healthFrac=math.max(0,math.min(1,stats.after/stats.maximum)) end
 
-                        write_actor(uid, 0, mx, my, mz, yaw, 0.6, 1.8, healthFrac)
-                        gActorsByName[uid] = actor
-                        count = count + 1
+                        if stats and stats.ready and stats.maximum>0 and stats.after>0 then
+                            local width,height,half=enemy_bounds(actor)
+                            local flags=1
+                            local tier=resolve_enemy(actor,clsName)
+                            if tier=="Alpha" or tier=="Elder" then flags=flags|4 end
+                            local okDamage,canDamage=pcall(function() return actor.bCanBeDamaged end)
+                            if stats.invulnerable or okDamage and canDamage==false then flags=flags|16 end
+                            write_actor(uid,flags,mx,my-half/100,mz,yaw,width,height,healthFrac,
+                                info.ActorGuid,info.CharacterDataId,gBuildWorldId or 0,uid)
+                            gActorsByName[uid]=actor
+                            if stats.sourceKey and stats.sourceKey>0 then
+                                if gCombatSources[stats.sourceKey]~=nil then gCombatSources[stats.sourceKey]=false
+                                else gCombatSources[stats.sourceKey]={actor=actor,guid=info.ActorGuid,time=now} end
+                            end
+                            count=count+1
+                        end
                         if count >= 256 then break end
                     end
                 end
@@ -613,7 +674,11 @@ local function mirror_actors(center, world)
         end
     end
 
-    set_actor_count(count)
+    set_actor_count(count,gBuildWorldId or 0)
+    if now-gActorDiagnosticAt>10 then
+        gActorDiagnosticAt=now
+        print(string.format("[StellarCraft-Actors] candidates=%d nearby=%d published=%d rejection=%s\n",#all,nearby,count,tostring(rejected)))
+    end
 end
 
 -- Apply damage to a real SB actor.
@@ -641,8 +706,7 @@ local function damage_actor(actor, mcDamage, knockback)
     pcall(function() cause=UEHelpers.GetPlayer().BroadcastSpawnInfo.ActorGuid end)
     local stats=enemy_stats(actor,mcDamage,budget,cause)
     if stats then
-        local info=actor.BroadcastSpawnInfo
-        print(string.format("[StellarCraft-Combat] guid=%d type=%d HP %.1f -> %.1f / %.1f: %s\n",info.ActorGuid,info.CharacterDataId,stats.before,stats.after,stats.maximum,tostring(stats.reason)))
+        print(string.format("[StellarCraft-Combat] guid=%d type=%d HP %.1f -> %.1f / %.1f: %s\n",stats.guid or 0,stats.type or 0,stats.before,stats.after,stats.maximum,tostring(stats.reason)))
         return stats.applied,math.max(0,stats.before-stats.after),tier,stats.maximum
     end
     return false,0,tier,maxHp
@@ -654,6 +718,7 @@ end
 --   kEvExplosionHit = 6  -> per-actor explosion damage (TNT)
 --   kEvHitActor     = 1  -> melee / arrow damage
 local gLastEventLog = 0
+local gDamageSerial,gDamagePid=0,0
 
 local function apply_events()
     if not read_events then return end
@@ -684,8 +749,20 @@ local function apply_events()
             if pearl_teleport then pearl_teleport(ev.a,ev.b,ev.c) end
         elseif t == 6 or t == 1 then
             local actor = gActorsByName[ev.uid]
-            if actor then
-                local applied, nativeDmg, tier, maxHp = damage_actor(actor, ev.a, ev.d)
+            local mc=read_mc_state and read_mc_state()
+            local serial=math.floor(ev.flags or 0)
+            if mc and mc.mcPid~=gDamagePid then gDamageSerial,gDamagePid=0,mc.mcPid end
+            local fresh=mc and mc.worldId==gBuildWorldId and mc.flags&256~=0
+            if actor and fresh and serial>gDamageSerial then
+                gDamageSerial=serial
+                local damage=ev.a
+                if t==6 then
+                    local nativeExposure=NativeWorld.native_exposure(UEHelpers.GetPlayer(),actor,gFrameOff,ev.b,ev.c,ev.d)
+                    -- Combine visibility before vanilla's quadratic explosion damage.
+                    local exposure=math.max(0,(-1+math.sqrt(1+4*math.max(0,damage-1)/28))/2)*nativeExposure
+                    damage=exposure>0 and (exposure*exposure+exposure)*28+1 or 0
+                elseif ev.weapon~=5 and not NativeWorld.melee_visible(UEHelpers.GetPlayer(),actor) then damage=0 end
+                local applied, nativeDmg, tier, maxHp = damage_actor(actor, damage, ev.d)
                 -- Log sparingly: explosions are bursty and spam the console otherwise.
                 local now = os.clock()
                 if now - gLastEventLog > 0.5 then
@@ -1067,7 +1144,7 @@ end
 local function apply_mc_transform()
     if not read_mc_state then return end
     local ok, st = pcall(read_mc_state)
-    if not ok or type(st) ~= "table" then st={flags=0} end
+    if not ok or type(st) ~= "table" or st.protocolVersion~=4 then st={flags=0} end
 
     local mcOwns  = (st.flags & MC_FLAG_CONTROL_STEVE) ~= 0
     local inWorld = (st.flags & MC_FLAG_IN_WORLD) ~= 0
@@ -1945,10 +2022,14 @@ local function tick()
             local okWorld, world = pcall(function() return pawn:GetWorld() end)
             -- Translated into Minecraft's frame, so the proxies spawn around the player.
             local cx, cy, cz = ue_to_mc_frame(loc.X, loc.Y, loc.Z)
-            pcall(mirror_actors, { X = cx, Y = cy, Z = cz }, (okWorld and world) or nil)
+            local okMirror,mirrorError=pcall(mirror_actors, { X = cx, Y = cy, Z = cz }, (okWorld and world) or nil)
+            if not okMirror and os.clock()-gActorDiagnosticAt>10 then
+                gActorDiagnosticAt=os.clock();print("[StellarCraft-Actors] "..tostring(mirrorError).."\n")
+            end
         end
     end
 
+    pcall(consume_native_hits)
     ts("events")
     pcall(apply_events)
 

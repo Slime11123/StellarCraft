@@ -33,7 +33,7 @@ public final class NativeQa {
                 mc.player.setYRot(Float.parseFloat(words[2]));mc.player.setXRot(Float.parseFloat(words[3]));
             } else if(words.length==4&&words[1].equals("hold")) {
                 if(held!=null) held.setDown(false);
-                held=switch(words[2]) {case "forward"->mc.options.keyUp;case "back"->mc.options.keyDown;case "shift"->mc.options.keyShift;case "jump"->mc.options.keyJump;default->null;};
+                held=switch(words[2]) {case "forward"->mc.options.keyUp;case "back"->mc.options.keyDown;case "shift"->mc.options.keyShift;case "jump"->mc.options.keyJump;case "use"->mc.options.keyUse;default->null;};
                 heldTicks=Math.max(0,Math.min(100,Integer.parseInt(words[3])));
             } else if(words.length==2&&words[1].equals("restoreHealth")) {
                 var id=mc.player.getUUID();mc.getSingleplayerServer().execute(()->{
@@ -60,7 +60,10 @@ public final class NativeQa {
                 });
             } else if(words.length==2&&words[1].equals("state")) {
                 var p=mc.player;
-                System.out.println("[StellarCraft-QA] player="+p.position()+" health="+p.getHealth()+" pose="+p.getPose()+" held="+p.getMainHandItem()+" pick="+mc.hitResult+" entities="+NativeEntities.snapshots()+" ledger="+PlacedBlocks.count());
+                System.out.println("[StellarCraft-QA] player="+p.position()+" health="+p.getHealth()+" pose="+p.getPose()
+                    +" ground="+p.onGround()+" glide="+p.isFallFlying()+" velocity="+p.getDeltaMovement()
+                    +" chest="+p.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST)
+                    +" held="+p.getMainHandItem()+" pick="+mc.hitResult+" entities="+NativeEntities.snapshots()+" ledger="+PlacedBlocks.count());
             }
             System.out.println("[StellarCraft-QA] "+command);
         }catch(Exception error){System.out.println("[StellarCraft-QA] failed: "+error);}

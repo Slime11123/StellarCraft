@@ -23,6 +23,8 @@ $sources = @('dev\stellarcraft\link\Proto.java','dev\stellarcraft\link\SharedMem
 $sources += @('dev\stellarcraft\client\NativeDisplay.java','dev\stellarcraft\client\NativeMovement.java','dev\stellarcraft\client\ClientBridge.java','dev\stellarcraft\world\mixin\MouseMixin.java','dev\stellarcraft\world\mixin\EntityCollisionMixin.java','dev\stellarcraft\world\mixin\WorldLayerMixin.java')
 $sources += @('dev\stellarcraft\client\ElytraBridge.java')
 $sources += @('dev\stellarcraft\world\mixin\NativeFireworkMixin.java')
+$sources += @('dev\stellarcraft\world\mixin\NativeGuiKeysMixin.java','dev\stellarcraft\world\mixin\NativeArrowMixin.java')
+$sources += @('dev\stellarcraft\world\NativeArrowAccess.java')
 $sources += @('dev\stellarcraft\render\FrameExporter.java')
 $sources += @('dev\stellarcraft\world\PlacedBlocks.java','dev\stellarcraft\world\mixin\TerrainTargetMixin.java')
 $sources += @('dev\stellarcraft\StellarCraftMod.java')
@@ -39,7 +41,7 @@ $sources += @('dev\stellarcraft\world\mixin\NativeLightSupportMixin.java')
 # TinyRemapper must see our LivingEntity subclass to resolve inherited calls made
 # through ActorProxy (isRemoved/discard/setPos, etc.) to intermediary names.
 # A Minecraft-only remap classpath cannot infer the hierarchy of a mod class.
-$sources += @('dev\stellarcraft\world\ActorProxy.java')
+$sources += @('dev\stellarcraft\world\ActorProxy.java','dev\stellarcraft\world\NativeActors.java','dev\stellarcraft\world\ExplosionDamageSink.java','dev\stellarcraft\world\mixin\ExplosionMixin.java')
 $compileArgs = @('--enable-preview','--release','21','-encoding','UTF-8','-proc:none','-classpath',('"' + $classpath.Replace('\','/') + '"'),'-d',('"' + $classes.Replace('\','/') + '"'))
 $compileArgs += $sources | ForEach-Object { '"' + (Join-Path $PSScriptRoot ('src\main\java\' + $_)).Replace('\','/') + '"' }
 $argfile = Join-Path $patchRoot 'javac.args'
@@ -66,14 +68,9 @@ if ($LASTEXITCODE -ne 0) { throw 'JAR update failed' }
 if ($LASTEXITCODE -ne 0) { throw 'Mixin configuration update failed' }
 # Fail the build before deployment if inherited proxy calls retain named symbols.
 $javap = Join-Path $JdkDirectory 'bin\javap.exe'
-$bridgeBytecode = (& $javap -classpath $result -p -c dev.stellarcraft.client.ClientBridge) -join "`n"
+$bridgeBytecode = (& $javap -classpath $result -p -c dev.stellarcraft.world.NativeActors) -join "`n"
 if ($LASTEXITCODE -ne 0) { throw 'Proxy bytecode inspection failed' }
-if ($bridgeBytecode -match 'ActorProxy\.(isRemoved|discard):') {
-    throw 'Inherited ActorProxy calls were not remapped; do not deploy this JAR'
-}
-if ($bridgeBytecode -notmatch 'ActorProxy\.method_31481:\(\)Z' -or
-    $bridgeBytecode -notmatch 'ActorProxy\.method_31472:\(\)V') {
-    throw 'Expected 1.20.1 intermediary proxy lifecycle calls are missing'
-}
-Write-Output 'PASS: ActorProxy inherited lifecycle calls use intermediary names'
+if ($bridgeBytecode -match 'ActorProxy\.(isRemoved|discard):') { throw 'Inherited ActorProxy calls were not remapped' }
+if ($bridgeBytecode -notmatch 'ActorProxy\.method_31481:\(\)Z' -or $bridgeBytecode -notmatch 'ActorProxy\.method_31472:\(\)V') { throw 'Missing proxy intermediary calls' }
+Write-Output 'PASS: server proxy lifecycle uses intermediary names'
 Write-Output $result

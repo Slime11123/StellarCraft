@@ -106,15 +106,9 @@ local function read_model(id)
     return sections
 end
 
-function M.attach(actor, cube, modelId, doubleSided)
-    if not modelId or modelId == 0 then error("MC did not publish a block model") end
+function M.replace_model(actor, component, modelId, doubleSided)
     local sections = read_model(modelId)
-    local cls = StaticFindObject("/Script/ProceduralMeshComponent.ProceduralMeshComponent")
-    assert(cls and cls:IsValid(), "ProceduralMeshComponent unavailable")
-    local transform = { Rotation = { X = 0, Y = 0, Z = 0, W = 1 }, Translation = { X = 0, Y = 0, Z = 0 }, Scale3D = { X = 1, Y = 1, Z = 1 } }
-    print("[StellarCraft] block visual: add procedural component\n")
-    local component = actor:AddComponentByClass(cls, false, transform, false)
-    assert(component and component:IsValid(), "Failed to create procedural component")
+    component:ClearAllMeshSections()
     for index, section in ipairs(sections) do
         local triangles = section.triangles
         if doubleSided then
@@ -129,9 +123,18 @@ function M.attach(actor, cube, modelId, doubleSided)
             section.uv, section.colors, section.tangents, false)
         component:SetMaterial(index - 1, material(actor:GetWorld(), section.filename))
     end
+end
+function M.attach(actor, cube, modelId, doubleSided)
+    if not modelId or modelId == 0 then error("MC did not publish a block model") end
+    local cls = StaticFindObject("/Script/ProceduralMeshComponent.ProceduralMeshComponent")
+    assert(cls and cls:IsValid(), "ProceduralMeshComponent unavailable")
+    local transform = { Rotation = { X = 0, Y = 0, Z = 0, W = 1 }, Translation = { X = 0, Y = 0, Z = 0 }, Scale3D = { X = 1, Y = 1, Z = 1 } }
+    local component = actor:AddComponentByClass(cls, false, transform, false)
+    assert(component and component:IsValid(), "Failed to create procedural component")
+    M.replace_model(actor,component,modelId,doubleSided)
     -- Keep native cube collision, hide only its visual; the procedural child stays visible.
     cube:SetHiddenInGame(true, false)
-    print(string.format("[StellarCraft] block visual ready model=%.0f sections=%d\n", modelId, #sections))
+    print(string.format("[StellarCraft] block visual ready model=%.0f\n", modelId))
     return component
 end
 
@@ -189,6 +192,7 @@ local function update_pose(owner, state, reader, isBody, firstPerson)
     assert(count<=2048 and #bytes==32+count*44,"Invalid native face count")
     if os.time()*1000-timestamp>2000 then hide_pose(state);return end
     local changed=sequence~=state.sequence
+    local topologyChanged=changed and (not state.sequence or (sequence >> 24)~=(state.sequence >> 24))
     if changed then
         state.interval=math.max(0.008,math.min(0.1,(timestamp-(state.timestamp or timestamp-16))/1000))
         state.timestamp=timestamp;state.sequence,state.lastSeen=sequence,now
@@ -210,7 +214,8 @@ local function update_pose(owner, state, reader, isBody, firstPerson)
             if isBody then pcall(function() component.bCastHiddenShadow=true end) end
             face={component=component};state.faces[index]=face
         end
-        if face.model ~= model then
+        local modelChanged=face.model ~= model
+        if modelChanged then
             face.component:ClearAllMeshSections()
             for section,data in ipairs(read_model(model)) do
                 face.component:CreateMeshSection(section-1,data.vertices,data.triangles,data.normals,data.uv,data.colors,data.tangents,false)
@@ -218,13 +223,20 @@ local function update_pose(owner, state, reader, isBody, firstPerson)
             end
             face.model=model
         end
+        if modelChanged or topologyChanged then
+            -- A different mesh may use a different local basis (cube vs quad,
+            -- or a different equipment layer). Its old pose cannot be blended.
+            face.from,face.target,face.transform=transform,transform,transform
+            face.pose,face.started,face.alpha=poseBytes,now,1
+            face.component:K2_SetRelativeTransform(transform,false,{},false)
+        end
         -- Ignore sub-pixel idle changes instead of crossing UE reflection for each face.
         local previous=face.transform
         local dirty=not previous
             or math.abs(x-previous.Translation.X)+math.abs(y-previous.Translation.Y)+math.abs(z-previous.Translation.Z)>0.25
             or math.abs(qx-previous.Rotation.X)+math.abs(qy-previous.Rotation.Y)+math.abs(qz-previous.Rotation.Z)+math.abs(qw-previous.Rotation.W)>0.001
             or math.abs(sx-previous.Scale3D.X)+math.abs(sy-previous.Scale3D.Y)+math.abs(sz-previous.Scale3D.Z)>0.001
-        if face.pose ~= poseBytes and dirty then
+        if not modelChanged and not topologyChanged and face.pose ~= poseBytes and dirty then
             face.from=face.transform or transform;face.target=transform;face.started=now
             face.pose=poseBytes;face.alpha=nil
         end

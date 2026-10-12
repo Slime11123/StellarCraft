@@ -54,7 +54,7 @@ local env=setmetatable({os={clock=function() return testTime end},advanceTime=fu
     require=function(name) return name=="UEHelpers" and helpers or {} end,
     print=function() end}, {__index=_G})
 local tests=[[
-local st={flags=257,x=10,y=106,z=55,yaw=90,pitch=0,eyeHeight=1.62,teleportAck=0,vx=0,vz=0}
+local st={protocolVersion=4,flags=257,x=10,y=106,z=55,yaw=90,pitch=0,eyeHeight=1.62,teleportAck=0,vx=0,vz=0}
 read_mc_state=function() return st end
 update_mc_camera=function() end
 apply_first_person_boom=function() end
@@ -87,6 +87,18 @@ st.flags=257;apply_mc_transform();movement.falling=false
 st.vx=10;advanceTime(.05);apply_mc_transform();assert(gTeleportSerial==1,"wall rejection must not issue a teleport")
 assert((gMotionFeedback.contacts&2)~=0,"wall rejection must report a collision")
 st.vx=0
+-- Identical intent must cover identical distance at different native frame rates.
+st.vz=.1
+local begin=UEHelpers.GetPlayer():K2_GetActorLocation().Y
+for i=1,120 do advanceTime(1/120);apply_mc_transform() end
+local distance120=UEHelpers.GetPlayer():K2_GetActorLocation().Y-begin
+begin=UEHelpers.GetPlayer():K2_GetActorLocation().Y
+for i=1,30 do advanceTime(1/30);apply_mc_transform() end
+assert(math.abs(distance120-(UEHelpers.GetPlayer():K2_GetActorLocation().Y-begin))<.0001,"host cadence changed movement speed")
+st.vz=0
+for i=1,1000 do st.vx=10;advanceTime(1/120);apply_mc_transform() end
+assert(gTeleportSerial==1,"sustained wall contact created a teleport loop")
+st.vx=0
 ack(); apply_mc_transform()
 st.flags=385;advanceTime(.05);apply_mc_transform()
 assert(movement.MovementMode==5 and movement.GravityScale==0,"creative flight did not disable native gravity")
@@ -101,6 +113,15 @@ for i=1,40 do advanceTime(.05);apply_mc_transform() end
 assert(UEHelpers.GetPlayer():K2_GetActorLocation().Z==90,"Shift did not descend to native ground")
 st.flags=257;advanceTime(.05);apply_mc_transform()
 assert(movement.MovementMode==3 and math.abs(movement:GetGravityZ()+3200)<.001,"ending flight did not restore calibrated falling")
+st.motionMode=3;st.vy=.1;advanceTime(.05);apply_mc_transform()
+assert(movement.MovementMode==5 and movement.GravityScale==0,"glide double-applied native gravity")
+local glideZ=UEHelpers.GetPlayer():K2_GetActorLocation().Z
+assert(glideZ>90,"glide discarded MC vertical intent")
+st.vy=-1
+for i=1,10 do advanceTime(.05);apply_mc_transform() end
+assert(UEHelpers.GetPlayer():K2_GetActorLocation().Z==90 and (gMotionFeedback.contacts&5)==5,"glide landing did not return floor contact")
+st.motionMode=0;st.vy=0;advanceTime(.05);apply_mc_transform()
+assert(movement.MovementMode==3,"glide landing did not restore falling physics")
 st.flags=385;advanceTime(.05);apply_mc_transform()
 steveMode=false; apply_mc_transform()
 assert(movement.MovementMode==3,"F4 left Eve in flight")

@@ -11,6 +11,7 @@ public final class ElytraBridge {
     private static double lastY;
     private static float fallDistance;
     private ElytraBridge() {}
+    public static void reset() {collision=false;wasGliding=false;fallDistance=0;lastY=0;}
     public static boolean gliding(Player player) {
         return NativeMovement.owns(player)&&ControlStateMachine.isSteve()&&player.isFallFlying()
             &&player.isAlive()&&!player.getAbilities().flying;
@@ -30,7 +31,7 @@ public final class ElytraBridge {
             -Math.hypot(state.velocityX,state.velocityZ))*10-3):0;
         if(glide&&!wasGliding) {fallDistance=0;lastY=state.posY;}
         if(glide||wasGliding) {
-            if(state.velocityY>-.5) fallDistance=1; // vanilla checkSlowFallDistance
+            if(before.y>-.5) fallDistance=1; // vanilla checkSlowFallDistance before collision
             else if(state.posY<lastY) fallDistance+=(float)(lastY-state.posY);
         }
         float landing=wasGliding&&ground?fallDistance:0;

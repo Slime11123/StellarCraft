@@ -19,7 +19,7 @@
 namespace stellarcraft::proto
 {
     inline constexpr std::uint32_t kMagic = 0x43544153;  // "STAC" (STellarCrAft)
-    inline constexpr std::uint32_t kVersion = 3;         // 3: motion intent and native collision feedback
+    inline constexpr std::uint32_t kVersion = 4;         // 3: motion intent and native collision feedback
     inline constexpr wchar_t       kMappingName[] = L"Local\\StellarCraft_v1";
 
     // ---- Coordinate / scale mapping -------------------------------------------------------
@@ -39,7 +39,6 @@ namespace stellarcraft::proto
     inline constexpr std::uint64_t kOffHeader        = 0x0;
     inline constexpr std::uint64_t kOffSbState       = 0x100;    // SB -> MC, seqlock
     inline constexpr std::uint64_t kOffMcState       = 0x200;    // MC -> SB, seqlock
-    inline constexpr std::uint64_t kOffActorTable    = 0x300;    // SB -> MC, seqlock
     inline constexpr std::uint64_t kOffInputRing     = 0x1000;   // SB -> MC, SPSC ring
     inline constexpr std::uint64_t kOffEventRing     = 0x10000;  // MC -> SB, SPSC ring
     inline constexpr std::uint64_t kOffCollisionRing = 0x20000;  // SB -> MC, SPSC ring (collision shapes)
@@ -70,6 +69,18 @@ namespace stellarcraft::proto
 
     inline constexpr std::uint64_t kOffRenderRing    = kOffOverlayDepth + kOverlayDepthBytes;
     inline constexpr std::uint64_t kRenderRingBytes  = 64ull << 20;  // 64 MiB
+    inline constexpr std::uint32_t kNativePoseSlots = 19; // hands/body/manifest/16 entities
+    inline constexpr std::uint32_t kNativePoseStride = 0x18000;
+    // SCPOSE1 payload sequence: high 8 bits = persistent topology generation,
+    // low 24 bits = publication serial. Footer and CRC cover the complete value.
+    // Slot-header seq below remains a separate, ordinary odd/even seqlock.
+    struct NativePoseHeader {
+        std::uint32_t seq, bytes, mcPid, sbPid, world, entity;
+        std::uint64_t uuidHigh, uuidLow, timeMs;
+        std::uint8_t reserved[16];
+    };
+    static_assert(sizeof(NativePoseHeader)==64);
+    static_assert(kNativePoseSlots*kNativePoseStride<=kRenderRingBytes);
 
     // Appearance region sizing (forward-declared here so kMappingBytes can reference it;
     // the full structs/constants live in the Appearance section below).
@@ -84,7 +95,20 @@ namespace stellarcraft::proto
         kAppearanceHeaderBytes + kSkinPixelsBytes + kCapePixelsBytes;
 
     inline constexpr std::uint64_t kOffAppearance    = kOffRenderRing + kRenderRingBytes;  // MC -> SB skin/cape textures
-    inline constexpr std::uint64_t kMappingBytes     = kOffAppearance + kAppearanceBytes;
+    inline constexpr std::uint64_t kOffActorTable = kOffAppearance + kAppearanceBytes;
+    inline constexpr std::uint64_t kOffCombat = kOffActorTable + 0x4040;
+    inline constexpr std::uint32_t kCombatSlots = 128;
+    struct CombatHit {
+        std::uint32_t seq, flags;
+        std::uint64_t id, timeMs;
+        std::uint32_t playerGuid, rawSource, sbPid, world;
+        float damage; std::uint32_t sourceGuid;
+        double x,y,z;
+        std::uint64_t reserved;
+    };
+    static_assert(sizeof(CombatHit)==80);
+    inline constexpr std::uint64_t kCombatBytes = 0x80 + kCombatSlots * sizeof(CombatHit);
+    inline constexpr std::uint64_t kMappingBytes = kOffCombat + kCombatBytes;
 
     // ---- Header @0x0 ----------------------------------------------------------------------
     struct Header
@@ -201,8 +225,9 @@ namespace stellarcraft::proto
         std::uint64_t motionTimeMs;
         std::uint32_t motionEpoch, motionMode; // host PID; ground/falling/creative/glide
         double velocityX, velocityY, velocityZ; // desired displacement per MC tick
+        std::uint32_t worldId, motionPad;
     };
-    static_assert(sizeof(McState) == 0xD8);
+    static_assert(sizeof(McState) == 0xE0);
     static_assert(sizeof(McState) <= 0x100);
 
     // ---- Actor table @0x300 (SB -> MC, seqlock) --------------------------------------------
@@ -230,7 +255,8 @@ namespace stellarcraft::proto
         float         healthFrac;     // 0..1
         std::uint16_t level;
         std::uint16_t pad;
-        char          name[24];       // display name, UTF-8, NUL-terminated (truncated)
+        std::uint32_t nativeGuid, nativeType, world, generation;
+        std::uint64_t reserved;
     };
     static_assert(sizeof(ActorRecord) == 64);
 

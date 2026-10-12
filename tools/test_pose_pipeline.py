@@ -31,7 +31,7 @@ MAPPING_BYTES = OFF_OVERLAY_DEPTH + OVERLAY_DEPTH_BYTES + (64 << 20) + 0x80 + 64
 
 SLOT_HDR = OFF_OVERLAY_CTL + 0x10
 K_MAGIC = 0x43544153
-K_VERSION = 2
+K_VERSION = 3
 NO_DEPTH = 0xFFFFFFFF
 
 # The values we plant, and the exact strings probe_shm.py must print for them.

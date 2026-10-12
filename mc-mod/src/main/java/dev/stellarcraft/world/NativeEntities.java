@@ -13,6 +13,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.entity.vehicle.ChestBoat;
 import net.minecraft.world.item.*;
@@ -33,9 +34,18 @@ public final class NativeEntities {
     private static int feedbackPid,feedbackWorld;
     private static final ConcurrentHashMap<UUID,Long> feedbackAt=new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID,Boolean> visibleToPlayer=new ConcurrentHashMap<>();
+    private static final Set<UUID> embedded=ConcurrentHashMap.newKeySet();
+    private static final Map<UUID,Set<UUID>> arrowHits=new ConcurrentHashMap<>();
+    private static final Map<UUID,Vec3> arrowConfirmed=new ConcurrentHashMap<>();
+    private record ArrowImpulse(Vec3 velocity,int ticks) {}
+    private static final Map<UUID,ArrowImpulse> arrowImpulses=new ConcurrentHashMap<>();
+    private record NativeTarget(int uid,AABB box,float health) {}
+    private static volatile List<NativeTarget> nativeTargets=List.of();
+    private static volatile long targetsAt;
     private static final Path DIR=Path.of("D:/SteamLibrary/steamapps/common/StellarBlade/SB/Binaries/Win64/ue4ss/Mods/StellarCraft/block-assets");
     public record Snapshot(int id,UUID uuid,double x,double y,double z,double vx,double vy,double vz,
-                           float width,float height,int kind,int fuse,float yaw,float headYaw,float bodyYaw) {}
+                           float width,float height,int kind,int fuse,float yaw,float headYaw,float bodyYaw,
+                           float pitch,int hurtTime,int deathTime,float hurtDir) {}
     private NativeEntities() {}
     public static boolean owns(Entity e) {
         if(e==null) return false;
@@ -51,14 +61,21 @@ public final class NativeEntities {
         ServerEntityEvents.ENTITY_LOAD.register((e,level)->{
             boolean tnt=e instanceof PrimedTnt && PlacedBlocks.contains(e.blockPosition().asLong());
             if(tnt&&!e.getTags().contains(TAG)) e.setPos(e.getX(),e.getY()+PlacedBlocks.offset(e.blockPosition().asLong()),e.getZ());
-            if(spawning.get() || tnt || e.getTags().contains(TAG)) {
+            boolean arrow=e instanceof AbstractArrow a&&!(a instanceof net.minecraft.world.entity.projectile.ThrownTrident)
+                &&NativeMovement.owns(a.getOwner())&&ControlStateMachine.isSteve();
+            if(spawning.get() || tnt || arrow || e.getTags().contains(TAG)) {
                 e.addTag(TAG);entities.put(e.getId(),e);e.noPhysics=true;
+                if(e instanceof AbstractArrow) {
+                    arrowConfirmed.put(e.getUUID(),e.position());
+                    if(e.getTags().contains("stellarcraft.embedded")) embedded.add(e.getUUID());
+                }
                 if(e instanceof Mob mob) mob.setNoAi(true);
                 System.out.println("[StellarCraft-Entities] native spawn id="+e.getId()+" type="+e.getType());
             }
         });
         ServerEntityEvents.ENTITY_UNLOAD.register((e,level)->{
-            if(entities.remove(e.getId(),e)) {feedbackAt.remove(e.getUUID());visibleToPlayer.remove(e.getUUID());}
+            if(entities.remove(e.getId(),e)) {feedbackAt.remove(e.getUUID());visibleToPlayer.remove(e.getUUID());
+                embedded.remove(e.getUUID());arrowHits.remove(e.getUUID());arrowConfirmed.remove(e.getUUID());arrowImpulses.remove(e.getUUID());}
         });
         ServerTickEvents.END_SERVER_TICK.register(server->{
             if(!NativeMovement.active()) {snapshot=List.of();return;}
@@ -92,17 +109,23 @@ public final class NativeEntities {
                     mob.setYBodyRot(e.getYRot());
                     double speed=e.onGround()?(hostile?.10:.045):0.0,angle=Math.toRadians(e.getYRot());
                     Vec3 v=e.getDeltaMovement();
-                    e.setDeltaMovement(-Math.sin(angle)*speed,Math.max(-3.9,v.y-.08),Math.cos(angle)*speed);
+                    var impact=arrowImpulses.remove(e.getUUID());
+                    Vec3 impulse=impact==null?Vec3.ZERO:impact.velocity();
+                    if(impact!=null&&impact.ticks()>1&&impulse.horizontalDistanceSqr()>1e-8)
+                        arrowImpulses.put(e.getUUID(),new ArrowImpulse(impulse.scale(e.onGround()?.546:.91),impact.ticks()-1));
+                    e.setDeltaMovement(-Math.sin(angle)*speed+impulse.x,Math.max(-3.9,v.y-.08),Math.cos(angle)*speed+impulse.z);
                     e.move(MoverType.SELF,e.getDeltaMovement());
                     mob.calculateEntityAnimation(false);
                     e.setDeltaMovement(e.getDeltaMovement().multiply(.91,.98,.91));
                 }
                 Vec3 v=e.getDeltaMovement();
-                int kind=e instanceof PrimedTnt?2:e instanceof ThrownEnderpearl?3:e instanceof FireworkRocketEntity?4:e instanceof Boat?1:0;
+                int kind=e instanceof PrimedTnt?2:e instanceof ThrownEnderpearl?3:e instanceof FireworkRocketEntity?4:e instanceof AbstractArrow?5:e instanceof Boat?1:0;
                 next.add(new Snapshot(e.getId(),e.getUUID(),e.getX(),e.getY(),e.getZ(),v.x,v.y,v.z,
-                    e.getBbWidth(),e.getBbHeight(),kind,e instanceof PrimedTnt t?t.getFuse():0,
+                    e.getBbWidth(),e.getBbHeight(),kind,e instanceof PrimedTnt t?t.getFuse():embedded.contains(e.getUUID())?1:0,
                     e.getYRot(),e instanceof LivingEntity living?living.yHeadRot:e.getYRot(),
-                    e instanceof LivingEntity living?living.yBodyRot:e.getYRot()));
+                    e instanceof LivingEntity living?living.yBodyRot:e.getYRot(),e.getXRot(),
+                    e instanceof LivingEntity living?living.hurtTime:0,e instanceof LivingEntity living?living.deathTime:0,
+                    e instanceof LivingEntity living?living.getHurtDir():0));
             }
             snapshot=List.copyOf(next);
         });
@@ -110,9 +133,25 @@ public final class NativeEntities {
     public static void clientTick() {
         currentWorld=PlacedBlocks.worldId();
         var level=Minecraft.getInstance().level;dimension=level==null?null:level.dimension();
+        if(level!=null&&Minecraft.getInstance().player!=null&&NativeMovement.active()) {
+            var box=Minecraft.getInstance().player.getBoundingBox().inflate(64);
+            nativeTargets=level.getEntitiesOfClass(ActorProxy.class,box).stream()
+                .filter(e->!e.isRemoved()&&e.mirroredHealth()>0)
+                .map(e->new NativeTarget(e.sbUid(),e.getBoundingBox(),e.mirroredHealth())).toList();
+            targetsAt=System.currentTimeMillis();
+        } else nativeTargets=List.of();
         if(level!=null) for(var state:snapshot) {
             var entity=level.getEntity(state.id());
-            if(!(entity instanceof LivingEntity living)||!entity.getUUID().equals(state.uuid())) continue;
+            if(entity==null||!entity.getUUID().equals(state.uuid())) continue;
+            if(entity instanceof PrimedTnt t) t.setFuse(state.fuse());
+            if(entity instanceof AbstractArrow) {
+                entity.yRotO=entity.getYRot();entity.xRotO=entity.getXRot();
+                entity.setYRot(entity.yRotO+net.minecraft.util.Mth.wrapDegrees(state.yaw()-entity.yRotO));
+                entity.setXRot(entity.xRotO+net.minecraft.util.Mth.wrapDegrees(state.pitch()-entity.xRotO));
+            }
+            if(!(entity instanceof LivingEntity living)) continue;
+            if(state.hurtTime()>living.hurtTime) living.animateHurt(state.hurtDir());
+            living.hurtTime=state.hurtTime();living.deathTime=state.deathTime();
             living.yRotO=living.getYRot();living.yHeadRotO=living.yHeadRot;living.yBodyRotO=living.yBodyRot;
             living.setYRot(living.yRotO+net.minecraft.util.Mth.wrapDegrees(state.yaw()-living.yRotO));
             living.yHeadRot=living.yHeadRotO+net.minecraft.util.Mth.wrapDegrees(state.headYaw()-living.yHeadRotO);
@@ -188,6 +227,56 @@ public final class NativeEntities {
         else if(e.tickCount>1200) e.discard();
         return true;
     }
+    public static boolean tickArrow(AbstractArrow arrow) {
+        if(!owns(arrow)) return false;
+        if(!simulates(arrow)) return true;
+        arrow.baseTick();
+        if(arrow.tickCount>1200) {arrow.discard();return true;}
+        if(embedded.contains(arrow.getUUID())) {
+            ((dev.stellarcraft.world.NativeArrowAccess)(Object)arrow).stellarcraft$embedded(true);
+            arrow.setDeltaMovement(Vec3.ZERO);
+            return true;
+        }
+        Vec3 velocity=arrow.getDeltaMovement();
+        arrow.move(MoverType.SELF,velocity);
+        arrow.yRotO=arrow.getYRot();arrow.xRotO=arrow.getXRot();
+        arrow.setYRot((float)Math.toDegrees(Math.atan2(velocity.x,velocity.z)));
+        arrow.setXRot((float)Math.toDegrees(Math.atan2(velocity.y,Math.hypot(velocity.x,velocity.z))));
+        arrow.setDeltaMovement(velocity.scale(.99).add(0,-.05,0));
+        return true;
+    }
+    private static void hitArrowSegment(AbstractArrow arrow,Vec3 end) {
+        Vec3 start=arrowConfirmed.put(arrow.getUUID(),end);
+        if(start==null||embedded.contains(arrow.getUUID())||start.distanceToSqr(end)<1e-8) return;
+        // Sweep only the published native scene segment. Host feedback clips walls
+        // before damage, so a delayed trace must not hit something behind a wall.
+        var hits=arrowHits.computeIfAbsent(arrow.getUUID(),id->new HashSet<>());
+        Entity target=null;double nearest=Double.POSITIVE_INFINITY;
+        for(Entity e:entities.values()) {
+            if(e==arrow||e==arrow.getOwner()||e.isRemoved()||!e.level().equals(arrow.level())
+                ||!simulates(e)||!(e instanceof LivingEntity living)||!living.isAlive()||hits.contains(e.getUUID())) continue;
+            var at=e.getBoundingBox().inflate(.15).clip(start,end);
+            if(at.isPresent()&&at.get().distanceToSqr(start)<nearest) {nearest=at.get().distanceToSqr(start);target=e;}
+        }
+        for(var proxy:arrow.level().getEntitiesOfClass(ActorProxy.class,new AABB(start,end).inflate(32))) {
+            if(!NativeActors.current(proxy)||hits.contains(proxy.getUUID())) continue;
+            var at=proxy.getBoundingBox().inflate(.15).clip(start,end);
+            if(at.isPresent()&&at.get().distanceToSqr(start)<nearest) {nearest=at.get().distanceToSqr(start);target=proxy;}
+        }
+        if(target!=null) {
+            hits.add(target.getUUID());
+            Vec3 before=target.getDeltaMovement();
+            ((dev.stellarcraft.world.NativeArrowAccess)(Object)arrow).stellarcraft$hitEntity(new EntityHitResult(target));
+            if(target instanceof Mob) {
+                Vec3 impulse=target.getDeltaMovement().subtract(before);
+                if(impulse.horizontalDistanceSqr()>1e-8) arrowImpulses.put(target.getUUID(),new ArrowImpulse(impulse,80));
+            }
+            // Vanilla handles successful hits, invulnerability bounces and piercing.
+            // Native proxies return false because only SB owns their HP; consume that
+            // arrow after its single forwarded hit rather than bouncing/repeating it.
+            if(target instanceof ActorProxy) arrow.discard();
+        }
+    }
     private static void explode(PrimedTnt t) {
         ServerLevel level=(ServerLevel)t.level();Vec3 center=t.position();double radius=4;
         for(long packed:PlacedBlocks.positions()) {
@@ -208,20 +297,15 @@ public final class NativeEntities {
             spawn(()->{victim.hurt(source,damage);});
             victim.setDeltaMovement(victim.getDeltaMovement().add(victim.position().subtract(center).normalize().scale(exposure)));
         }
-        Minecraft.getInstance().execute(()->{
-            NativeWorldEvents.send(3,0,center.x,center.y,center.z,radius,0);
-            var mc=Minecraft.getInstance();if(mc.level!=null) for(var actor:mc.level.getEntitiesOfClass(ActorProxy.class,new AABB(center,center).inflate(8))) {
-                double exposure=Math.max(0,1-actor.position().distanceTo(center)/8);
-                if(exposure>0) ExplosionDamageSink.forwardHit(actor.sbUid(),(float)((exposure*exposure+exposure)*28+1),center.x,center.y,center.z,(float)exposure);
-            }
-        });
+        ExplosionDamageSink.blast(t.getUUID(),level,center);
+        Minecraft.getInstance().execute(()->NativeWorldEvents.send(3,0,center.x,center.y,center.z,radius,0));
         System.out.println("[StellarCraft-TNT] native blast at="+center+" damage whitelist=native entities/SB enemies");
     }
     private static void applyFeedback() {
         String[] chosen=null;long best=feedbackSeq;
         for(int slot=0;slot<2;slot++) try {
             String[] lines=Files.readString(DIR.resolve("entities-feedback."+slot+".txt")).split("\\R");
-            if(lines.length<3||!lines[0].equals("SCFEED1")) continue;
+            if(lines.length<3||!lines[0].equals("SCFEED2")) continue;
             String[] header=lines[1].split(" ");long seq=Long.parseLong(header[0]),time=Long.parseLong(header[1]);
             int world=Integer.parseUnsignedInt(header[2]),count=Integer.parseInt(header[3]);
             if(seq<=best||world!=currentWorld||Math.abs(System.currentTimeMillis()-time)>400||count<0||count>64||lines.length!=count+3||!lines[count+2].equals("END "+seq)) continue;
@@ -230,19 +314,32 @@ public final class NativeEntities {
         if(chosen==null) return;
         // Parse the entire batch before mutating any entity.
         ArrayList<double[]> rows=new ArrayList<>();
+        ArrayList<UUID> rowIds=new ArrayList<>();
         try {for(int i=2;i<chosen.length-1;i++) {
-            String[] parts=chosen[i].split(" ");if(parts.length!=10) return;
+            String[] parts=chosen[i].split(" ");if(parts.length!=12) return;
             double[] row=new double[10];for(int j=0;j<10;j++) {row[j]=Double.parseDouble(parts[j]);if(!Double.isFinite(row[j])) return;}
             if(Math.abs(row[1])>3e7||Math.abs(row[2])>2e7||Math.abs(row[3])>3e7) return;rows.add(row);
+            rowIds.add(new UUID(Long.parseUnsignedLong(parts[10],16),Long.parseUnsignedLong(parts[11],16)));
         }}catch(Exception ignored){return;}
         feedbackSeq=best;
+        int index=0;
         for(double[] row:rows) {
+            UUID uuid=rowIds.get(index++);
             Entity e=entities.get((int)row[0]);if(e==null||e.isRemoved()) continue;
+            if(!e.getUUID().equals(uuid)) continue;
             feedbackAt.put(e.getUUID(),System.currentTimeMillis());
             visibleToPlayer.put(e.getUUID(),row[9]==1);
+            if(e instanceof AbstractArrow arrow) {
+                hitArrowSegment(arrow,new Vec3(row[1],row[2],row[3]));
+                if(e.isRemoved()) continue;
+            }
             // Feedback clamps only collisions; free movement remains server tick physics.
             if(row[8]!=0) {
                 e.setPos(row[1],row[2],row[3]);e.setDeltaMovement(row[4],row[5],row[6]);e.setOnGround(row[7]!=0);
+                if(e instanceof AbstractArrow) {
+                    embedded.add(e.getUUID());e.addTag("stellarcraft.embedded");e.setDeltaMovement(Vec3.ZERO);
+                    ((dev.stellarcraft.world.NativeArrowAccess)(Object)e).stellarcraft$embedded(true);
+                }
                 if(e instanceof ThrownEnderpearl pearl && pearl.getOwner() instanceof net.minecraft.server.level.ServerPlayer player) {
                     Vec3 landing=new Vec3(row[1],row[2],row[3]);
                     Minecraft.getInstance().execute(()->NativeWorldEvents.send(8,0,landing.x,landing.y,landing.z,0,0));

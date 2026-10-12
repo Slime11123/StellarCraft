@@ -33,11 +33,7 @@ public final class ClientBridge {
 
     private final SharedMemory mem;
     private final CollisionField collision = new CollisionField();
-    private final Map<Integer, ActorProxy> proxies = new HashMap<>();
-
-    /** Consecutive proxy-spawn failures before actor mirroring is abandoned for the session. */
-    private static final int MAX_SPAWN_FAILURES = 5;
-    private int spawnFailures = 0;
+    private long combatCursor;
 
     private int lastTeleportSeq = -1;
     private long tickCounter = 0;
@@ -52,7 +48,8 @@ public final class ClientBridge {
         int pid=mem.sbPid();
         if(pid!=nativePid) {
             nativePid=pid;lastTeleportSeq=-1;preparedLevel=null;lastSbAnchor=null;
-            damagePrimed=false;
+            damagePrimed=false;combatCursor=mem.combatHead();dev.stellarcraft.world.NativeActors.clear();
+            ElytraBridge.reset();
         }
     }
 
@@ -77,6 +74,9 @@ public final class ClientBridge {
 
     public CollisionField collisionField() { return collision; }
     public int hostPid() {return mem.sbPid();}
+    public void publishPose(int slot,int entity,java.util.UUID uuid,byte[] bytes) {
+        mem.writeNativePose(slot,dev.stellarcraft.world.PlacedBlocks.worldId(),entity,uuid,bytes);
+    }
 
     /** Called once per client tick. */
     public void tick() {
@@ -89,12 +89,13 @@ public final class ClientBridge {
         long age = dev.stellarcraft.NativeLink.tickCount() - mem.sbHeartbeat();
         boolean nativeScene = age >= 0 && age < 5000 && (sb.flags & Proto.SbFlags.IN_GAME) != 0;
         NativeMovement.tick(mc, nativeScene);
-        var hurt=mem.readPlayerHurt();
-        if(hurt!=null&&Double.isFinite(hurt.total())&&hurt.total()>=0) {
-            double delta=damagePrimed&&damageGuid==hurt.guid()?hurt.total()-damageTotal:0;
-            damageGuid=hurt.guid();damageTotal=hurt.total();damagePrimed=true;
-            if(nativeScene&&ControlStateMachine.isSteve()&&delta>0&&delta<=1000&&mc.player!=null)
-                DamageBridge.applyNativeHealthDamage(mc.player,(float)delta,hurt.attacker());
+        long head=mem.combatHead();
+        if(head<combatCursor) combatCursor=head;
+        combatCursor=Math.max(combatCursor,head-Proto.COMBAT_SLOTS);
+        while(combatCursor<head) {
+            var hit=mem.readCombatHit(++combatCursor);
+            if(hit!=null&&nativeScene&&ControlStateMachine.isSteve()&&mc.player!=null
+                &&hit.world()==dev.stellarcraft.world.PlacedBlocks.worldId()) DamageBridge.applyNativeHit(mc.player,hit);
         }
 
         // Cache SB player anchor for control-switch teleport.
@@ -103,6 +104,7 @@ public final class ClientBridge {
         // 1. If SB teleported us (new level / respawn), move the player there.
         if (lastTeleportSeq == -1) lastTeleportSeq = sb.teleportSeq;
         if (nativeScene && sb.teleportSeq>0 && sb.teleportSeq != lastTeleportSeq) {
+            ElytraBridge.reset();
             LocalPlayer p = mc.player;
             if (p != null) {
                 long now = System.nanoTime();
@@ -148,46 +150,8 @@ public final class ClientBridge {
     }
 
     private void reconcileActors(Minecraft mc, SharedMemory.SbStateSnapshot sb) {
-        int count = mem.actorCount();
-        java.util.Set<Integer> seen = new java.util.HashSet<>();
-
-        for (int i = 0; i < count && i < Proto.MAX_ACTORS; i++) {
-            SharedMemory.ActorSnapshot a = mem.readActor(i);
-            if (a.uid == 0) continue;
-            seen.add(a.uid);
-
-            ActorProxy proxy = proxies.get(a.uid);
-            if (proxy == null || proxy.isRemoved()) {
-                if (spawnFailures >= MAX_SPAWN_FAILURES) {
-                    // Give up entirely rather than retrying (and logging) every frame.
-                    continue;
-                }
-                // Guarded on purpose. Spawning a custom LivingEntity touches vanilla
-                // machinery that a mod can get wrong (see EntityRegistry: an unregistered
-                // attribute table NPEs inside LivingEntity's constructor). A bug there must
-                // cost us the proxies, not the player's game.
-                try {
-                    proxy = ActorProxy.spawn(mc.level, a.x, a.y, a.z, a.uid, a.width, a.height, a.healthFrac);
-                } catch (Throwable t) {
-                    spawnFailures++;
-                    System.out.println("[StellarCraft] ActorProxy.spawn failed for uid " + a.uid
-                        + " (" + t + ")" + (spawnFailures >= MAX_SPAWN_FAILURES
-                            ? " - disabling actor mirroring for this session" : ""));
-                    continue;
-                }
-                proxies.put(a.uid, proxy);
-            }
-            proxy.syncFrom(a.x, a.y, a.z, a.yaw, a.width, a.height, a.healthFrac);
-        }
-
-        // Remove proxies for actors that left range.
-        proxies.entrySet().removeIf(e -> {
-            if (!seen.contains(e.getKey())) {
-                e.getValue().discard();
-                return true;
-            }
-            return false;
-        });
+        var actors=mem.readActors(dev.stellarcraft.world.PlacedBlocks.worldId());
+        if(actors!=null) dev.stellarcraft.world.NativeActors.publish(mem.sbPid(),actors);
     }
 
     /**

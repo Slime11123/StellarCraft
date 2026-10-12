@@ -29,15 +29,18 @@ public final class SharedMemory {
     private final ByteBuffer playerHurt;
     private final ByteBuffer mcState;
     private final ByteBuffer actorTable;
+    private final ByteBuffer combat;
     private final ByteBuffer inputRing;
     private final ByteBuffer eventRing;
     private final ByteBuffer collisionRing;
     private final ByteBuffer overlay;
     private final ByteBuffer overlayCtl;
     private final ByteBuffer appearance;
+    private final ByteBuffer nativePoses;
 
     public SharedMemory(ByteBuffer mapping) {
         this.mapping = mapping;
+        this.combat = slice(Proto.OFF_COMBAT,Proto.COMBAT_BYTES);
         mapping.order(ByteOrder.LITTLE_ENDIAN);
 
         // Slice each region out of the single mapping.
@@ -54,6 +57,7 @@ public final class SharedMemory {
         this.overlay      = slice(Proto.OFF_OVERLAY_PIXELS, (int) (Proto.OVERLAY_SLOT_BYTES * Proto.OVERLAY_SLOTS));
         this.overlayCtl   = slice(Proto.OFF_OVERLAY_CTL, (int) Proto.OVERLAY_CTL_BYTES);
         this.appearance   = slice(Proto.OFF_APPEARANCE, (int) Proto.APPEARANCE_BYTES);
+        this.nativePoses = slice(Proto.OFF_RENDER_RING,Proto.NATIVE_POSE_SLOTS*Proto.NATIVE_POSE_STRIDE);
     }
 
     private ByteBuffer slice(long offset, int size) {
@@ -171,8 +175,22 @@ public final class SharedMemory {
         mcState.putDouble(Proto.MC_VX, s.velocityX);
         mcState.putDouble(Proto.MC_VY, s.velocityY);
         mcState.putDouble(Proto.MC_VZ, s.velocityZ);
+        mcState.putInt(Proto.MC_WORLD_ID,dev.stellarcraft.world.PlacedBlocks.worldId());
         java.lang.invoke.VarHandle.releaseFence();
         mcState.putInt(Proto.MC_SEQ, seq); // end write (even)
+    }
+    /** Single MC render-thread producer; a reader validates ownership before and after copying. */
+    public void writeNativePose(int slot,int world,int entity,java.util.UUID uuid,byte[] bytes) {
+        if(slot<0||slot>=Proto.NATIVE_POSE_SLOTS||bytes.length>Proto.NATIVE_POSE_STRIDE-64)
+            throw new IllegalArgumentException("native pose bounds");
+        int at=slot*Proto.NATIVE_POSE_STRIDE,seq=(nativePoses.getInt(at)+2)&~1;
+        nativePoses.putInt(at,seq-1);java.lang.invoke.VarHandle.fullFence();
+        nativePoses.putInt(at+4,bytes.length);nativePoses.putInt(at+8,(int)ProcessHandle.current().pid());
+        nativePoses.putInt(at+12,sbPid());nativePoses.putInt(at+16,world);nativePoses.putInt(at+20,entity);
+        nativePoses.putLong(at+24,uuid.getMostSignificantBits());nativePoses.putLong(at+32,uuid.getLeastSignificantBits());
+        nativePoses.putLong(at+40,dev.stellarcraft.NativeLink.tickCount());
+        var payload=nativePoses.duplicate();payload.position(at+64);payload.put(bytes);
+        java.lang.invoke.VarHandle.releaseFence();nativePoses.putInt(at,seq);
     }
 
     // ---- Actor table ------------------------------------------------------------------
@@ -194,7 +212,37 @@ public final class SharedMemory {
         a.height     = actorTable.getFloat(base + Proto.AR_HEIGHT);
         a.healthFrac = actorTable.getFloat(base + Proto.AR_HEALTH);
         a.level      = actorTable.getShort(base + Proto.AR_LEVEL);
+        a.guid=actorTable.getInt(base+40);a.nativeType=actorTable.getInt(base+44);
+        a.world=actorTable.getInt(base+48);a.generation=actorTable.getInt(base+52);
         return a;
+    }
+
+    public java.util.List<ActorSnapshot> readActors(int world) {
+        int seq=actorTable.getInt(0);if((seq&1)!=0) return null;
+        java.lang.invoke.VarHandle.acquireFence();
+        long time=actorTable.getLong(8),now=dev.stellarcraft.NativeLink.tickCount();
+        if(actorTable.getInt(16)!=sbPid()||actorTable.getInt(20)!=world||time>now||now-time>500) return java.util.List.of();
+        int count=actorCount();if(count<0||count>Proto.MAX_ACTORS) return null;
+        var rows=new java.util.ArrayList<ActorSnapshot>();for(int i=0;i<count;i++) rows.add(readActor(i));
+        java.lang.invoke.VarHandle.acquireFence();return seq==actorTable.getInt(0)?rows:null;
+    }
+    public record CombatHit(long id,long time,int player,int rawSource,int world,float damage,int sourceGuid,
+                            boolean directional,double x,double y,double z) {}
+    public long combatHead() {return combat.getLong(0);}
+    public CombatHit readCombatHit(long id) {
+        int at=0x80+(int)(id%Proto.COMBAT_SLOTS)*Proto.COMBAT_HIT_SIZE;
+        int seq=combat.getInt(at);if((seq&1)!=0) return null;
+        java.lang.invoke.VarHandle.acquireFence();
+        long actual=combat.getLong(at+8),time=combat.getLong(at+16),now=dev.stellarcraft.NativeLink.tickCount();
+        int player=combat.getInt(at+24),raw=combat.getInt(at+28),pid=combat.getInt(at+32),world=combat.getInt(at+36);
+        float damage=combat.getFloat(at+40);int guid=combat.getInt(at+44);
+        double x=combat.getDouble(at+48),y=combat.getDouble(at+56),z=combat.getDouble(at+64);
+        boolean direction=(combat.getInt(at+4)&1)!=0;
+        java.lang.invoke.VarHandle.acquireFence();
+        if(seq!=combat.getInt(at)||actual!=id||pid!=sbPid()||time>now||now-time>500||player<=0
+            ||!Float.isFinite(damage)||damage<=0||damage>20
+            ||direction&&(guid<=0||!Double.isFinite(x)||!Double.isFinite(y)||!Double.isFinite(z))) return null;
+        return new CombatHit(id,time,player,raw,world,damage,guid,direction,x,y,z);
     }
 
     // ---- Rings (raw byte access; the ring code lives in RingBuffer) --------------------
@@ -375,7 +423,7 @@ public final class SharedMemory {
     }
 
     public static final class ActorSnapshot {
-        public int uid, flags;
+        public int uid, flags,guid,nativeType,world,generation;
         public float x, y, z, yaw, width, height, healthFrac;
         public short level;
     }

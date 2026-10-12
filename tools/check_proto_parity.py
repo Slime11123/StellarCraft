@@ -75,6 +75,11 @@ def main():
         ('kOffAppearance', 'OFF_APPEARANCE'),
         ('kMappingBytes', 'MAPPING_BYTES'),
         ('kVersion', 'K_VERSION'),
+        ('kOffActorTable', 'OFF_ACTOR_TABLE'),
+        ('kOffCombat', 'OFF_COMBAT'),
+        ('kCombatBytes', 'COMBAT_BYTES'),
+        ('kCombatSlots', 'COMBAT_SLOTS'),
+        ('CombatHit', 'COMBAT_HIT_SIZE'),
     ]
 
     # Java-only constants that must match the protocol header but have no direct C++ mirror.

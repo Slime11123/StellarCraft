@@ -19,7 +19,9 @@
 // UE4SS-owned stack; because we linked the same Lua 5.4.7 core with the same ABI, our
 // lua_tonumber/lua_tointeger operate on it correctly.
 
+#define NOMINMAX
 #include <windows.h>
+#include <algorithm>
 #include <cstdint>
 #include <cstring>   // memset — clearing stale state on startup
 #include <cmath>
@@ -42,14 +44,22 @@ extern "C" {
 }
 
 extern "C" __declspec(dllexport) int sc_enemy_damage_lua(lua_State* L) {
-    auto result=native_combat::actor(static_cast<uint32_t>(lua_tointeger(L,1)),static_cast<uint32_t>(lua_tointeger(L,2)),
-        static_cast<float>(lua_tonumber(L,3)),static_cast<float>(lua_tonumber(L,4)),static_cast<uint32_t>(lua_tointeger(L,5)));
+    auto guid=static_cast<uint32_t>(lua_tointeger(L,1)),type=static_cast<uint32_t>(lua_tointeger(L,2));
+    auto identity=native_combat::identity(static_cast<std::uintptr_t>(lua_tointeger(L,6)));
+    const bool matched=identity.guid&&(!guid||guid==identity.guid)&&(!type||type==identity.type);
+    auto result=matched?native_combat::actor(identity.guid,identity.type,
+        static_cast<float>(lua_tonumber(L,3)),static_cast<float>(lua_tonumber(L,4)),static_cast<uint32_t>(lua_tointeger(L,5))):native_combat::Result{};
+    if(!matched) result.reason="UE/native identity mismatch";
     lua_newtable(L);
+    lua_pushinteger(L,identity.guid);lua_setfield(L,-2,"guid");
+    lua_pushinteger(L,identity.type);lua_setfield(L,-2,"type");
     lua_pushboolean(L,result.ready);lua_setfield(L,-2,"ready");
     lua_pushboolean(L,result.applied);lua_setfield(L,-2,"applied");
     lua_pushnumber(L,result.before);lua_setfield(L,-2,"before");
     lua_pushnumber(L,result.after);lua_setfield(L,-2,"after");
     lua_pushnumber(L,result.maximum);lua_setfield(L,-2,"maximum");
+    lua_pushinteger(L,result.sourceKey);lua_setfield(L,-2,"sourceKey");
+    lua_pushboolean(L,result.invulnerable);lua_setfield(L,-2,"invulnerable");
     lua_pushstring(L,result.reason);lua_setfield(L,-2,"reason");
     return 1;
 }
@@ -100,9 +110,42 @@ static constexpr uint64_t   kSbPitch            = 0x2C;
 static HANDLE   g_hMapping = nullptr;
 static uint8_t* g_pBase    = nullptr;
 
+extern "C" __declspec(dllexport) int sc_native_hits_lua(lua_State* L) {
+    lua_newtable(L);int index=0;
+    std::lock_guard<std::mutex> lock(native_player_damage::hitMutex);
+    while(native_player_damage::readHit<native_player_damage::nextHit) {
+        const auto& h=native_player_damage::hits[++native_player_damage::readHit%128];
+        lua_newtable(L);
+        const char* names[]={"id","time","player","source","world"};
+        const std::uint64_t values[]={h.id,h.time,h.player,h.source,h.world};
+        for(int i=0;i<5;++i) {lua_pushinteger(L,values[i]);lua_setfield(L,-2,names[i]);}
+        lua_pushnumber(L,h.damage);lua_setfield(L,-2,"damage");lua_rawseti(L,-2,++index);
+    }
+    return 1;
+}
+extern "C" __declspec(dllexport) int sc_combat_hit_lua(lua_State* L) {
+    if(!g_pBase) return 0;
+    const auto id=static_cast<uint64_t>(lua_tointeger(L,1)),time=static_cast<uint64_t>(lua_tointeger(L,2));
+    const auto player=static_cast<uint32_t>(lua_tointeger(L,3)),source=static_cast<uint32_t>(lua_tointeger(L,4));
+    const auto world=static_cast<uint32_t>(lua_tointeger(L,11));
+    const auto* mc=reinterpret_cast<P::McState*>(g_pBase+P::kOffMcState);
+    if(!id||player!=native_player_damage::guid||world!=mc->worldId||GetTickCount64()-time>500) return 0;
+    auto* at=g_pBase+P::kOffCombat+0x80+(id%P::kCombatSlots)*sizeof(P::CombatHit);
+    auto* record=reinterpret_cast<P::CombatHit*>(at);
+    const auto seq=(record->seq+2u)&~1u;record->seq=seq-1;std::atomic_thread_fence(std::memory_order_seq_cst);
+    record->flags=static_cast<uint32_t>(lua_tointeger(L,10));record->id=id;record->timeMs=time;
+    record->playerGuid=player;record->rawSource=source;record->sbPid=GetCurrentProcessId();record->world=world;
+    record->damage=static_cast<float>(lua_tonumber(L,5));record->sourceGuid=static_cast<uint32_t>(lua_tointeger(L,6));
+    record->x=lua_tonumber(L,7);record->y=lua_tonumber(L,8);record->z=lua_tonumber(L,9);
+    std::atomic_thread_fence(std::memory_order_seq_cst);record->seq=seq;
+    *reinterpret_cast<uint64_t*>(g_pBase+P::kOffCombat)=id;
+    return 0;
+}
+
 extern "C" __declspec(dllexport) int sc_player_guard_lua(lua_State* L) {
     bool active=lua_toboolean(L,3)!=0;
     if(g_pBase) {
+        native_player_damage::world=reinterpret_cast<P::McState*>(g_pBase+kOffMcState)->worldId;
         const auto heartbeat=*reinterpret_cast<uint64_t*>(g_pBase+kHdrMcHb);
         const auto flags=*reinterpret_cast<uint32_t*>(g_pBase+kOffMcState+4);
         active=active&&(flags&P::kMcInWorld)&&heartbeat&&GetTickCount64()-heartbeat<1000;
@@ -164,6 +207,8 @@ extern "C" __declspec(dllexport) uintptr_t sc_create_mapping()
     // can inherit a stale handoff.
     memset(g_pBase + kOffSbState, 0, kSbStateBytes);
     memset(g_pBase + kOffMcState, 0, kMcStateBytes);
+    memset(g_pBase+P::kOffActorTable,0,sizeof(P::ActorTable));
+    memset(g_pBase+P::kOffCombat,0,P::kCombatBytes);
 
     // Init header.
     *reinterpret_cast<uint32_t*>(g_pBase + kOffHeader + kHdrMagic)   = kMagic;
@@ -336,7 +381,7 @@ extern "C" __declspec(dllexport) int sc_write_actor_lua(lua_State* L)
 
     // Actor table layout (mirror of Proto.java ACTOR_*): header at OFF_ACTOR_TABLE,
     // count at +0x04, records at +0x40, each 64 bytes.
-    const uint64_t offActorTable = 0x300;
+    const uint64_t offActorTable = P::kOffActorTable;
     const uint64_t kActorCount   = 0x04;
     const uint64_t kActorData    = 0x40;
     const uint64_t kRecordSize   = 64;
@@ -374,6 +419,7 @@ extern "C" __declspec(dllexport) int sc_write_actor_lua(lua_State* L)
     *reinterpret_cast<float*>(rec + 0x18)   = width;    // AR_WIDTH
     *reinterpret_cast<float*>(rec + 0x1C)   = height;   // AR_HEIGHT
     *reinterpret_cast<float*>(rec + 0x20)   = health;   // AR_HEALTH
+    for(int i=0;i<4;++i) *reinterpret_cast<uint32_t*>(rec+40+i*4)=static_cast<uint32_t>(luaL_optinteger(L,10+i,0));
 
     if (idx == count && count < kMaxActors) {
         *reinterpret_cast<uint32_t*>(base + kActorCount) = count + 1;
@@ -387,7 +433,16 @@ extern "C" __declspec(dllexport) int sc_set_actor_count_lua(lua_State* L)
 {
     if (!g_pBase) return 0;
     uint32_t n = (uint32_t)luaL_optinteger(L, 1, 0);
-    *reinterpret_cast<uint32_t*>(g_pBase + 0x300 + 0x04) = n;
+    auto* table=reinterpret_cast<P::ActorTable*>(g_pBase+P::kOffActorTable);
+    if(n==0) { table->seq=((table->seq+2u)&~1u)-1; std::atomic_thread_fence(std::memory_order_seq_cst); table->count=0; }
+    else table->count=std::min(n,P::kMaxActors);
+    if(lua_gettop(L)>1) {
+        auto* hdr=g_pBase+P::kOffActorTable;
+        *reinterpret_cast<uint64_t*>(hdr+8)=GetTickCount64();
+        *reinterpret_cast<uint32_t*>(hdr+16)=GetCurrentProcessId();
+        *reinterpret_cast<uint32_t*>(hdr+20)=static_cast<uint32_t>(lua_tointeger(L,2));
+        std::atomic_thread_fence(std::memory_order_seq_cst); if(table->seq&1) ++table->seq;
+    }
     return 0;
 }
 
@@ -404,41 +459,41 @@ extern "C" __declspec(dllexport) int sc_read_mc_control_lua(lua_State* L)
 }
 
 // Read the newest complete slot; concurrent writes are rejected by sequence + CRC.
-static int read_pose_frame(lua_State* L, const wchar_t* stem)
+static int read_pose_frame(lua_State* L, int first, int last, uint32_t id=0, uint32_t world=0,
+                           const char* uuid=nullptr)
 {
-    std::vector<uint8_t> best;
-    uint64_t bestTime=0;
-    uint32_t bestSeq=0;
-    for (int slot=0;slot<2;++slot) {
-        std::wstring path=L"D:/SteamLibrary/steamapps/common/StellarBlade/SB/Binaries/Win64/ue4ss/Mods/StellarCraft/block-assets/";
-        path+=stem; path+=slot==0?L".0.frame":L".1.frame";
-        HANDLE file=CreateFileW(path.c_str(),GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE,
-            nullptr,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,nullptr);
-        if (file==INVALID_HANDLE_VALUE) continue;
-        DWORD size=GetFileSize(file,nullptr),read=0;
-        if (size<32 || size>1024*1024) {CloseHandle(file);continue;}
-        std::vector<uint8_t> bytes(size);
-        bool ok=ReadFile(file,bytes.data(),size,&read,nullptr)&&read==size;
-        CloseHandle(file);
-        if (!ok || !pose_valid(bytes.data(),bytes.size())) continue;
-        uint64_t timestamp; uint32_t seq;
-        std::memcpy(&timestamp,bytes.data()+12,8);std::memcpy(&seq,bytes.data()+8,4);
-        if (timestamp>bestTime || (timestamp==bestTime && seq>bestSeq)) {
-            bestTime=timestamp;bestSeq=seq;best.swap(bytes);
-        }
+    if(!g_pBase) {lua_pushnil(L);return 1;}
+    auto* header=reinterpret_cast<const volatile P::Header*>(g_pBase);
+    auto* mc=reinterpret_cast<const volatile P::McState*>(g_pBase+P::kOffMcState);
+    const auto now=GetTickCount64();
+    for (int slot=first;slot<=last;++slot) {
+        auto* at=g_pBase+P::kOffRenderRing+slot*P::kNativePoseStride;
+        auto* shared=reinterpret_cast<const volatile P::NativePoseHeader*>(at);
+        const auto seq=shared->seq;if(seq&1u) continue;
+        std::atomic_thread_fence(std::memory_order_acquire);
+        P::NativePoseHeader state;std::memcpy(&state,at,sizeof(state));
+        if(state.bytes<32||state.bytes>P::kNativePoseStride-64||state.mcPid!=header->mcPid
+            ||!state.mcPid||state.sbPid!=GetCurrentProcessId()||state.world!=mc->worldId
+            ||state.timeMs>now||now-state.timeMs>250||id&&state.entity!=id
+            ||uuid&&(state.world!=world||std::memcmp(&state.uuidHigh,uuid,16)!=0)) continue;
+        std::vector<uint8_t> bytes(state.bytes);std::memcpy(bytes.data(),at+64,state.bytes);
+        std::atomic_thread_fence(std::memory_order_acquire);
+        if(shared->seq!=seq||!pose_valid(bytes.data(),bytes.size())) continue;
+        lua_pushlstring(L,reinterpret_cast<const char*>(bytes.data()),bytes.size());return 1;
     }
-    if (best.empty()) lua_pushnil(L);
-    else lua_pushlstring(L,reinterpret_cast<const char*>(best.data()),best.size());
+    lua_pushnil(L);
     return 1;
 }
-extern "C" __declspec(dllexport) int sc_read_hand_frame_lua(lua_State* L) { return read_pose_frame(L,L"hands"); }
-extern "C" __declspec(dllexport) int sc_read_body_frame_lua(lua_State* L) { return read_pose_frame(L,L"body"); }
-extern "C" __declspec(dllexport) int sc_read_entities_frame_lua(lua_State* L) { return read_pose_frame(L,L"entities"); }
+extern "C" __declspec(dllexport) int sc_read_hand_frame_lua(lua_State* L) { return read_pose_frame(L,0,0); }
+extern "C" __declspec(dllexport) int sc_read_body_frame_lua(lua_State* L) { return read_pose_frame(L,1,1); }
+extern "C" __declspec(dllexport) int sc_read_entities_frame_lua(lua_State* L) { return read_pose_frame(L,2,2); }
 extern "C" __declspec(dllexport) int sc_read_entity_frame_lua(lua_State* L) {
     auto id=luaL_optinteger(L,1,0);
     if(id<=0 || id>0x7FFFFFFF) {lua_pushnil(L);return 1;}
-    std::wstring stem=L"entity-"+std::to_wstring(id);
-    return read_pose_frame(L,stem.c_str());
+    auto world=(uint32_t)luaL_optinteger(L,2,0);size_t size=0;
+    auto* uuid=lua_tolstring(L,3,&size);
+    if(!uuid||size!=16) {lua_pushnil(L);return 1;}
+    return read_pose_frame(L,3,18,(uint32_t)id,world,uuid);
 }
 
 // sc_read_mc_state_lua() -> table | nil
@@ -496,11 +551,16 @@ extern "C" __declspec(dllexport) int sc_read_mc_state_lua(lua_State* L)
     const uint64_t now = GetTickCount64();
     if (epoch != GetCurrentProcessId() || motionTime > now || now-motionTime > 250 || mode > 3
         || !std::isfinite(x) || !std::isfinite(y) || !std::isfinite(z)
+        || std::abs(x)>3e7 || std::abs(z)>3e7 || std::abs(y)>2e7
+        || !std::isfinite(yaw) || !std::isfinite(pitch) || !std::isfinite(eye)
         || !std::isfinite(vx) || !std::isfinite(vy) || !std::isfinite(vz)) {
         lua_pushnil(L); return 1;
     }
 
     lua_newtable(L);
+    lua_pushinteger(L,P::kVersion); lua_setfield(L,-2,"protocolVersion");
+    lua_pushinteger(L,reinterpret_cast<P::Header*>(g_pBase)->mcPid);lua_setfield(L,-2,"mcPid");
+    lua_pushinteger(L,reinterpret_cast<P::McState*>(g_pBase+P::kOffMcState)->worldId);lua_setfield(L,-2,"worldId");
     lua_pushinteger(L, (lua_Integer)seq0);      lua_setfield(L, -2, "seq");
     lua_pushinteger(L, (lua_Integer)flags);     lua_setfield(L, -2, "flags");
     lua_pushinteger(L, (lua_Integer)teleportAck); lua_setfield(L, -2, "teleportAck");

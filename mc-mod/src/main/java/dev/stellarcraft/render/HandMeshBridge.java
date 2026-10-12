@@ -101,10 +101,7 @@ public final class HandMeshBridge {
         BufferedImage tinted=new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_ARGB);
         for(int y=0;y<image.getHeight();y++) for(int x=0;x<image.getWidth();x++) {
             int c=image.getRGB(x,y);
-            int r=((c>>>16)&255)*((tint>>>16)&255)/255;
-            int g=((c>>>8)&255)*((tint>>>8)&255)/255;
-            int b=(c&255)*(tint&255)/255;
-            tinted.setRGB(x,y,(c&0xFF000000)|(r<<16)|(g<<8)|b);
+            tinted.setRGB(x,y,NativePixels.color(c,tint));
         }
         ImageIO.write(tinted,"png",DIR.resolve(name).toFile());
         files.put(key,name);
@@ -221,6 +218,7 @@ public final class HandMeshBridge {
         final ResourceLocation texture;
         float[] v=new float[8];
         int tint=0xFFFFFF;
+        int overlay;
         Collector(RenderType type) {
             var match=TEXTURE.matcher(type.toString());
             // Glint is a separate animated effect, not the item's surface or a light source.
@@ -231,10 +229,12 @@ public final class HandMeshBridge {
         public VertexConsumer uv(float u,float w) {v[3]=u;v[4]=w;return this;}
         public VertexConsumer normal(float x,float y,float z) {v[5]=x;v[6]=y;v[7]=z;return this;}
         public VertexConsumer color(int r,int g,int b,int a) {tint=(r<<16)|(g<<8)|b;return this;}
-        public VertexConsumer overlayCoords(int u,int v) {return this;}
+        public VertexConsumer overlayCoords(int u,int v) {
+            overlay=(v==3?0x1000000:0)|((u&15)<<25);return this;
+        }
         public VertexConsumer uv2(int u,int v) {return this;}
         public void defaultColor(int r,int g,int b,int a) {color(r,g,b,a);}
         public void unsetDefaultColor() {tint=0xFFFFFF;}
-        public void endVertex() {vertices.add(v);tints.add(tint);v=new float[8];}
+        public void endVertex() {vertices.add(v);tints.add(tint|overlay);v=new float[8];}
     }
 }

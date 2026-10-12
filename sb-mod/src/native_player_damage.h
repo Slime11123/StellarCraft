@@ -3,6 +3,8 @@
 #include "../third_party/minhook/include/MinHook.h"
 #include <atomic>
 #include <intrin.h>
+#include <array>
+#include <mutex>
 
 // Only the verified local Eve is protected. The game's authoritative HP debit
 // becomes an MC health fraction; the client replay must never produce a second hit.
@@ -14,6 +16,17 @@ inline std::atomic<std::uint32_t> guid{0},attacker{0},blocked{0};
 inline std::atomic<ULONGLONG> refreshed{0};
 inline std::atomic<double> total{0};
 inline std::atomic<bool> enabled{false};
+struct Hit {std::uint64_t id,time;std::uint32_t player,source,world;float damage;};
+inline std::mutex hitMutex;
+inline std::array<Hit,128> hits{};
+inline std::uint64_t nextHit=0,readHit=0;
+inline std::atomic<std::uint32_t> world{0};
+inline void record(float damage,int source) {
+    std::lock_guard<std::mutex> lock(hitMutex);
+    auto id=++nextHit;
+    hits[id%hits.size()]={id,GetTickCount64(),guid.load(),source>0?static_cast<std::uint32_t>(source):0,world.load(),damage};
+    if(nextHit-readHit>hits.size()) readHit=nextHit-hits.size();
+}
 inline bool installed=false;
 inline std::atomic<unsigned> observed{0},observedGuid{0},observedStat{0},observedThread{0},observedGameThread{0},observedMatch{0};
 inline std::atomic<float> observedAmount{0};
@@ -26,6 +39,8 @@ inline bool certified(std::uintptr_t base) {
     const unsigned char client[]={0x48,0x8b,0x05,0x25,0xa9,0x59,0x05,0x48,0x85,0xc0,0x75,0x4c};
     const unsigned char target[]={0x48,0x83,0xec,0x28,0xe8,0xa7,0x56,0xdd,0xff,0x48,0x8b,0x80,0xc8,0,0,0,0x48,0x85,0xc0,0x74,0x2e,0x48,0x63,0x48,0x3c,0x85,0xc9,0x78,0xf,0x3b,0x48,0x30,0x7d,0xa,0x48,0x8b,0x40,0x28,0x48,0x8b,0xc,0xc8,0xeb,0x2,0x33,0xc9,0x48,0x85,0xc9,0x74,0x10,0x48,0x8b,0x41,0x10,0x48,0x83,0xc1,0x10,0x48,0x83,0xc4,0x28,0x48,0xff,0x60,0x38,0x33,0xc0,0x48,0x83,0xc4,0x28,0xc3};
     const unsigned char playerId[]={0x89,0x83,0xa0,4,0,0};
+    // Source passed to ApplyStatDiff is the resolved owner's +0x104 key, not a GUID.
+    const unsigned char sourceKey[]={0xe8,0x68,0xf3,0xee,0xff,0x8b,0x95,0xe8,0,0,0,0x48,0x8b,0xc8,0xe8,0x4a,0xe2,0xf2,0xff,0x4c,0x8b,0xe8,0x48,0x85,0xc0,0x74,0xe,0x8b,0x80,0x4,0x1,0,0,0x4d,0x8d,0x77,0x60,0x89,0x44,0x24,0x68};
     const unsigned char diff[]={0x48,0x8b,0xc4,0x55,0x53,0x56,0x41,0x54,0x41,0x57,0x48,0x8d,0x68,0xb9,0x48,0x81,0xec,0,1,0,0,0x0f,0x57,0xc0,0x0f,0x29,0x70,0xc8,0x0f,0x29,0x78,0xb8};
     // Actual server call-site is certified separately below by its CALL target.
     std::int32_t rel=0;unsigned char opcode=0;
@@ -36,6 +51,7 @@ inline bool certified(std::uintptr_t base) {
         &&native_combat::bytes(base+0x1A97C44,client,sizeof client)
         &&native_combat::bytes(base+0x1CC2590,target,sizeof target)
         &&native_combat::bytes(base+0x1AAC32C,playerId,sizeof playerId)
+        &&native_combat::bytes(base+0x1BA87B3,sourceKey,sizeof sourceKey)
         &&native_combat::bytes(base+0x1C71B1F,worldInit,sizeof worldInit)
         &&native_combat::bytes(base+0x1C97E3E,eventorLoad,sizeof eventorLoad)
         &&native_combat::read(base+0x1BA881E,opcode)&&opcode==0xe8
@@ -81,13 +97,13 @@ __declspec(noinline) inline bool __fastcall intercept(void* actor,int stat,void*
             double previous=total.load();
             while(!total.compare_exchange_weak(previous,previous+delta)) {}
             attacker=source>0?static_cast<std::uint32_t>(source):0;
+            record(static_cast<float>(delta),source);
         }
         return false;
     }
     return original(actor,stat,context,amount,a,b,source);
 }
-inline bool update(std::uint32_t playerId,std::uint32_t netGuid,bool active) {
-    enabled=false;
+inline bool validate_update(std::uint32_t playerId,std::uint32_t netGuid,bool active) {
     const auto base=reinterpret_cast<std::uintptr_t>(GetModuleHandleW(nullptr));
     DWORD thread=0;
     if(!native_combat::read(base+0x706B538,thread)||thread!=GetCurrentThreadId()) return false;
@@ -131,5 +147,16 @@ inline bool update(std::uint32_t playerId,std::uint32_t netGuid,bool active) {
         ||!std::isfinite(hp)||!std::isfinite(maxHp)||hp<=0||maxHp<1||maxHp>1e7||hp>maxHp+1) return false;
     if(guid!=playerGuid) {guid=playerGuid;total=0;blocked=0;}
     watched=entity;refreshed=GetTickCount64();enabled=true;return true;
+}
+inline bool update(std::uint32_t playerId,std::uint32_t netGuid,bool active) {
+    // Explicit release is immediate. A rejected worker-thread refresh must
+    // not revoke the still-fresh identity published by GameThread. The hook
+    // continues to enforce its 500 ms lease and every live actor check.
+    if(!active) {enabled=false;watched=0;return installed;}
+    const auto base=reinterpret_cast<std::uintptr_t>(GetModuleHandleW(nullptr));DWORD thread=0;
+    if(!native_combat::read(base+0x706B538,thread)||thread!=GetCurrentThreadId()) return installed;
+    const bool ready=validate_update(playerId,netGuid,true);
+    if(!ready) enabled=false;
+    return ready;
 }
 }

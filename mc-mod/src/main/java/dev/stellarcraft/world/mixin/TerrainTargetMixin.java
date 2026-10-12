@@ -51,6 +51,8 @@ public abstract class TerrainTargetMixin {
             if (r > 0) reach = r;
         }
         Vec3 end = start.add(look.scale(reach));
+        double entityReach=mc.gameMode!=null&&mc.gameMode.hasFarPickRange()?6.0:3.0;
+        Vec3 entityEnd=start.add(look.scale(entityReach));
 
         BlockHitResult hit = VirtualTerrain.raycast(start, end);
         // Invisible MC terrain must not intercept the native placement ray. Search only
@@ -73,18 +75,27 @@ public abstract class TerrainTargetMixin {
         HitResult current = mc.hitResult;
         if (current instanceof net.minecraft.world.phys.EntityHitResult entity
             && (entity.getEntity() instanceof dev.stellarcraft.world.ActorProxy || dev.stellarcraft.world.NativeEntities.owns(entity.getEntity()))
+            && start.distanceToSqr(current.getLocation())<=entityReach*entityReach
             && start.distanceToSqr(current.getLocation()) < nearest) return;
+        for(var proxy:mc.level.getEntitiesOfClass(dev.stellarcraft.world.ActorProxy.class,camera.getBoundingBox().inflate(reach+32))) {
+            if(!proxy.isNativeLive()) continue;
+            var intersection=proxy.getBoundingBox().inflate(.1).clip(start,entityEnd);
+            if(intersection.isPresent()&&start.distanceToSqr(intersection.get())<nearest) {
+                nearest=start.distanceToSqr(intersection.get());current=new net.minecraft.world.phys.EntityHitResult(proxy,intersection.get());
+            }
+        }
         // Re-pick native entities explicitly: hidden MC blocks may have shortened vanilla's ray.
         for(var nativeEntity:dev.stellarcraft.world.NativeEntities.snapshots()) {
             Entity entity=mc.level.getEntity(nativeEntity.id());if(entity==null) continue;
-            var intersection=entity.getBoundingBox().inflate(.1).clip(start,end);
+            var intersection=entity.getBoundingBox().inflate(.1).clip(start,entityEnd);
             if(intersection.isPresent()&&start.distanceToSqr(intersection.get())<nearest) {
                 nearest=start.distanceToSqr(intersection.get());
                 current=new net.minecraft.world.phys.EntityHitResult(entity,intersection.get());
             }
         }
         if(current instanceof net.minecraft.world.phys.EntityHitResult entity
-            &&dev.stellarcraft.world.NativeEntities.owns(entity.getEntity())&&start.distanceToSqr(current.getLocation())<=nearest) {
+            &&(entity.getEntity() instanceof dev.stellarcraft.world.ActorProxy||dev.stellarcraft.world.NativeEntities.owns(entity.getEntity()))
+            &&start.distanceToSqr(current.getLocation())<=entityReach*entityReach&&start.distanceToSqr(current.getLocation())<=nearest) {
             mc.hitResult=current;mc.crosshairPickEntity=entity.getEntity();return;
         }
         mc.hitResult = hit != null ? hit : BlockHitResult.miss(end,

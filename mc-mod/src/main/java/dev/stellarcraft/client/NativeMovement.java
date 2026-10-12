@@ -24,6 +24,10 @@ public final class NativeMovement {
         state.motionMode=player!=null&&player.getAbilities().flying?2
             :player!=null&&ElytraBridge.gliding(player)?3:grounded?0:1;
         state.velocityX=intent.x;state.velocityY=intent.y;state.velocityZ=intent.z;
+        if(Minecraft.getInstance().screen!=null||!ControlStateMachine.isSteve()) {
+            state.motionTimeMs=dev.stellarcraft.NativeLink.tickCount();
+            state.velocityX=state.velocityY=state.velocityZ=0;
+        }
     }
     public static void feedback(Minecraft mc,dev.stellarcraft.link.SharedMemory.SbStateSnapshot state,int epoch) {
         var p=mc.player;
@@ -53,7 +57,7 @@ public final class NativeMovement {
         playerId = mc.player == null ? null : mc.player.getUUID();
         // The hidden world stays isolated during F4 handoff and Eve's gameplay too.
         active = hostAlive && mc.hasSingleplayerServer();
-        if(!active) {intent=net.minecraft.world.phys.Vec3.ZERO;intentTime=0;grounded=true;}
+        if(!active) {intent=net.minecraft.world.phys.Vec3.ZERO;intentTime=0;grounded=true;ElytraBridge.reset();}
         if (mc.player != null) apply(mc.player);
         var server = mc.getSingleplayerServer();
         UUID id = playerId;

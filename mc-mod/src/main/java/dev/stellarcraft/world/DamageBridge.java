@@ -38,6 +38,11 @@ public final class DamageBridge {
     public static float SB_TO_MC_DIVISOR = 5.0f;
 
     private static RingBuffer eventRing;
+    private static int eventSerial;
+    private static long incomingSerial;
+    private static int incomingPid,incomingWorld,incomingPlayer;
+
+    public static int nextEventId() {return ++eventSerial;}
 
     public static void init(RingBuffer events) {
         eventRing = events;
@@ -45,14 +50,19 @@ public final class DamageBridge {
 
     /** Called from {@link ActorProxy#hurt}: forward MC damage to SB. */
     public static void forward(ActorProxy proxy, DamageSource source, float amount) {
-        if (eventRing == null) return;
+        var mc=net.minecraft.client.Minecraft.getInstance();
+        if(!mc.isSameThread()) {mc.execute(()->forward(proxy,source,amount));return;}
+        if (eventRing == null||!NativeActors.current(proxy)||!Float.isFinite(amount)||amount<=0) return;
 
         // Determine weapon class for SB's impact effects/sounds.
         int weapon = Proto.WEAPON_UNARMED;
-        int flags = 0;
+        if(source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.AbstractArrow) weapon=Proto.WEAPON_ARROW;
+        int flags = nextEventId();
         if (source.getDirectEntity() instanceof Player p) {
             var item = p.getMainHandItem();
-            // TODO: map item type -> weapon class (sword/axe/blunt/pierce/bow).
+            if(item.getItem() instanceof net.minecraft.world.item.SwordItem) weapon=Proto.WEAPON_BLADE;
+            else if(item.getItem() instanceof net.minecraft.world.item.AxeItem) weapon=Proto.WEAPON_AXE;
+            else if(item.getItem() instanceof net.minecraft.world.item.DiggerItem) weapon=Proto.WEAPON_BLUNT;
         }
 
         // Send the RAW vanilla damage amount. Converting it into native HP is the Stellar
@@ -102,6 +112,33 @@ public final class DamageBridge {
                 dev.stellarcraft.client.NativeMovement.withHostDamage(() -> peer.hurt(peer.damageSources().mobAttack(null),scaled));
                 System.out.println("[StellarCraft-PlayerDamage] native attacker="+attackerUid+" amount="+scaled+" HP="+before+" -> "+peer.getHealth());
             }
+        });
+    }
+
+    /** Per-hit native event, evaluated on the authoritative MC server at current shield state. */
+    public static void applyNativeHit(Player player,dev.stellarcraft.link.SharedMemory.CombatHit hit) {
+        var mc=net.minecraft.client.Minecraft.getInstance();var server=mc.getSingleplayerServer();
+        if(server==null||!dev.stellarcraft.client.ControlStateMachine.isSteve()) return;
+        int pid=dev.stellarcraft.client.ClientBridge.get().hostPid();
+        server.execute(()->{
+            if(pid!=dev.stellarcraft.client.ClientBridge.get().hostPid()
+                ||hit.world()!=PlacedBlocks.worldId()||dev.stellarcraft.NativeLink.tickCount()-hit.time()>500) return;
+            if(incomingPid!=pid||incomingWorld!=hit.world()||incomingPlayer!=hit.player()) {
+                incomingSerial=0;incomingPid=pid;incomingWorld=hit.world();incomingPlayer=hit.player();
+            }
+            if(hit.id()<=incomingSerial) return;incomingSerial=hit.id();
+            var peer=server.getPlayerList().getPlayer(player.getUUID());
+            if(peer==null||!peer.isAlive()||peer.isCreative()||peer.isSpectator()
+                ||!dev.stellarcraft.client.NativeMovement.owns(peer)||!dev.stellarcraft.client.ControlStateMachine.isSteve()) return;
+            var type=peer.level().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.DAMAGE_TYPE)
+                .getHolderOrThrow(net.minecraft.world.damagesource.DamageTypes.MOB_ATTACK);
+            var position=hit.directional()?new net.minecraft.world.phys.Vec3(hit.x(),hit.y(),hit.z()):null;
+            var source=new DamageSource(type,position);
+            float before=peer.getHealth();
+            dev.stellarcraft.client.NativeMovement.withHostDamage(()->peer.hurt(source,hit.damage()));
+            System.out.println("[StellarCraft-PlayerDamage] event="+hit.id()+" rawSource="+hit.rawSource()
+                +" verifiedSource="+hit.sourceGuid()+" direction="+hit.directional()+" shield="+peer.isBlocking()
+                +" amount="+hit.damage()+" HP="+before+" -> "+peer.getHealth());
         });
     }
 }

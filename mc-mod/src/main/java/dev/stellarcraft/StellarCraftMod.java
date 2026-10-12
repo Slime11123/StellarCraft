@@ -48,6 +48,7 @@ public final class StellarCraftMod implements ClientModInitializer {
         }
         EntityRegistry.register();
         dev.stellarcraft.world.NativeEntities.init();
+        dev.stellarcraft.world.NativeActors.init();
 
         // Auto-launch Stellar Blade in the background so the bridge comes up on its own.
         SBAutoLauncher.maybeLaunch();

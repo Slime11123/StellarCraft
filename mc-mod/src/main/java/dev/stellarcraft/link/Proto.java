@@ -15,7 +15,7 @@ public final class Proto {
     private Proto() {}
 
     public static final int K_MAGIC = 0x43544153; // "STAC"
-    public static final int K_VERSION = 3;        // motion intent and native collision feedback
+    public static final int K_VERSION = 4;        // motion intent and native collision feedback
     public static final String K_MAPPING_NAME = "Local\\StellarCraft_v1";
 
     /** 100 Unreal Units (1 m) per Minecraft block. */
@@ -25,7 +25,6 @@ public final class Proto {
     public static final long OFF_HEADER        = 0x0;
     public static final long OFF_SB_STATE      = 0x100;
     public static final long OFF_MC_STATE      = 0x200;
-    public static final long OFF_ACTOR_TABLE   = 0x300;
     public static final long OFF_INPUT_RING    = 0x1000;
     public static final long OFF_EVENT_RING    = 0x10000;
     public static final long OFF_COLLISION_RING = 0x20000;
@@ -51,6 +50,7 @@ public final class Proto {
 
     public static final long OFF_RENDER_RING = OFF_OVERLAY_DEPTH + OVERLAY_DEPTH_BYTES;
     public static final long RENDER_RING_BYTES = 64L << 20;
+    public static final int NATIVE_POSE_SLOTS=19, NATIVE_POSE_STRIDE=0x18000, NATIVE_POSE_HEADER=64;
 
     // ---- Appearance region (MC -> SB skin/cape) --------------------------------------
     public static final int  SKIN_W = 64;
@@ -63,7 +63,12 @@ public final class Proto {
     public static final long APPEARANCE_BYTES = APPEARANCE_HEADER_BYTES + SKIN_PIXELS_BYTES + CAPE_PIXELS_BYTES;
 
     public static final long OFF_APPEARANCE = OFF_RENDER_RING + RENDER_RING_BYTES;
-    public static final long MAPPING_BYTES = OFF_APPEARANCE + APPEARANCE_BYTES;
+    public static final long OFF_ACTOR_TABLE = OFF_APPEARANCE + APPEARANCE_BYTES;
+    public static final long OFF_COMBAT = OFF_ACTOR_TABLE + 0x4040;
+    public static final int COMBAT_SLOTS = 128;
+    public static final int COMBAT_HIT_SIZE = 80;
+    public static final int COMBAT_BYTES = 0x80 + COMBAT_SLOTS * COMBAT_HIT_SIZE;
+    public static final long MAPPING_BYTES = OFF_COMBAT + COMBAT_BYTES;
 
     // AppearanceHeader field offsets (within the appearance region).
     public static final int APP_SEQ       = 0x00;
@@ -137,7 +142,8 @@ public final class Proto {
     }
 
     // ---- MC -> SB state (seqlock) ----------------------------------------------------
-    public static final int MC_STATE_SIZE = 0xD8;
+    public static final int MC_STATE_SIZE = 0xE0;
+    public static final int MC_WORLD_ID = 0xD8;
     public static final int MC_MOTION_TIME = 0xB0, MC_MOTION_EPOCH = 0xB8, MC_MOTION_MODE = 0xBC;
     public static final int MC_VX = 0xC0, MC_VY = 0xC8, MC_VZ = 0xD0;
     public static final int MC_SEQ         = 0x00;

@@ -47,24 +47,7 @@ public abstract class ExplosionMixin {
 
     @Inject(method = "explode", at = @At("TAIL"))
     private void stellarcraft$captureExplosion(CallbackInfo ci) {
-        if (level == null || !level.isClientSide()) return; // client only for M1
-
-        double cx = x, cy = y, cz = z;
-        double r = Math.max(radius, 4.0); // TNT blast radius ~4 blocks
-
-        // Find ActorProxy entities in range.
-        AABB box = new AABB(cx - r, cy - r, cz - r, cx + r, cy + r, cz + r);
-        List<ActorProxy> proxies = level.getEntitiesOfClass(ActorProxy.class, box);
-
-        for (ActorProxy proxy : proxies) {
-            double dist = proxy.distanceToSqr(cx, cy, cz);
-            // Vanilla-style falloff: full damage at centre, zero at the edge.
-            double falloff = 1.0 - Math.sqrt(dist) / r;
-            if (falloff <= 0) continue;
-            float mcDamage = (float) (56.0 * falloff); // TNT max ~56
-            float sbDamage = mcDamage * ExplosionDamageSink.scale;
-
-            ExplosionDamageSink.forwardHit(proxy.sbUid(), sbDamage, cx, cy, cz, (float) falloff);
-        }
+        // Registered TNT uses NativeEntities.explode only. Hidden/vanilla MC
+        // explosions are deliberately not forwarded into the native scene.
     }
 }

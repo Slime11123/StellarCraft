@@ -100,7 +100,7 @@ public final class InputBridge {
         // Keep MC's key-binding levels in sync with what we believe is held. MC's own
         // KeyMapping ticking reads these levels; without this a key we hold via the screen
         // dispatcher never reaches gameplay (and vice versa).
-        if (!authorised && mc.level != null) {
+        if (!authorised) {
             // Ownership left us: make sure nothing stays stuck down.
             releaseAll();
         }
@@ -166,7 +166,7 @@ public final class InputBridge {
                 if (btn == 1 && down && mc.screen == null)
                     dev.stellarcraft.world.BlockBridge.notePlacement();
                 if (mc.mouseHandler instanceof MouseHandlerAccessor acc) {
-                    acc.stellarcraft$onPress(window, btn, action, 0);
+                    acc.stellarcraft$onPress(window, btn, action, modifiers());
                 }
 
                 // Vanilla owns the press and its single queued click; track only its release.
@@ -266,10 +266,13 @@ public final class InputBridge {
         return false;
     }
 
+    public static boolean forwardsModifiers() {
+        return ControlStateMachine.hasInputAuthority();
+    }
+
     /** Clears every currently-held key/button, e.g. when input ownership leaves MC. */
     private static void releaseAll() {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.options == null) return;
         for (int vk = 8; vk < pressed.length; vk++) {
             if (pressed[vk] == 0) continue;
             InputConstants.Key key = InputConstants.Type.KEYSYM.getOrCreate(pressed[vk]);
@@ -283,6 +286,7 @@ public final class InputBridge {
             KeyMapping.set(InputConstants.Type.MOUSE.getOrCreate(btn), false);
             mouseHeld[btn] = false;
         }
+        if (mc.options == null) return;
         KeyMapping[] all = {
             mc.options.keyUp, mc.options.keyDown, mc.options.keyLeft, mc.options.keyRight,
             mc.options.keyJump, mc.options.keyShift, mc.options.keySprint,
