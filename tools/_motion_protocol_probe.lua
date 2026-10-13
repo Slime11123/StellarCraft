@@ -6,7 +6,7 @@ print("READY");io.stdout:flush()
 for line in io.lines() do
     local state=motion()
     if type(state)=="table" then
-        assert(state.protocolVersion==4 and state.x==10 and state.y==200 and state.z==-30)
+        assert(state.protocolVersion==6 and state.x==10 and state.y==200 and state.z==-30)
         assert(state.motionMode==3 and math.abs(state.vy+.1)<1e-12)
     end
     print(type(state).." "..type(entity(7,9,string.pack("<I8I8",11,22))))

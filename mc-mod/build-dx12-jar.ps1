@@ -22,12 +22,14 @@ $classpath = (@($existing,$mcJar) + $dependencies) -join ';'
 $sources = @('dev\stellarcraft\link\Proto.java','dev\stellarcraft\link\SharedMemory.java','dev\stellarcraft\SBAutoLauncher.java','dev\stellarcraft\client\InputBridge.java','dev\stellarcraft\world\BlockBridge.java','dev\stellarcraft\world\BlockVisuals.java','dev\stellarcraft\world\mixin\ClientLevelMixin.java','dev\stellarcraft\render\NativePixels.java','dev\stellarcraft\render\HandMeshBridge.java','dev\stellarcraft\world\mixin\GameRendererMixin.java')
 $sources += @('dev\stellarcraft\client\NativeDisplay.java','dev\stellarcraft\client\NativeMovement.java','dev\stellarcraft\client\ClientBridge.java','dev\stellarcraft\world\mixin\MouseMixin.java','dev\stellarcraft\world\mixin\EntityCollisionMixin.java','dev\stellarcraft\world\mixin\WorldLayerMixin.java')
 $sources += @('dev\stellarcraft\client\ElytraBridge.java')
+$sources += @('dev\stellarcraft\world\NativeJumpAttack.java','dev\stellarcraft\world\mixin\NativeJumpAttackMixin.java')
 $sources += @('dev\stellarcraft\world\mixin\NativeFireworkMixin.java')
 $sources += @('dev\stellarcraft\world\mixin\NativeGuiKeysMixin.java','dev\stellarcraft\world\mixin\NativeArrowMixin.java')
 $sources += @('dev\stellarcraft\world\NativeArrowAccess.java')
 $sources += @('dev\stellarcraft\render\FrameExporter.java')
 $sources += @('dev\stellarcraft\world\PlacedBlocks.java','dev\stellarcraft\world\mixin\TerrainTargetMixin.java')
 $sources += @('dev\stellarcraft\StellarCraftMod.java')
+$sources += @('dev\stellarcraft\render\ActorProxyRenderer.java')
 $sources += @('dev\stellarcraft\world\VirtualTerrain.java','dev\stellarcraft\render\BodyMeshBridge.java','dev\stellarcraft\render\NativePoseWriter.java')
 $sources += @('dev\stellarcraft\render\NativeRigidParts.java')
 $sources += @('dev\stellarcraft\world\mixin\NativePlayerMixin.java','dev\stellarcraft\world\mixin\NativeLocalPlayerMixin.java','dev\stellarcraft\world\mixin\NativeServerMovementMixin.java','dev\stellarcraft\world\mixin\NativeClientPositionMixin.java')
@@ -73,4 +75,17 @@ if ($LASTEXITCODE -ne 0) { throw 'Proxy bytecode inspection failed' }
 if ($bridgeBytecode -match 'ActorProxy\.(isRemoved|discard):') { throw 'Inherited ActorProxy calls were not remapped' }
 if ($bridgeBytecode -notmatch 'ActorProxy\.method_31481:\(\)Z' -or $bridgeBytecode -notmatch 'ActorProxy\.method_31472:\(\)V') { throw 'Missing proxy intermediary calls' }
 Write-Output 'PASS: server proxy lifecycle uses intermediary names'
+$rendererBytecode = (& $javap -classpath $result -p -c dev.stellarcraft.render.ActorProxyRenderer) -join "`n"
+if ($LASTEXITCODE -ne 0 -or $rendererBytecode -notmatch 'method_3933\(net.minecraft.class_1297, net.minecraft.class_4604, double, double, double\)') { throw 'Missing proxy renderer intermediary dispatch method' }
+$startupBytecode = (& $javap -classpath $result -p -c dev.stellarcraft.StellarCraftMod) -join "`n"
+if ($LASTEXITCODE -ne 0 -or $startupBytecode -notmatch 'EntityRendererRegistry.register:') { throw 'Missing proxy renderer registration at client startup' }
+Write-Output 'PASS: invisible proxy renderer and client registration packaged/remapped'
+$playerBytecode=(& $javap -classpath $mcJar -p -c net.minecraft.world.entity.player.Player)-join "`n"
+$primaryAttack=[regex]::Match($playerBytecode,'(?ms)^  public void attack\(net.minecraft.world.entity.Entity\);.*?(?=^  (?:public|protected|private)|\z)').Value
+if(!$primaryAttack -or [regex]::Matches($primaryAttack,'world/entity/Entity\.hurt:').Count -ne 1 -or
+    $primaryAttack.IndexOf('getAttackStrengthScale:') -lt 0 -or
+    $primaryAttack.IndexOf('getAttackStrengthScale:') -ge $primaryAttack.IndexOf('resetAttackStrengthTicker:')) {throw 'Primary attack injection contract changed'}
+$jumpBytecode=(& $javap -classpath $result -p -v dev.stellarcraft.world.mixin.NativeJumpAttackMixin)-join "`n"
+if($LASTEXITCODE -ne 0 -or $jumpBytecode -notmatch 'method_7324' -or $jumpBytecode -notmatch 'class_1297;method_5643') {throw 'Missing remapped primary-hit interception'}
+Write-Output 'PASS: vanilla primary hurt call, pre-reset cooldown and remapped jump attack injection'
 Write-Output $result

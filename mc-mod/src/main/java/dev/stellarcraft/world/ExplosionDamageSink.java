@@ -93,6 +93,11 @@ public final class ExplosionDamageSink {
      */
     public static void forwardHit(int uid, float damage, double cx, double cy, double cz,
                                   float knockback) {
+        forwardHit(uid,damage,cx,cy,cz,knockback,dev.stellarcraft.NativeLink.tickCount());
+    }
+    private static void forwardHit(int uid,float damage,double cx,double cy,double cz,float knockback,long time) {
+        var mc=net.minecraft.client.Minecraft.getInstance();
+        if(!mc.isSameThread()) {mc.execute(()->forwardHit(uid,damage,cx,cy,cz,knockback,time));return;}
         RingBuffer ring = eventRing;
         if (ring == null) return;
 
@@ -103,13 +108,11 @@ public final class ExplosionDamageSink {
         ev.putFloat((float) cx);       // b = centre x
         ev.putFloat((float) cy);       // c = centre y
         ev.putFloat((float) cz);       // d = centre z (native exposure check)
-        ev.putInt(DamageBridge.nextEventId()); // unique damage publication
+        int serial=DamageBridge.nextEventId();
+        ev.putInt(serial); // unique damage publication
         ev.putInt(0);                  // weapon
         ev.flip();
 
-        long claimed = ring.claim(Proto.MC_EVENT_SIZE);
-        if (claimed < 0) return;
-        ring.writeBytes(claimed, ev);
-        ring.publish(claimed, Proto.MC_EVENT_SIZE);
+        DamageBridge.publishHit(ring,ev,uid,serial,0,new net.minecraft.world.phys.Vec3(cx,cy,cz),null,time);
     }
 }

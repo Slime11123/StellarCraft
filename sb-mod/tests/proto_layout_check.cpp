@@ -62,6 +62,9 @@ int main()
     // Exact decimal values, so tools/check_proto_parity.py can compare them against the
     // Java mirror (Proto.java) without reimplementing the layout.
     std::printf("kVersion=%u\n", kVersion);
+    std::printf("kHitStyleJumpHeavy=%u\n", kHitStyleJumpHeavy);
+    std::printf("kEvHitOrigin=%u\n",kEvHitOrigin);
+    std::printf("kEvHitDirection=%u\n",kEvHitDirection);
     std::printf("kOffActorTable=%llu\n", (unsigned long long)kOffActorTable);
     std::printf("kOffCombat=%llu\n", (unsigned long long)kOffCombat);
     std::printf("kCombatBytes=%llu\n", (unsigned long long)kCombatBytes);

@@ -1,4 +1,4 @@
-"""Exercise the real v3 DLL/Lua readers without either game running."""
+"""Exercise the current DLL/Lua motion readers without either game running."""
 import ctypes
 import pathlib
 import struct
@@ -55,7 +55,7 @@ def main():
         print('PASS:', name)
 
     try:
-        motion(); pose(); expect('fresh v3 motion and matching UUID', 'table', 'string')
+        motion(); pose(); expect('fresh v6 motion and matching UUID', 'table', 'string')
         for name, change in [('odd seqlock', dict(seq=3)), ('wrong epoch', dict(epoch=child.pid+1)),
                              ('stale intent', dict(time=clock()-1000)), ('future intent', dict(time=clock()+1000)),
                              ('NaN velocity', dict(vx=float('nan'))), ('unknown mode', dict(mode=4))]:

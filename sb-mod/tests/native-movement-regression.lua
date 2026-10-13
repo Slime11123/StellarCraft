@@ -54,13 +54,33 @@ local env=setmetatable({os={clock=function() return testTime end},advanceTime=fu
     require=function(name) return name=="UEHelpers" and helpers or {} end,
     print=function() end}, {__index=_G})
 local tests=[[
-local st={protocolVersion=4,flags=257,x=10,y=106,z=55,yaw=90,pitch=0,eyeHeight=1.62,teleportAck=0,vx=0,vz=0}
+local pawn=UEHelpers.GetPlayer()
+local world={name="World /Game/Maps/E05_GreatDesert_P.E05_GreatDesert_P"}
+function world:IsValid() return true end
+function world:GetFullName() return self.name end
+function pawn:GetWorld() return world end
+local first=native_level_id(pawn)
+assert(first~=0 and first==native_level_id(pawn))
+world.name="World /Game/Maps/E04_Xion_P.E04_Xion_P"
+assert(native_level_id(pawn)~=0 and native_level_id(pawn)~=first)
+world.name="";assert(native_level_id(pawn)==0)
+world.name=nil;assert(native_level_id(pawn)==0)
+function world:IsValid() return false end
+assert(native_level_id(pawn)==0)
+function pawn:GetWorld() error("world unavailable") end
+assert(native_level_id(pawn)==0)
+world.name="World /Game/Maps/E05_GreatDesert_P.E05_GreatDesert_P"
+function world:IsValid() return true end
+function pawn:GetWorld() return world end
+local st={protocolVersion=6,flags=257,x=10,y=106,z=55,yaw=90,pitch=0,eyeHeight=1.62,teleportAck=0,vx=0,vz=0}
 read_mc_state=function() return st end
 update_mc_camera=function() end
 apply_first_person_boom=function() end
 restore_native_camera=function() end
 local published
-write_player=function(flags,x,y,z,yaw,pitch,seq) published={x=x,y=y,z=z,seq=seq} end
+write_player=function(flags,x,y,z,yaw,pitch,seq,frame,contacts,vx,vy,vz,level)
+    assert(level==first);published={x=x,y=y,z=z,seq=seq}
+end
 local function ack() publish_player_frame(); st.x,st.y,st.z,st.teleportAck=published.x,published.y,published.z,published.seq end
 steveMode=true; apply_mc_transform(); ack()
 assert(UEHelpers.GetPlayerController():IsMoveInputIgnored(),"Eve input is still active")

@@ -44,7 +44,7 @@ inline bool invoke_apply(std::uintptr_t base,void* owner,float amount,std::uint3
 inline float converted_damage(float current,float maximum,float mcDamage,float budget) {
     return std::fmin(current,maximum*std::fmin(mcDamage/budget,1.0f));
 }
-struct Identity { std::uint32_t guid{},type{}; };
+struct Identity { std::uint32_t guid{},type{}; std::uintptr_t entity{}; };
 struct ControlGuid { std::uint32_t words[4]{}; };
 inline bool identity_certified(std::uintptr_t base) {
     // Local character facade -> UE actor manager. The native game passes its
@@ -84,7 +84,7 @@ inline Identity identity(std::uintptr_t object) {
         if(!read(entity+0x30,guid)||!guid||guid>=0x10000000||!read(entity+0x10c,type)||!type||type==100) return {};
         // Duplicate mappings are ambiguous, even when the native GUID agrees.
         if(out.guid) return {};
-        out={guid,type};
+        out={guid,type,entity};
     }
     return out;
 }

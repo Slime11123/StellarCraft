@@ -19,7 +19,7 @@
 namespace stellarcraft::proto
 {
     inline constexpr std::uint32_t kMagic = 0x43544153;  // "STAC" (STellarCrAft)
-    inline constexpr std::uint32_t kVersion = 4;         // 3: motion intent and native collision feedback
+    inline constexpr std::uint32_t kVersion = 6;         // 6: packed jump-heavy visual style; layouts unchanged
     inline constexpr wchar_t       kMappingName[] = L"Local\\StellarCraft_v1";
 
     // ---- Coordinate / scale mapping -------------------------------------------------------
@@ -326,6 +326,8 @@ namespace stellarcraft::proto
         kEvExplosionHit = 6,  // M1: per-actor explosion damage: uid, a = scaled damage, d = knockback (falloff)
         kEvBlockLight = 7,    // a/b/c = block min corner; d = actual emission 0..15
         kEvPearlTeleport = 8, // a/b/c = native projectile impact in MC coordinates
+        kEvHitOrigin = 9,     // uid/flags/weapon match next hit; a/b/c = source MC position; d bits = low32 GetTickCount64
+        kEvHitDirection = 10, // optional confirmed arrow segment; a/b/c = normalized MC direction; d bits = same time
     };
 
     // McEvent.flags values for kEvBlockChange. Mirrored in Proto.java (EV_BLOCK_*) and in
@@ -354,14 +356,15 @@ namespace stellarcraft::proto
         kWeaponPierce  = 4,  // tridents, spears
         kWeaponArrow   = 5,  // arrows / projectiles
     };
+    inline constexpr std::uint32_t kHitStyleJumpHeavy = 0x100;
 
     struct McEvent
     {
         std::uint32_t type;
         std::uint32_t uid;         // actor uid for kEvHitActor / kEvSkillUse
         float         a, b, c, d;
-        std::uint32_t flags;       // HitFlags
-        std::uint32_t weapon;      // HitWeapon for kEvHitActor
+        std::uint32_t flags;       // unique event serial for hit/context events
+        std::uint32_t weapon;      // low8 HitWeapon; bit8 kHitStyleJumpHeavy (v6)
     };
     static_assert(sizeof(McEvent) == 32);
 

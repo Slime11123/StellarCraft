@@ -245,6 +245,12 @@ public final class NativeEntities {
         arrow.setDeltaMovement(velocity.scale(.99).add(0,-.05,0));
         return true;
     }
+    public record HitSegment(UUID arrow,Vec3 start,Vec3 end) {}
+    private static final ThreadLocal<HitSegment> activeHitSegment=new ThreadLocal<>();
+    public static HitSegment hitSegment(AbstractArrow arrow) {
+        var segment=activeHitSegment.get();
+        return segment!=null&&segment.arrow().equals(arrow.getUUID())?segment:null;
+    }
     private static void hitArrowSegment(AbstractArrow arrow,Vec3 end) {
         Vec3 start=arrowConfirmed.put(arrow.getUUID(),end);
         if(start==null||embedded.contains(arrow.getUUID())||start.distanceToSqr(end)<1e-8) return;
@@ -266,7 +272,10 @@ public final class NativeEntities {
         if(target!=null) {
             hits.add(target.getUUID());
             Vec3 before=target.getDeltaMovement();
-            ((dev.stellarcraft.world.NativeArrowAccess)(Object)arrow).stellarcraft$hitEntity(new EntityHitResult(target));
+            var previous=activeHitSegment.get();
+            activeHitSegment.set(new HitSegment(arrow.getUUID(),start,end));
+            try {((dev.stellarcraft.world.NativeArrowAccess)(Object)arrow).stellarcraft$hitEntity(new EntityHitResult(target));}
+            finally {if(previous==null) activeHitSegment.remove();else activeHitSegment.set(previous);}
             if(target instanceof Mob) {
                 Vec3 impulse=target.getDeltaMovement().subtract(before);
                 if(impulse.horizontalDistanceSqr()>1e-8) arrowImpulses.put(target.getUUID(),new ArrowImpulse(impulse,80));

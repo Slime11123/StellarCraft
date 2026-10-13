@@ -30,6 +30,8 @@
 #include <vector>
 #include <string>
 #include "native_combat.h"
+#include "native_hit_context.h"
+#include "native_hit_show.h"
 #include "native_player_damage.h"
 
 // The layout below MUST stay byte-for-byte identical to the protocol header. This file used
@@ -43,6 +45,8 @@ extern "C" {
 #include "lauxlib.h"
 }
 
+static native_hit_context::Context prepare_hit_context(lua_State*,const native_combat::Result&,native_combat::Identity);
+
 extern "C" __declspec(dllexport) int sc_enemy_damage_lua(lua_State* L) {
     auto guid=static_cast<uint32_t>(lua_tointeger(L,1)),type=static_cast<uint32_t>(lua_tointeger(L,2));
     auto identity=native_combat::identity(static_cast<std::uintptr_t>(lua_tointeger(L,6)));
@@ -50,6 +54,9 @@ extern "C" __declspec(dllexport) int sc_enemy_damage_lua(lua_State* L) {
     auto result=matched?native_combat::actor(identity.guid,identity.type,
         static_cast<float>(lua_tonumber(L,3)),static_cast<float>(lua_tonumber(L,4)),static_cast<uint32_t>(lua_tointeger(L,5))):native_combat::Result{};
     if(!matched) result.reason="UE/native identity mismatch";
+    const auto hit=prepare_hit_context(L,result,identity);
+    const auto show=hit.ready?native_hit_show::request(static_cast<std::uintptr_t>(lua_tointeger(L,6)),hit,
+        static_cast<float>(lua_tonumber(L,4))):native_hit_show::Result{};
     lua_newtable(L);
     lua_pushinteger(L,identity.guid);lua_setfield(L,-2,"guid");
     lua_pushinteger(L,identity.type);lua_setfield(L,-2,"type");
@@ -61,6 +68,17 @@ extern "C" __declspec(dllexport) int sc_enemy_damage_lua(lua_State* L) {
     lua_pushinteger(L,result.sourceKey);lua_setfield(L,-2,"sourceKey");
     lua_pushboolean(L,result.invulnerable);lua_setfield(L,-2,"invulnerable");
     lua_pushstring(L,result.reason);lua_setfield(L,-2,"reason");
+    lua_pushboolean(L,hit.ready);lua_setfield(L,-2,"hitContextReady");
+    lua_pushstring(L,hit.reason);lua_setfield(L,-2,"hitContextReason");
+    lua_pushboolean(L,show.requested);lua_setfield(L,-2,"hitShowRequested");
+    lua_pushstring(L,show.reason);lua_setfield(L,-2,"hitShowReason");
+    lua_pushboolean(L,hit.ready&&hit.request.heavyRequested);lua_setfield(L,-2,"jumpHeavy");
+    lua_pushboolean(L,show.heavy);lua_setfield(L,-2,"hitShowHeavy");
+    if(hit.ready) {
+        lua_pushnumber(L,hit.direction.x);lua_setfield(L,-2,"hitDirectionX");
+        lua_pushnumber(L,hit.direction.y);lua_setfield(L,-2,"hitDirectionY");
+        lua_pushnumber(L,hit.direction.z);lua_setfield(L,-2,"hitDirectionZ");
+    }
     return 1;
 }
 
@@ -110,15 +128,82 @@ static constexpr uint64_t   kSbPitch            = 0x2C;
 static HANDLE   g_hMapping = nullptr;
 static uint8_t* g_pBase    = nullptr;
 
+static native_hit_context::Context prepare_hit_context(lua_State* L,const native_combat::Result& result,native_combat::Identity identity) {
+    using namespace native_hit_context;
+    Context unavailable;
+    if(lua_gettop(L)<17||!lua_isnumber(L,7)||!lua_isnumber(L,8)||!lua_isnumber(L,9)||!lua_isinteger(L,17)) return unavailable;
+    Request request;
+    request.source={float(lua_tonumber(L,7)),float(lua_tonumber(L,8)),float(lua_tonumber(L,9))};
+    request.serial=static_cast<uint32_t>(lua_tointeger(L,10));request.uid=static_cast<uint32_t>(lua_tointeger(L,11));
+    request.world=static_cast<uint32_t>(lua_tointeger(L,12));request.pid=static_cast<uint32_t>(lua_tointeger(L,13));
+    request.kind=static_cast<uint32_t>(lua_tointeger(L,14));request.weapon=static_cast<uint32_t>(lua_tointeger(L,15));
+    request.timeLow=static_cast<uint32_t>(lua_tointeger(L,17));
+    request.hasTrajectory=lua_isnumber(L,18)&&lua_isnumber(L,19)&&lua_isnumber(L,20);
+    if(request.hasTrajectory) request.trajectory={float(lua_tonumber(L,18)),float(lua_tonumber(L,19)),float(lua_tonumber(L,20))};
+    if(!result.applied||result.after<=0) {unavailable.reason="no surviving damaged target";return unavailable;}
+    const auto base=reinterpret_cast<std::uintptr_t>(GetModuleHandleW(nullptr));
+    if(!g_pBase||!position_certified(base)) {unavailable.reason="hit position ABI unavailable";return unavailable;}
+    const auto now=GetTickCount64();
+    const auto* header=reinterpret_cast<const volatile P::Header*>(g_pBase);
+    const auto* mc=reinterpret_cast<const volatile P::McState*>(g_pBase+P::kOffMcState);
+    const auto seq=mc->seq;std::atomic_thread_fence(std::memory_order_acquire);
+    const bool fresh=!(seq&1u)&&seq==static_cast<uint32_t>(lua_tointeger(L,16))
+        &&header->mcPid==request.pid&&header->sbPid==GetCurrentProcessId()
+        &&header->mcHeartbeatMs<=now&&now-header->mcHeartbeatMs<500
+        &&mc->worldId==request.world&&(mc->flags&P::kMcInWorld)&&(mc->flags&P::kMcControlSteve)
+        &&mc->motionEpoch==GetCurrentProcessId()&&mc->motionTimeMs<=now&&now-mc->motionTimeMs<=250;
+    std::atomic_thread_fence(std::memory_order_acquire);
+    if(!fresh||mc->seq!=seq) {unavailable.reason="stale hit session";return unavailable;}
+    const auto* sb=reinterpret_cast<const volatile P::SbState*>(g_pBase+P::kOffSbState);
+    const auto sbSeq=sb->seq;std::atomic_thread_fence(std::memory_order_acquire);
+    const auto sbFlags=sb->flags;request.hostLevel=sb->levelId;
+    std::atomic_thread_fence(std::memory_order_acquire);
+    if((sbSeq&1u)||sb->seq!=sbSeq||!request.hostLevel
+        ||(sbFlags&(P::kSbInGame|P::kSbControlSteve))!=(P::kSbInGame|P::kSbControlSteve)
+        ||(sbFlags&(P::kSbMenuOpen|P::kSbLoading|P::kSbPaused|P::kSbNativeUi))) {
+        unavailable.reason=!request.hostLevel?"host map identity unavailable":"host not in MC combat state";return unavailable;
+    }
+    // The UID must still be the published hostile target in this world. Read a
+    // complete actor-table generation, not a partially updated record.
+    const auto* table=reinterpret_cast<const volatile P::ActorTable*>(g_pBase+P::kOffActorTable);
+    const auto actorSeq=table->seq;const auto count=table->count;
+    std::atomic_thread_fence(std::memory_order_acquire);int matches=0;
+    if(!(actorSeq&1u)&&count<=P::kMaxActors) for(uint32_t i=0;i<count;++i) {
+        const auto& actor=table->actors[i];
+        if(actor.uid==request.uid&&actor.world==request.world&&actor.nativeGuid==identity.guid&&actor.nativeType==identity.type
+            &&(actor.flags&P::kActorHostile)&&!(actor.flags&(P::kActorDead|P::kActorInvuln))) ++matches;
+    }
+    std::atomic_thread_fence(std::memory_order_acquire);
+    if(matches!=1||table->seq!=actorSeq) {unavailable.reason="hit UID no longer published";return unavailable;}
+    const auto after=native_combat::identity(static_cast<std::uintptr_t>(lua_tointeger(L,6)));
+    const auto current=native_combat::actor(after.guid,after.type,0,1,0);
+    if(!current.ready||current.invulnerable||current.before<=0) {
+        unavailable.reason="hit target state changed";return unavailable;
+    }
+    Vec3 target;native_combat::ControlGuid control;
+    if(!after.entity||!native_combat::read(after.entity+0x4CC,target)||!native_combat::read(after.entity+0x4A4,control)) {
+        unavailable.reason="hit target position unavailable";return unavailable;
+    }
+    static Session session;
+    return prepare(session,request,result,identity,after,control,target,true,static_cast<uint32_t>(now));
+}
+
 extern "C" __declspec(dllexport) int sc_native_hits_lua(lua_State* L) {
     lua_newtable(L);int index=0;
+    // Lua must revalidate the captured enemy through GameThread-only game
+    // lookups. A worker callback leaves the queue for the next valid consumer.
+    DWORD thread=0;const auto base=reinterpret_cast<std::uintptr_t>(GetModuleHandleW(nullptr));
+    if(!native_combat::read(base+0x706B538,thread)||thread!=GetCurrentThreadId()) return 1;
     std::lock_guard<std::mutex> lock(native_player_damage::hitMutex);
     while(native_player_damage::readHit<native_player_damage::nextHit) {
         const auto& h=native_player_damage::hits[++native_player_damage::readHit%128];
         lua_newtable(L);
-        const char* names[]={"id","time","player","source","world"};
-        const std::uint64_t values[]={h.id,h.time,h.player,h.source,h.world};
-        for(int i=0;i<5;++i) {lua_pushinteger(L,values[i]);lua_setfield(L,-2,names[i]);}
+        const char* names[]={"id","time","player","source","world","sourceObject","sourceGuid","sourceType"};
+        const std::uint64_t values[]={h.id,h.time,h.player,h.source,h.world,h.sourceObject,h.origin.guid,h.origin.type};
+        for(int i=0;i<8;++i) {lua_pushinteger(L,values[i]);lua_setfield(L,-2,names[i]);}
+        const char* positions[]={"sourceX","sourceY","sourceZ"};
+        const float coordinates[]={h.origin.x,h.origin.y,h.origin.z};
+        for(int i=0;i<3;++i) {lua_pushnumber(L,coordinates[i]);lua_setfield(L,-2,positions[i]);}
         lua_pushnumber(L,h.damage);lua_setfield(L,-2,"damage");lua_rawseti(L,-2,++index);
     }
     return 1;
@@ -242,12 +327,12 @@ extern "C" __declspec(dllexport) void sc_write_heartbeat(uintptr_t base)
 // Writes the SB->MC state via a seqlock (odd seq during write, even after).
 // x/y/z are in Minecraft space (blocks, Y-up). yaw/pitch in degrees.
 // -----------------------------------------------------------------------------------
-extern "C" __declspec(dllexport) void sc_write_player(uintptr_t base,
+static void write_player_frame(uintptr_t base,
                                                      int32_t flags,
                                                      double x, double y, double z,
                                                      float yaw, float pitch, uint32_t teleport = 0,
                                                      uint64_t motionFrame = 0, uint32_t contacts = 0,
-                                                     double vx = 0, double vy = 0, double vz = 0)
+                                                     double vx = 0, double vy = 0, double vz = 0, uint32_t level = 0)
 {
     if (!base) return;
     uint8_t* s = reinterpret_cast<uint8_t*>(base) + kOffSbState;
@@ -284,6 +369,7 @@ extern "C" __declspec(dllexport) void sc_write_player(uintptr_t base,
     *reinterpret_cast<float*>(s + kSbPitch)  = pitch;
     *reinterpret_cast<uint32_t*>(s + 0x0C) = teleport;
     auto* state = reinterpret_cast<P::SbState*>(s);
+    state->levelId = (low&P::kSbInGame)?level:0;
     state->motionTimeMs = GetTickCount64();
     state->motionFrame = motionFrame;
     state->motionEpoch = GetCurrentProcessId();
@@ -292,6 +378,13 @@ extern "C" __declspec(dllexport) void sc_write_player(uintptr_t base,
 
     std::atomic_thread_fence(std::memory_order_release);
     *reinterpret_cast<uint32_t*>(s + kSbSeq) = seq;   // end write (even)
+}
+
+// Preserve the existing C export ABI; only the Lua publisher adds map identity.
+extern "C" __declspec(dllexport) void sc_write_player(uintptr_t base,int32_t flags,
+    double x,double y,double z,float yaw,float pitch,uint32_t teleport=0,
+    uint64_t motionFrame=0,uint32_t contacts=0,double vx=0,double vy=0,double vz=0) {
+    write_player_frame(base,flags,x,y,z,yaw,pitch,teleport,motionFrame,contacts,vx,vy,vz);
 }
 
 // -----------------------------------------------------------------------------------
@@ -366,9 +459,10 @@ extern "C" __declspec(dllexport) int sc_write_player_lua(lua_State* L)
     float  pitch = (float)luaL_optnumber(L, 6, 0.0);
 
     uint32_t teleport = (uint32_t)luaL_optinteger(L, 7, 0);
-    sc_write_player(reinterpret_cast<uintptr_t>(g_pBase), flags, x, y, z, yaw, pitch, teleport,
+    write_player_frame(reinterpret_cast<uintptr_t>(g_pBase), flags, x, y, z, yaw, pitch, teleport,
         (uint64_t)luaL_optinteger(L,8,0), (uint32_t)luaL_optinteger(L,9,0),
-        luaL_optnumber(L,10,0),luaL_optnumber(L,11,0),luaL_optnumber(L,12,0));
+        luaL_optnumber(L,10,0),luaL_optnumber(L,11,0),luaL_optnumber(L,12,0),
+        static_cast<uint32_t>(luaL_optinteger(L,13,0)));
     return 0;
 }
 
@@ -710,7 +804,10 @@ extern "C" __declspec(dllexport) int sc_read_events_lua(lua_State* L)
         lua_pushnumber (L, (lua_Number) e.a);      lua_setfield(L, -2, "a");
         lua_pushnumber (L, (lua_Number) e.b);      lua_setfield(L, -2, "b");
         lua_pushnumber (L, (lua_Number) e.c);      lua_setfield(L, -2, "c");
-        lua_pushnumber (L, (lua_Number) e.d);      lua_setfield(L, -2, "d");
+        if(e.type==P::kEvHitOrigin||e.type==P::kEvHitDirection) {
+            uint32_t timeLow=0;std::memcpy(&timeLow,ev+20,4);
+            lua_pushinteger(L,timeLow);lua_setfield(L,-2,"timeLow");
+        } else {lua_pushnumber(L,(lua_Number)e.d);lua_setfield(L,-2,"d");}
         lua_pushinteger(L, (lua_Integer)e.flags);  lua_setfield(L, -2, "flags");
         lua_pushinteger(L, (lua_Integer)e.weapon); lua_setfield(L, -2, "weapon");
         lua_seti(L, -2, ++idx);

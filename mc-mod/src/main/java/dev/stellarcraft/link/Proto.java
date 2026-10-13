@@ -15,7 +15,7 @@ public final class Proto {
     private Proto() {}
 
     public static final int K_MAGIC = 0x43544153; // "STAC"
-    public static final int K_VERSION = 4;        // motion intent and native collision feedback
+    public static final int K_VERSION = 6;        // packed jump-heavy visual style; layouts unchanged
     public static final String K_MAPPING_NAME = "Local\\StellarCraft_v1";
 
     /** 100 Unreal Units (1 m) per Minecraft block. */
@@ -256,6 +256,8 @@ public final class Proto {
     public static final int EV_EXPLOSION_HIT = 6;
     public static final int EV_BLOCK_LIGHT = 7;
     public static final int EV_PEARL_TELEPORT = 8;
+    public static final int EV_HIT_ORIGIN = 9;    // a/b/c source; raw d bits = low32 Windows tick count
+    public static final int EV_HIT_DIRECTION = 10; // confirmed arrow direction, same UID/serial/time
 
     /**
      * {@code MC_EVENT.flags} for {@link #EV_BLOCK_CHANGE}. Mirrors {@code BlockAction} in
@@ -276,6 +278,7 @@ public final class Proto {
     public static final int WEAPON_BLUNT   = 3;
     public static final int WEAPON_PIERCE  = 4;
     public static final int WEAPON_ARROW   = 5;
+    public static final int HIT_STYLE_JUMP_HEAVY = 0x100;
 
     public static final int MC_EVENT_SIZE = 32;
 

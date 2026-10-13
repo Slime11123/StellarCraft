@@ -47,6 +47,8 @@ public final class StellarCraftMod implements ClientModInitializer {
             }
         }
         EntityRegistry.register();
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+            EntityRegistry.ACTOR_PROXY, dev.stellarcraft.render.ActorProxyRenderer::new);
         dev.stellarcraft.world.NativeEntities.init();
         dev.stellarcraft.world.NativeActors.init();
 

@@ -50,20 +50,32 @@ public final class DamageBridge {
 
     /** Called from {@link ActorProxy#hurt}: forward MC damage to SB. */
     public static void forward(ActorProxy proxy, DamageSource source, float amount) {
+        int weapon=Proto.WEAPON_UNARMED;
+        net.minecraft.world.phys.Vec3 origin=null,direction=null;
+        if(source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.AbstractArrow arrow) {
+            weapon=Proto.WEAPON_ARROW;
+            var segment=NativeEntities.hitSegment(arrow);
+            if(segment!=null) {origin=segment.start();direction=segment.end().subtract(segment.start()).normalize();}
+        } else if(source.getDirectEntity() instanceof Player player) {
+            origin=player.position();
+            var item=player.getMainHandItem().getItem();
+            if(item instanceof net.minecraft.world.item.SwordItem) weapon=Proto.WEAPON_BLADE;
+            else if(item instanceof net.minecraft.world.item.AxeItem) weapon=Proto.WEAPON_AXE;
+            else if(item instanceof net.minecraft.world.item.DiggerItem) weapon=Proto.WEAPON_BLUNT;
+        }
+        boolean jumpHeavy=weapon!=Proto.WEAPON_ARROW&&NativeJumpAttack.heavy(proxy,source);
+        if(jumpHeavy) weapon|=Proto.HIT_STYLE_JUMP_HEAVY;
+        NativeJumpAttack.log(proxy,jumpHeavy);
+        forward(proxy,source,amount,weapon,origin,direction,dev.stellarcraft.NativeLink.tickCount());
+    }
+    private static void forward(ActorProxy proxy,DamageSource source,float amount,int weapon,
+        net.minecraft.world.phys.Vec3 origin,net.minecraft.world.phys.Vec3 direction,long time) {
         var mc=net.minecraft.client.Minecraft.getInstance();
-        if(!mc.isSameThread()) {mc.execute(()->forward(proxy,source,amount));return;}
+        if(!mc.isSameThread()) {mc.execute(()->forward(proxy,source,amount,weapon,origin,direction,time));return;}
         if (eventRing == null||!NativeActors.current(proxy)||!Float.isFinite(amount)||amount<=0) return;
 
         // Determine weapon class for SB's impact effects/sounds.
-        int weapon = Proto.WEAPON_UNARMED;
-        if(source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.AbstractArrow) weapon=Proto.WEAPON_ARROW;
         int flags = nextEventId();
-        if (source.getDirectEntity() instanceof Player p) {
-            var item = p.getMainHandItem();
-            if(item.getItem() instanceof net.minecraft.world.item.SwordItem) weapon=Proto.WEAPON_BLADE;
-            else if(item.getItem() instanceof net.minecraft.world.item.AxeItem) weapon=Proto.WEAPON_AXE;
-            else if(item.getItem() instanceof net.minecraft.world.item.DiggerItem) weapon=Proto.WEAPON_BLUNT;
-        }
 
         // Send the RAW vanilla damage amount. Converting it into native HP is the Stellar
         // Blade side's job, because only SB knows the target's tier and MaxHP:
@@ -88,10 +100,30 @@ public final class DamageBridge {
         ev.putInt(weapon);
         ev.flip();
 
-        long claimed = eventRing.claim(Proto.MC_EVENT_SIZE);
-        if (claimed < 0) return; // ring full; drop
-        eventRing.writeBytes(claimed, ev);
-        eventRing.publish(claimed, Proto.MC_EVENT_SIZE);
+        publishHit(eventRing,ev,proxy.sbUid(),flags,weapon,origin,direction,time);
+    }
+
+    /** Publish context and HP event together; insufficient context space keeps legacy HP behavior. */
+    public static void publishHit(RingBuffer ring,ByteBuffer hit,int uid,int serial,int weapon,
+        net.minecraft.world.phys.Vec3 origin,net.minecraft.world.phys.Vec3 direction,long time) {
+        int records=finite(origin)?(finite(direction)&&direction.lengthSqr()>.5?3:2):1;
+        int bytes=records*Proto.MC_EVENT_SIZE;
+        long claimed=ring.claim(bytes);
+        if(claimed<0) {records=1;bytes=Proto.MC_EVENT_SIZE;claimed=ring.claim(bytes);}
+        if(claimed<0) return;
+        ByteBuffer batch=ByteBuffer.allocate(bytes).order(ByteOrder.LITTLE_ENDIAN);
+        if(records>1) context(batch,Proto.EV_HIT_ORIGIN,uid,serial,weapon,origin,time);
+        if(records==3) context(batch,Proto.EV_HIT_DIRECTION,uid,serial,weapon,direction,time);
+        batch.put(hit);batch.flip();ring.writeBytes(claimed,batch);ring.publish(claimed,bytes);
+    }
+    private static boolean finite(net.minecraft.world.phys.Vec3 v) {
+        return v!=null&&Double.isFinite(v.x)&&Double.isFinite(v.y)&&Double.isFinite(v.z)
+            &&Math.abs(v.x)<3e7&&Math.abs(v.y)<2e7&&Math.abs(v.z)<3e7;
+    }
+    private static void context(ByteBuffer out,int kind,int uid,int serial,int weapon,
+        net.minecraft.world.phys.Vec3 v,long time) {
+        out.putInt(kind).putInt(uid).putFloat((float)v.x).putFloat((float)v.y).putFloat((float)v.z)
+            .putInt((int)time).putInt(serial).putInt(weapon);
     }
 
     /** Applies an SB-sourced hit to the MC player (called from the client tick). */

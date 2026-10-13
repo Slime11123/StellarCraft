@@ -16,21 +16,70 @@ inline std::atomic<std::uint32_t> guid{0},attacker{0},blocked{0};
 inline std::atomic<ULONGLONG> refreshed{0};
 inline std::atomic<double> total{0};
 inline std::atomic<bool> enabled{false};
-struct Hit {std::uint64_t id,time;std::uint32_t player,source,world;float damage;};
+struct HitSource {std::uint32_t guid{},type{};float x{},y{},z{};};
+struct Hit {std::uint64_t id,time;std::uint32_t player,source,world;float damage;std::uint32_t sourceObject;HitSource origin;};
 inline std::mutex hitMutex;
 inline std::array<Hit,128> hits{};
 inline std::uint64_t nextHit=0,readHit=0;
 inline std::atomic<std::uint32_t> world{0};
-inline void record(float damage,int source) {
+inline void record(float damage,int source,std::uint32_t sourceObject,HitSource origin) {
     std::lock_guard<std::mutex> lock(hitMutex);
     auto id=++nextHit;
-    hits[id%hits.size()]={id,GetTickCount64(),guid.load(),source>0?static_cast<std::uint32_t>(source):0,world.load(),damage};
+    hits[id%hits.size()]={id,GetTickCount64(),guid.load(),source>0?static_cast<std::uint32_t>(source):0,world.load(),damage,sourceObject,origin};
     if(nextHit-readHit>hits.size()) readHit=nextHit-hits.size();
 }
 inline bool installed=false;
 inline std::atomic<unsigned> observed{0},observedGuid{0},observedStat{0},observedThread{0},observedGameThread{0},observedMatch{0};
 inline std::atomic<float> observedAmount{0};
+// The game has just resolved the effect on this same stat callback. Read its
+// hash chain, not sparse/free slots, and never invoke game code on a worker.
+inline std::uintptr_t source_lookup(std::uintptr_t manager,std::size_t offset,std::uint32_t key) {
+    using native_combat::read;
+    std::uintptr_t entries=0,hash=0;std::int32_t count=0,free=0,buckets=0,index=-1;
+    if(!key||!read(manager+offset,entries)||!entries||!read(manager+offset+8,count)
+        ||!read(manager+offset+0x34,free)||count<1||count>16384||free<0||free>=count
+        ||!read(manager+offset+0x48,buckets)||buckets<1||buckets>16384||(buckets&(buckets-1))
+        ||!read(manager+offset+0x40,hash)) return 0;
+    if(!hash) hash=manager+offset+0x38;
+    if(!read(hash+4u*(key&(buckets-1)),index)) return 0;
+    for(int n=0;n<64&&index>=0&&index<count;n++) {
+        const auto slot=entries+24u*index;std::uint32_t found=0;std::uintptr_t object=0,again=0;std::int32_t next=-1;
+        if(!read(slot,found)||!read(slot+8,object)||!read(slot+16,next)) return 0;
+        if(found==key) {
+            std::uint32_t live=0;
+            if(!object||!read(object+0x20,live)||live!=key||!read(manager+offset,again)||again!=entries) return 0;
+            return object;
+        }
+        if(next==index) return 0;
+        index=next;
+    }
+    return 0;
+}
+inline HitSource hit_source(std::uintptr_t base,std::uintptr_t manager,std::uint32_t objectId,std::uint32_t rawKey,std::uintptr_t victim) {
+    using native_combat::read;
+    HitSource out;std::uintptr_t effect=source_lookup(manager,0x120,objectId),vt=0,target=0,owner=0,entity=0,iface=0;
+    std::uint32_t key=0,id=0;
+    if(!effect||!read(effect,vt)||vt!=base+0x5C0BD18||!read(effect+0x104,key)||key!=rawKey
+        ||!read(effect+0x58,target)||!target||!read(target,vt)||vt!=base+0x5C0BEE0
+        ||!read(target+0x60,entity)||entity!=victim
+        ||!read(effect+0x60,owner)||!owner||!read(owner,vt)||vt!=base+0x5C0BEE0
+        ||!read(owner+0x20,id)||source_lookup(manager,0x170,id)!=owner
+        ||!read(owner+0x60,entity)||!entity||entity==victim
+        ||!read(entity,vt)||vt!=base+0x5BF6730||!read(entity+0x10,iface)||iface!=base+0x5BF67D0
+        ||!read(entity+0x30,out.guid)||out.guid!=id||id>=0x10000000
+        ||!read(entity+0x10c,out.type)||!out.type||out.type==100
+        ||!read(entity+0x4cc,out.x)||!read(entity+0x4d0,out.y)||!read(entity+0x4d4,out.z)
+        ||!std::isfinite(out.x)||!std::isfinite(out.y)||!std::isfinite(out.z)
+        ||std::fabs(out.x)>3e7||std::fabs(out.y)>3e7||std::fabs(out.z)>3e7
+        ||source_lookup(manager,0x120,objectId)!=effect||source_lookup(manager,0x170,id)!=owner) return {};
+    return out;
+}
 inline bool certified(std::uintptr_t base) {
+    const unsigned char effectLookup[]={0x40,0x53,0x48,0x83,0xec,0x20,0x8b,0x81,0x28,0x01,0,0,0x3b,0x81,0x54,0x01,0,0,0x74,0x55,0x4c,0x63,0x89,0x68,0x01,0,0,0x4c,0x8d,0x91,0x58,0x01,0};
+    const unsigned char effectChain[]={0x48,0x63,0xc8,0x48,0x8d,0x04,0x49,0x41,0x39,0x14,0xc0,0x49,0x8d,0x0c,0xc0,0x74,0x10,0x8b,0x41,0x10,0x83,0xf8,0xff,0x75,0xe7};
+    const unsigned char effectVictim[]={0x49,0x89,0x7e,0x58};
+    const unsigned char effectOrigin[]={0x4c,0x89,0x41,0x60};
+    const unsigned char position[]={0x8b,0x81,0xc4,0x04,0,0,0xf2,0x0f,0x10,0x81,0xbc,0x04,0,0,0xf2,0x0f,0x11,0x02,0x89,0x42,0x08,0x48,0x8b,0xc2,0xc3};
     const unsigned char serverCall[]={0x49,0x8B,0x4F,0x60,0x0F,0x28,0xD8,0x4C,0x8B,0xC3,0x8B,0xD7,0x0F,0x28,0xF8,0xF3,0x0F,0x2C,0x81,0x1C,0x01,0,0,0x89,0x45,0x40,0x8B,0x44,0x24,0x68,0x89,0x44,0x24,0x30,0x0F,0xB6,0x85,0,0x01,0,0,0x88,0x44,0x24,0x28,0x0F,0xB6,0x85,0xF8,0,0,0,0x88,0x44,0x24,0x20,0xE8,0xBD,0xC4,0xEB,0xFF};
     const unsigned char serverResult[]={0x84,0xC0,0x0F,0x84,0x58,0x0E,0,0,0x49,0x8B,0x06,0xF3,0x0F,0x10,0xB4,0xB8,0x18,0x01,0,0};
     const unsigned char echoCall[]={0x8B,0x46,0x20,0x4C,0x8B,0xC7,0xF3,0x0F,0x10,0x5E,0x18,0x49,0x8B,0xCF,0x8B,0x56,0x14,0x89,0x44,0x24,0x30,0x0F,0xB6,0x46,0x1D,0x88,0x44,0x24,0x28,0x0F,0xB6,0x46,0x1C,0x88,0x44,0x24,0x20,0x48,0x89,0x7C,0x24,0x70,0xE8,0xB5,0x54,0xF4,0xFF,0x48,0x63,0x46,0x14,0xF3,0x45,0x0F,0x10,0x84,0x87,0x18,0x01,0,0,0x44,0x0F,0x2E,0x46,0x24};
@@ -45,6 +94,11 @@ inline bool certified(std::uintptr_t base) {
     // Actual server call-site is certified separately below by its CALL target.
     std::int32_t rel=0;unsigned char opcode=0;
     return native_combat::certified(base)&&native_combat::bytes(base+0x1A64CE0,diff,sizeof diff)
+        &&native_combat::bytes(base+0x1AD6A10,effectLookup,sizeof effectLookup)
+        &&native_combat::bytes(base+0x1AD6A60,effectChain,sizeof effectChain)
+        &&native_combat::bytes(base+0x1BC609A,effectVictim,sizeof effectVictim)
+        &&native_combat::bytes(base+0x1BC64CF,effectOrigin,sizeof effectOrigin)
+        &&native_combat::bytes(base+0x1A30C90,position,sizeof position)
         &&native_combat::bytes(base+0x1BA87E6,serverCall,sizeof serverCall)
         &&native_combat::bytes(base+0x1BA8823,serverResult,sizeof serverResult)
         &&native_combat::bytes(base+0x1B1F7FC,echoCall,sizeof echoCall)
@@ -97,7 +151,14 @@ __declspec(noinline) inline bool __fastcall intercept(void* actor,int stat,void*
             double previous=total.load();
             while(!total.compare_exchange_weak(previous,previous+delta)) {}
             attacker=source>0?static_cast<std::uint32_t>(source):0;
-            record(static_cast<float>(delta),source);
+            // Certified ApplyStatExecute frame: five pushes + 0x180 allocation;
+            // its eighth argument ([rbp+0xE8]) precedes conversion to +0x104.
+            std::uint32_t sourceObject=0;
+            native_combat::read(reinterpret_cast<std::uintptr_t>(_AddressOfReturnAddress())+0x1f0,sourceObject);
+            std::uintptr_t manager=0;HitSource origin;
+            if(source>0&&native_combat::read(base+0x7032568,manager)&&manager)
+                origin=hit_source(base,manager,sourceObject,static_cast<std::uint32_t>(source),watchedActor);
+            record(static_cast<float>(delta),source,sourceObject,origin);
         }
         return false;
     }

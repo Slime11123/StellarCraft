@@ -8,7 +8,7 @@ h=k.OpenFileMappingW(4,False,r'Local\StellarCraft_v1');assert h,'bridge not runn
 base=k.MapViewOfFile(h,4,0,0,0);assert base
 try:
  def read(at,size):return ctypes.string_at(base+at,size)
- magic,version,sb,mc=struct.unpack('<4I',read(0,16));assert version==4
+ magic,version,sb,mc=struct.unpack('<4I',read(0,16));assert version in (4,5) # actor/combat offsets unchanged
  pos=struct.unpack('<3d',read(0x110,24));print('version',version,'SB',sb,'MC',mc,'player',pos)
  at=299888768;head=read(at,64);seq,count=struct.unpack_from('<2I',head);world=struct.unpack_from('<I',head,20)[0]
  print('actors',count,'world',world,'sequence',seq)

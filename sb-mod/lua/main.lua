@@ -138,6 +138,18 @@ end
 
 -- Read the player's transform and push it into shared memory.
 -- Returns true if the player pawn was valid and we wrote a frame.
+local function native_level_id(pawn)
+    local ok,name=pcall(function()
+        local world=pawn:GetWorld()
+        if not world or not world:IsValid() then return nil end
+        return world:GetFullName()
+    end)
+    if not ok or type(name)~="string" or #name==0 then return 0 end
+    local hash=0
+    for i=1,#name do hash=(hash*131+name:byte(i))%4294967296 end
+    return hash
+end
+
 local function publish_player_frame()
     local pawn = UEHelpers.GetPlayer()
     if not pawn or not pawn:IsValid() then
@@ -193,7 +205,7 @@ local function publish_player_frame()
     local vy=gMotionFeedback.vy
     pcall(function() if not gMotionFeedback.gliding then vy=pawn.CharacterMovement.Velocity.Z/2000 end end)
     write_player(flags, mcX, mcY, mcZ, yaw, pitch, gTeleportSerial,
-        gMotionFeedback.frame,contacts,gMotionFeedback.vx,vy,gMotionFeedback.vz)
+        gMotionFeedback.frame,contacts,gMotionFeedback.vx,vy,gMotionFeedback.vz,native_level_id(pawn))
     return true
 end
 
@@ -527,11 +539,14 @@ local function collect_character_actors(world)
     return nil
 end
 
-local function enemy_stats(actor,damage,budget,cause)
+local function enemy_stats(actor,damage,budget,cause,hit)
     if not native_enemy_damage then return nil end
     local ok,result=pcall(function()
         local info=actor.BroadcastSpawnInfo
-        return native_enemy_damage(info.ActorGuid,info.CharacterDataId,damage or 0,budget or 1,cause or 0,actor:GetAddress())
+        return native_enemy_damage(info.ActorGuid,info.CharacterDataId,damage or 0,budget or 1,cause or 0,actor:GetAddress(),
+            hit and hit.X,hit and hit.Y,hit and hit.Z,hit and hit.serial,hit and hit.uid,hit and hit.world,
+            hit and hit.pid,hit and hit.kind,hit and hit.weapon,hit and hit.seq,hit and hit.timeLow,
+            hit and hit.DX,hit and hit.DY,hit and hit.DZ)
     end)
     return ok and result or nil
 end
@@ -555,15 +570,17 @@ local function consume_native_hits()
     local rows=nativeHits()
     for _,hit in ipairs(rows) do
         if hit.world==gBuildWorldId then
-            local source=gCombatSources[hit.source]
+            if hit.sourceObject and hit.sourceObject>0 then
+                print(string.format("[StellarCraft-HitSource] event=%d object=%d rawKey=%d attacker=%d\n",hit.id,hit.sourceObject,hit.source,hit.sourceGuid or 0))
+            end
+            local source=gCombatSources[hit.sourceGuid or 0]
             local x,y,z,guid,flags=0,0,0,0,0
             if source and source~=false and os.clock()-source.time<.5 then
-                -- +0x104 source keys are certified in the executable. Revalidate
-                -- the corresponding server identity; the integer is never treated as a GUID.
+                -- The hit callback captured the effect's actual origin owner.
+                -- Revalidate against this world's exact native/UE enemy mapping.
                 local stats=enemy_stats(source.actor)
-                if stats and stats.ready and stats.guid==source.guid and stats.sourceKey==hit.source then
-                    local loc=source.actor:K2_GetActorLocation()
-                    x,y,z=-loc.X/100+gFrameOff.X,loc.Z/100+gFrameOff.Y,-loc.Y/100+gFrameOff.Z
+                if stats and stats.ready and stats.guid==source.guid and stats.type==hit.sourceType then
+                    x,y,z=-hit.sourceX/100+gFrameOff.X,hit.sourceZ/100+gFrameOff.Y,-hit.sourceY/100+gFrameOff.Z
                     guid,flags=source.guid,1
                 end
             end
@@ -661,9 +678,9 @@ local function mirror_actors(center, world)
                             write_actor(uid,flags,mx,my-half/100,mz,yaw,width,height,healthFrac,
                                 info.ActorGuid,info.CharacterDataId,gBuildWorldId or 0,uid)
                             gActorsByName[uid]=actor
-                            if stats.sourceKey and stats.sourceKey>0 then
-                                if gCombatSources[stats.sourceKey]~=nil then gCombatSources[stats.sourceKey]=false
-                                else gCombatSources[stats.sourceKey]={actor=actor,guid=info.ActorGuid,time=now} end
+                            if stats.guid and stats.guid>0 then
+                                if gCombatSources[stats.guid]~=nil then gCombatSources[stats.guid]=false
+                                else gCombatSources[stats.guid]={actor=actor,guid=stats.guid,time=now} end
                             end
                             count=count+1
                         end
@@ -692,8 +709,22 @@ end
 -- The bridge verifies this build, GameThread, server GUID/type and live HP;
 -- Stellar Blade's server stat pipeline owns damage, replication and death.
 --
+local function hit_context(ev,mc,origin,direction)
+    if not mc or not gFrameOff or not origin or origin.uid~=ev.uid or origin.flags~=ev.flags
+        or origin.weapon~=ev.weapon or origin.pid~=mc.mcPid or origin.world~=mc.worldId then return nil end
+    if ev.type==6 and (origin.a~=ev.b or origin.b~=ev.c or origin.c~=ev.d) then return nil end
+    local packed=ev.weapon or 0
+    local base=packed&0xFF
+    if packed&~0x1FF~=0 or base>5 or packed&0x100~=0 and (ev.type~=1 or base==5) then return nil end
+    if base==5 and not direction then return nil end
+    local hit={X=-(origin.a-gFrameOff.X)*UNITS_PER_BLOCK,Y=-(origin.c-gFrameOff.Z)*UNITS_PER_BLOCK,
+        Z=(origin.b-gFrameOff.Y)*UNITS_PER_BLOCK,serial=ev.flags,uid=ev.uid,world=mc.worldId,
+        pid=mc.mcPid,kind=ev.type,weapon=ev.weapon or 0,seq=mc.seq,timeLow=origin.timeLow}
+    if direction then hit.DX=-direction.a;hit.DY=-direction.c;hit.DZ=direction.b end
+    return hit
+end
 -- Returns: applied, nativeDamage, tier, maxHp
-local function damage_actor(actor, mcDamage, knockback)
+local function damage_actor(actor, mcDamage, knockback,hit)
     if not actor or not actor:IsValid() then return false, 0, nil, 0 end
 
     local okName, clsName = pcall(function()
@@ -704,9 +735,14 @@ local function damage_actor(actor, mcDamage, knockback)
 
     local cause=0
     pcall(function() cause=UEHelpers.GetPlayer().BroadcastSpawnInfo.ActorGuid end)
-    local stats=enemy_stats(actor,mcDamage,budget,cause)
+    local stats=enemy_stats(actor,mcDamage,budget,cause,hit)
     if stats then
         print(string.format("[StellarCraft-Combat] guid=%d type=%d HP %.1f -> %.1f / %.1f: %s\n",stats.guid or 0,stats.type or 0,stats.before,stats.after,stats.maximum,tostring(stats.reason)))
+        if hit and stats.hitContextReason then
+            print(string.format("[StellarCraft-HitContext] event=%d uid=%d world=%d ready=%s showRequested=%s: %s; %s; baseWeapon=%d jumpHeavy=%s selectedHeavy=%s\n",
+                hit.serial,hit.uid,hit.world,tostring(stats.hitContextReady),tostring(stats.hitShowRequested),
+                stats.hitContextReason,tostring(stats.hitShowReason),hit.weapon&0xFF,tostring(stats.jumpHeavy),tostring(stats.hitShowHeavy)))
+        end
         return stats.applied,math.max(0,stats.before-stats.after),tier,stats.maximum
     end
     return false,0,tier,maxHp
@@ -719,6 +755,7 @@ end
 --   kEvHitActor     = 1  -> melee / arrow damage
 local gLastEventLog = 0
 local gDamageSerial,gDamagePid=0,0
+local gHitOrigin,gHitDirection
 
 local function apply_events()
     if not read_events then return end
@@ -727,7 +764,17 @@ local function apply_events()
 
     for _, ev in ipairs(events) do
         local t = ev.type
-        if t == 5 then
+        if t==9 or t==10 then
+            local mc=read_mc_state and read_mc_state()
+            local fresh=mc and mc.worldId==gBuildWorldId and mc.flags&256~=0 and ev.timeLow~=nil
+            if t==9 then
+                gHitOrigin,gHitDirection=nil,nil
+                if fresh then ev.pid,ev.world=mc.mcPid,mc.worldId;gHitOrigin=ev end
+            elseif fresh and gHitOrigin and gHitOrigin.uid==ev.uid and gHitOrigin.flags==ev.flags
+                and gHitOrigin.weapon==ev.weapon and gHitOrigin.timeLow==ev.timeLow
+                and gHitOrigin.pid==mc.mcPid and gHitOrigin.world==mc.worldId then gHitDirection=ev
+            else gHitOrigin,gHitDirection=nil,nil end
+        elseif t == 5 then
             -- kEvBlockChange: Minecraft is telling us a block appeared or disappeared, so the
             -- matching actor can be spawned/destroyed in Stellar Blade's own world. Queued,
             -- not spawned inline: a full re-sync arrives as a burst of a few hundred events
@@ -748,6 +795,7 @@ local function apply_events()
         elseif t == 8 then
             if pearl_teleport then pearl_teleport(ev.a,ev.b,ev.c) end
         elseif t == 6 or t == 1 then
+            local origin,direction=gHitOrigin,gHitDirection;gHitOrigin,gHitDirection=nil,nil
             local actor = gActorsByName[ev.uid]
             local mc=read_mc_state and read_mc_state()
             local serial=math.floor(ev.flags or 0)
@@ -761,8 +809,9 @@ local function apply_events()
                     -- Combine visibility before vanilla's quadratic explosion damage.
                     local exposure=math.max(0,(-1+math.sqrt(1+4*math.max(0,damage-1)/28))/2)*nativeExposure
                     damage=exposure>0 and (exposure*exposure+exposure)*28+1 or 0
-                elseif ev.weapon~=5 and not NativeWorld.melee_visible(UEHelpers.GetPlayer(),actor) then damage=0 end
-                local applied, nativeDmg, tier, maxHp = damage_actor(actor, damage, ev.d)
+                elseif (ev.weapon or 0)&0xFF~=5 and not NativeWorld.melee_visible(UEHelpers.GetPlayer(),actor) then damage=0 end
+                local hit=damage>0 and hit_context(ev,mc,origin,direction) or nil
+                local applied, nativeDmg, tier, maxHp = damage_actor(actor, damage, ev.d,hit)
                 -- Log sparingly: explosions are bursty and spam the console otherwise.
                 local now = os.clock()
                 if now - gLastEventLog > 0.5 then
@@ -1144,7 +1193,7 @@ end
 local function apply_mc_transform()
     if not read_mc_state then return end
     local ok, st = pcall(read_mc_state)
-    if not ok or type(st) ~= "table" or st.protocolVersion~=4 then st={flags=0} end
+    if not ok or type(st) ~= "table" or st.protocolVersion~=6 then st={flags=0} end
 
     local mcOwns  = (st.flags & MC_FLAG_CONTROL_STEVE) ~= 0
     local inWorld = (st.flags & MC_FLAG_IN_WORLD) ~= 0

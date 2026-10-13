@@ -71,7 +71,7 @@ class Dump:
         code, eflags, nested, addr = struct.unpack_from('<IIQQ', self.data, eoff)
         nparams, align = struct.unpack_from('<II', self.data, eoff + 24)
         params = struct.unpack_from('<15Q', self.data, eoff + 32)
-        ctx_size, ctx_rva = struct.unpack_from('<II', self.data, eoff + 160)  # after EXCEPTION_RECORD
+        ctx_size, ctx_rva = struct.unpack_from('<II', self.data, eoff + 152)  # after MINIDUMP_EXCEPTION
         return {'tid': tid, 'code': code, 'flags': eflags, 'addr': addr,
                 'nparams': nparams, 'params': params, 'ctx_rva': ctx_rva, 'ctx_size': ctx_size}
 

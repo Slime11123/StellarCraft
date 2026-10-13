@@ -89,6 +89,7 @@ public final class ClientBridge {
         long age = dev.stellarcraft.NativeLink.tickCount() - mem.sbHeartbeat();
         boolean nativeScene = age >= 0 && age < 5000 && (sb.flags & Proto.SbFlags.IN_GAME) != 0;
         NativeMovement.tick(mc, nativeScene);
+        dev.stellarcraft.world.NativeJumpAttack.update(mc,sb,mem.sbPid(),age);
         long head=mem.combatHead();
         if(head<combatCursor) combatCursor=head;
         combatCursor=Math.max(combatCursor,head-Proto.COMBAT_SLOTS);
