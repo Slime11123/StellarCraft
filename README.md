@@ -33,31 +33,59 @@ Neither game is replaced or recreated. A **Minecraft Fabric mod**, a **Stellar B
 
 ## Screenshots
 
-| Minecraft UI composited in Stellar Blade | Native rendering experiment |
-|:---:|:---:|
-| ![Minecraft HUD composited in Stellar Blade](sb-mod/reshade-addon/verification/2026-10-09-MC-hud-only.png) | ![Stellar Blade native hand rendering test](sb-mod/reshade-addon/verification/2026-10-09-SB-native-hand.png) |
+### Gameplay preview — Great Desert
 
-<sub>Captured during local development/testing. Visuals may differ from current builds. More gameplay footage will be added as features stabilize.</sub>
+<div align="center">
+<a href="docs/images/2026-10-12-tnt-shield-gameplay.jpg">
+  <img src="docs/images/2026-10-12-tnt-shield-gameplay.jpg" width="100%" alt="StellarCraft running in Stellar Blade's Great Desert: Minecraft hotbar and shield visible during a TNT particle effect" />
+</a>
+<br />
+<sub><strong>TNT visual effect & Minecraft HUD</strong> — in-game capture, October 12, 2026. The shield is visible; this frame alone does not demonstrate successful shield blocking or TNT damage to Stellar Blade enemies.</sub>
+</div>
+
+### Minecraft inventory inside Stellar Blade
+
+<div align="center">
+<a href="docs/images/2026-10-12-creative-inventory.jpg">
+  <img src="docs/images/2026-10-12-creative-inventory.jpg" width="100%" alt="Interactive Minecraft creative inventory composited over the Great Desert in Stellar Blade" />
+</a>
+<br />
+<sub><strong>Creative inventory, item categories and hotbar</strong> — captured in the running game on October 12, 2026.</sub>
+</div>
+
+<details>
+<summary>Earlier rendering verification screenshots (October 9)</summary>
+
+| Minecraft HUD compositing | Native hand rendering experiment |
+|:---:|:---:|
+| ![Minecraft HUD verification](sb-mod/reshade-addon/verification/2026-10-09-MC-hud-only.png) | ![Native hand rendering verification](sb-mod/reshade-addon/verification/2026-10-09-SB-native-hand.png) |
+
+</details>
+
+<sub>These images document local development builds, not a packaged release. Visual effects shown in screenshots are not proof of every related gameplay/damage feature.</sub>
 
 ## Features
 
-The following statuses reflect project documentation and local testing through **October 11, 2026**.
+The following statuses are based on project logs and owner-led in-game testing through **October 12, 2026**. “Tested” refers only to the stated scenario.
 
 | System | Status | Current scope |
 |---|---|---|
-| Eve / Minecraft control switching | ✅ Tested | Switch between modes with **F4**, including returning to Eve. |
-| Minecraft movement | ✅ Tested | Walking, jumping, crouching, creative flight and tested stair/terrain traversal. |
-| Minecraft HUD & inventory | ✅ Tested | DirectX 12 in-process compositing, menus, hotbar and mouse interaction. |
-| Blocks in Stellar Blade | ✅ Tested | Place selected blocks; native geometry, pixel textures and persistence for registered blocks. |
-| Lighting & Ender Pearls | ✅ Tested | Torch/glowstone lighting and safe pearl teleportation in tested scenes. |
-| TNT effects | ✅ Partial | Priming, explosion particles and interactions with registered Minecraft blocks/entities tested; reliable damage to actual Stellar Blade enemies needs more verification. |
-| Selected Minecraft entities | 🧪 Partial | Pig and oak boat rendering demonstrated; full vanilla mob AI and water/boat physics are not supported yet. |
-| Cross-game damage | 🧪 Partial | Player damage-mode rules tested locally; broader combat interactions still need validation. |
-| Character/hand visuals | 🛠 In progress | Texture, animation and synchronization issues remain. |
-| Map transitions and stability | 🛠 In progress | Some transitions with Minecraft active and some exit paths can crash. |
-| Elytra, advanced projectiles & full entity parity | 📋 Planned | Not ready as fully implemented features. |
+| Eve / Minecraft mode switching | ✅ Tested | **F4** switches control between Eve and the Minecraft player in tested ordinary areas. |
+| Minecraft movement & building | ✅ Tested | Walking, jumping, crouching, creative flight, stairs and registered block placement/persistence. |
+| Minecraft UI & inventory | ✅ Tested | Interactive creative inventory, item categories, hotbar and mouse input composited in-process via DX12; see the screenshots above. |
+| Native visuals & items | ✅ Tested in selected scenes | Pixel-style geometry, some entity models, torch/glowstone light and Ender Pearl teleportation. |
+| TNT visual effects | ✅ Tested visually | Pixelated explosion particles are visible in Stellar Blade; effects on registered MC blocks/entities were tested. |
+| Ordinary Stellar Blade enemy combat | ✅ Tested in part | Native enemy registration and actual HP reduction/death recorded in the Great Desert. Not every weapon, arrow or TNT damage path has been individually attributed and verified. |
+| Incoming damage & Eve protection | ✅ Tested in ordinary combat | Recent tests recorded 66 incoming-hit events; Minecraft survival HP changed while Eve's logged HP remained protected during the active lease. |
+| Minecraft shield blocking | 🛠 In progress | Shield can be raised, but a live test still lost HP because verified hit direction was missing; a source-direction fix awaits another in-game test. |
+| Bow, arrows & advanced combat | 🧪 Partially implemented | Code and offline regression tests exist; projectile visuals, arrow hits and TNT damage to real enemies still need combined in-game acceptance. |
+| Elytra flight | 🧪 Partially tested | The maintainer confirmed basic Elytra flight and a visual improvement; dive, fireworks, durability and edge cases remain to be checked. |
+| Mob/hand/character visuals | 🧪 Partially tested | Texture and knockback fixes were locally accepted; some visual animation and model-switching cases still require validation. |
+| Stability & compatibility | 🛠 In progress | An ActorProxy renderer-null crash was identified and a fix built, but restart verification is pending. Map-transition and game-exit crashes are not confirmed fixed. |
 
-**Scope note:** Benchmarks and functional tests were performed in specific scenes only; they are not guarantees of general performance or stability.
+**Evidence:** [Current status](CURRENT_STATE.md) · [Native combat progress](docs/PLAN_NATIVE_COMBAT_2026-10-12.md) · [Visual/combat worklist](docs/PLAN_VISUAL_COMBAT_2026-10-12.md).
+
+**Scope note:** Screenshots document rendering and UI, not automatically successful shield blocks or native TNT damage. Performance numbers and acceptance tests are scene-specific.
 
 ## Requirements
 
@@ -165,25 +193,29 @@ The native xmake target has an optional SDK-dependent configuration. **The gener
 
 ## Roadmap
 
-- [x] Establish shared-memory protocol and in-process DX12 UI composition
-- [x] Demonstrate Eve/Minecraft mode switching, Minecraft inventory and block placement
-- [x] Demonstrate selected native entities, lighting, pearls and TNT particles
-- [ ] Fix remaining player/entity textures, hands and animation smoothness
-- [ ] Improve mob knockback, bow/projectile rendering and combat verification
-- [ ] Resolve map-transition and exit crashes; improve world-state cleanup
-- [ ] Extend entity behavior, collision and physics parity
-- [ ] Implement and verify Elytra support
-- [ ] Provide reproducible builds, installer packaging and public Releases
+- [x] Establish shared-memory protocol and in-process DX12 UI compositing
+- [x] Demonstrate Eve/Minecraft switching, interactive creative inventory and registered block placement
+- [x] Demonstrate native-rendered entities, lighting, pearls and visible TNT particles in selected scenes
+- [x] Verify ordinary enemy registration, real native HP reduction and survival-mode incoming damage with Eve protection
+- [x] Demonstrate basic Elytra flight (some behaviors still unverified)
+- [ ] Verify shield-facing/blocked damage and the new hit-source-direction fix in-game
+- [ ] Re-test the ActorProxy renderer fix after restart; validate arrows, bow visuals and enemy TNT damage
+- [ ] Address outstanding model/hand animation edge cases and extend mob behavior
+- [ ] Resolve remaining map-transition and exit crashes; complete regression coverage
+- [ ] Verify Elytra dive/fireworks/durability and expand entity/physics parity
+- [ ] Provide reproducible clean builds, packaged installer and public Releases
 
-Progress and testing evidence: [CURRENT_STATE.md](CURRENT_STATE.md) · [Native-world repair notes](docs/REPAIR_2026-10-11_NATIVE_WORLD.md).
+Latest progress: [CURRENT_STATE.md](CURRENT_STATE.md) · [Native combat work](docs/PLAN_NATIVE_COMBAT_2026-10-12.md) · [Visual combat validation](docs/PLAN_VISUAL_COMBAT_2026-10-12.md).
 
 ## Known limitations
 
 - Not ready for general end-user installation; expected bugs and incomplete features.
-- Some game map transitions, mode-specific visuals and exit paths are not fully stable.
-- Vanilla mob AI, boats on water, advanced projectiles and Elytra are incomplete or unverified.
-- Native texture/material behavior may differ between areas of Stellar Blade.
-- Builds that depend on generated Stellar Blade SDK headers require separately obtained, lawfully usable dependencies.
+- Some game map transitions and exit paths remain unstable; a Minecraft ActorProxy renderer-null crash has a code fix pending in-game restart verification.
+- Shield direction/blocking, native-enemy TNT damage and several bow/arrow scenarios remain unverified or incomplete.
+- Basic Elytra flight has been demonstrated, but advanced flying mechanics and durability scenarios are not fully accepted.
+- Full vanilla mob AI, boats on water and some character/hand animation cases are not yet supported or fully verified.
+- Native texture/material behavior may differ between Stellar Blade areas.
+- Native builds requiring generated Stellar Blade SDK headers need separately obtained, lawfully usable dependencies.
 - No multiplayer support is claimed.
 
 ## Contributing & Credits
