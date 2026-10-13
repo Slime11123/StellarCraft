@@ -95,3 +95,18 @@ steam_autocloud.vdf
 /docs/**/*.jar
 **/__pycache__/
 *.pyc
+# Public repo safety: developer-local instructions and reference notes
+/AGENTS.md
+/START_HERE.md
+/docs/GTA5_PASSTHROUGH_ANALYSIS.md
+
+# Keep high-volume diagnostic snapshots and pre-install backups local
+/docs/combat-integration-*/
+/docs/hit-reaction-*/
+/docs/jump-heavy-*/
+/docs/movement-elytra-*/
+/docs/visual-combat-five-*/
+/docs/elytra-visual-*/
+
+# Per-machine generated paths
+/tools/combat-latest-candidate-path.txt
