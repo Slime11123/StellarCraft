@@ -226,4 +226,6 @@ StellarCraft takes architectural inspiration from [SkyCraft](https://github.com/
 
 ## License
 
+See [Third-party notices](THIRD-PARTY-NOTICES.md) for upstream copyright and license terms.
+
 Project-authored code is provided under the [MIT License](LICENSE), subject to any applicable third-party notices and licenses. External tools, libraries, games, artwork and assets remain the property of their respective owners; the project's MIT license does **not** override their terms.

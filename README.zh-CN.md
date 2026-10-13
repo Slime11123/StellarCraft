@@ -226,4 +226,6 @@ StellarCraft 的架构受 [SkyCraft](https://github.com/chasmlol/SkyCraft) 启�
 
 ## 开源协议
 
+请参阅 [第三方版权声明](THIRD-PARTY-NOTICES.md)，了解 SkyCraft 等上游项目的版权与许可条款。
+
 项目原创代码使用 [MIT License](LICENSE)，第三方组件遵循各自的许可证。其他游戏、软件、素材和资产仍归原权利人所有；项目 MIT 许可证不覆盖第三方内容的权利与限制。

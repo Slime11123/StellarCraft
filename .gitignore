@@ -86,3 +86,12 @@ steam_autocloud.vdf
 
 # Local reference repository
 /tools/stellar-blade-control-panel-reference/
+
+# Public repository: private developer handoff and binary backups
+/plan.md
+/docs/AGENTS_PRE_MIGRATION_2026-10-11.md
+/tools/combat-backup-path.txt
+/docs/**/*.dll
+/docs/**/*.jar
+**/__pycache__/
+*.pyc

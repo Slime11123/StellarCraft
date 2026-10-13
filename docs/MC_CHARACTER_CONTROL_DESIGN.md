@@ -473,7 +473,7 @@ accessor.stellarcraft$renderItemInHand(new PoseStack(), camera, partialTick);   
 
 | 产物 | 构建 | 部署路径 |
 |---|---|---|
-| `stellarcraft-0.1.0.jar` | `JAVA_HOME="C:/Users/StickySlime/jdk-21.0.12.1+1" "<gradle-8.8>/bin/gradle.bat" build --no-daemon` | `D:\Release 2.7.4\.minecraft\versions\1.20.1-Fabric 0.19.5\mods\` |
+| `stellarcraft-0.1.0.jar` | `JAVA_HOME="C:/path/to/jdk-21" "<gradle-8.8>/bin/gradle.bat" build --no-daemon` | `D:\Release 2.7.4\.minecraft\versions\1.20.1-Fabric 0.19.5\mods\` |
 | `stellarcraft_shm.dll` | `sb-mod/编译shm.bat` | `…\SB\Binaries\Win64\ue4ss\Mods\StellarCraft\` |
 | `overlay.exe` | `sb-mod/build_overlay9.bat`（编译）→ `build_overlay6.bat`（链接） | `…\SB\Binaries\Win64\` |
 | `main.lua` | 自编 `luac.exe -p lua/main.lua` 验语法 | `…\ue4ss\Mods\StellarCraft\Scripts\` |
@@ -506,8 +506,8 @@ accessor.stellarcraft$renderItemInHand(new PoseStack(), camera, partialTick);   
 
 ```bash
 # MC（注意 编译MC.bat 指向 jdk-17，是错的）
-JAVA_HOME="C:/Users/StickySlime/jdk-21.0.12.1+1" \
-  "C:/Users/StickySlime/.gradle/wrapper/dists/gradle-8.8-bin/dl7vupf4psengwqhwktix4v1/gradle-8.8/bin/gradle.bat" \
+JAVA_HOME="C:/path/to/jdk-21" \
+  "C:/path/to/gradle-8.8/bin/gradle.bat" \
   build --no-daemon
 
 # 剑星 DLL / overlay

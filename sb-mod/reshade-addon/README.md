@@ -42,7 +42,7 @@ Mixin 改动类，用 TinyRemapper 按本机 1.20.1 mappings 从 named 转为 in
 可重复执行：
 
 ```powershell
-& ..\..\mc-mod\build-dx12-jar.ps1 -JdkDirectory 'C:\Users\StickySlime\jdk-21.0.12.1+1'
+& ..\..\mc-mod\build-dx12-jar.ps1 -JdkDirectory 'C:\path\to\jdk-21'
 ```
 
 产物为 `mc-mod/build/libs/stellarcraft-0.1.0-dx12.jar`。此脚本依赖复制项目中保留的
@@ -58,7 +58,7 @@ Mixin 改动类，用 TinyRemapper 按本机 1.20.1 mappings 从 named 转为 in
 关闭剑星与 MC 后，可用安装脚本重新部署：
 
 ```powershell
-& .\install.ps1 -ReShadeRuntime 'C:\Users\StickySlime\Documents\Codex\2026-10-08\c-users-stickyslime-workbuddy-2026-10\work\reshade-dist\ReShade64.dll'
+& .\install.ps1 -ReShadeRuntime 'C:\path\to\ReShade64.dll'
 ```
 
 必须使用支持 add-on 的完整 ReShade runtime。脚本备份已有 runtime、配置、插件、
