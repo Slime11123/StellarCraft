@@ -3,6 +3,7 @@ local native={X=0,Y=0,Z=90}
 local height,ceiling,normal=40,1000,1
 local pawn={CapsuleComponent={GetScaledCapsuleHalfHeight=function() return 90 end}}
 function pawn:IsValid() return true end
+function pawn:GetAddress() return 100 end
 function pawn:K2_GetActorLocation() return {X=native.X,Y=native.Y,Z=native.Z} end
 function pawn:K2_SetActorLocation(loc,sweep)
     if not sweep then native={X=loc.X,Y=loc.Y,Z=loc.Z};return end
@@ -16,7 +17,7 @@ function glib:LineTraceSingle(_,start,finish,channel,complex,ignored,debug,hit)
     hit.Location={X=start.X,Y=start.Y,Z=height};hit.Normal={X=0,Y=0,Z=normal}
     return height<=start.Z and height>=finish.Z
 end
-local env=setmetatable({require=function() return {} end,print=function() end,
+local env=setmetatable({require=function(name) return name=="world_lifecycle" and {new=function()return {}end} or {} end,print=function() end,
     StaticFindObject=function() return glib end}, {__index=_G})
 env.pawn=pawn
 env.reset=function(h,c,n) height=h;ceiling=c;normal=n or 1;native={X=0,Y=0,Z=90} end

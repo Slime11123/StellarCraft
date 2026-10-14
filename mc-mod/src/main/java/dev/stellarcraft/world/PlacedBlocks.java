@@ -16,12 +16,14 @@ public final class PlacedBlocks {
     private static ClientLevel owner;
     private static Path file;
     private static int worldId;
+    private static int nativeMapId;
+    private static long nativeEpoch;
     private static boolean dirty;
     private static long lastSaved;
     private PlacedBlocks() {}
     public static synchronized void ensureLevel(ClientLevel level) {
         if(level==owner) return;
-        save();owner=level;blocks.clear();offsets.clear();file=null;dirty=false;
+        save();owner=level;blocks.clear();offsets.clear();file=null;dirty=false;nativeMapId=0;nativeEpoch=0;
         var server=Minecraft.getInstance().getSingleplayerServer();
         if(level==null || server==null) return;
         Path root=server.getWorldPath(net.minecraft.world.level.storage.LevelResource.ROOT).toAbsolutePath().normalize();
@@ -32,6 +34,7 @@ public final class PlacedBlocks {
         try {
             if(Files.exists(file)) {
                 CompoundTag data=NbtIo.readCompressed(file.toFile());ListTag list=data.getList("Blocks",10);
+                nativeMapId=data.getInt("NativeMapId");nativeEpoch=data.getLong("NativeEpoch");
                 for(int i=0;i<Math.min(list.size(),8192);i++) {
                     CompoundTag entry=list.getCompound(i);
                     BlockState state=NbtUtils.readBlockState(level.holderLookup(Registries.BLOCK),entry.getCompound("State"));
@@ -56,6 +59,18 @@ public final class PlacedBlocks {
     public static synchronized long[] positions() {return blocks.keySet().stream().mapToLong(Long::longValue).toArray();}
     public static synchronized int count() {return blocks.size();}
     public static synchronized int worldId() {return worldId;}
+    public static synchronized long nativeEpoch() {return nativeEpoch;}
+    /** Null means first observation/same map; a map (even empty) means clear old content. */
+    public static synchronized Map<Long,BlockState> enterNativeMap(int mapId) {
+        if(mapId==0 || nativeMapId==mapId) return null;
+        boolean changed=nativeMapId!=0;
+        nativeMapId=mapId;dirty=true;
+        if(!changed) {save();return null;}
+        nativeEpoch++;
+        var previous=new LinkedHashMap<>(blocks);
+        blocks.clear();offsets.clear();save();
+        return previous;
+    }
     public static synchronized boolean contains(long packed) {return blocks.containsKey(packed);}
     public static synchronized BlockState state(long packed) {return blocks.get(packed);}
     public static synchronized double offset(long packed) {return offsets.getOrDefault(packed,0.0);}
@@ -67,6 +82,7 @@ public final class PlacedBlocks {
         if(!dirty || file==null) return;
         try {
             CompoundTag data=new CompoundTag();ListTag list=new ListTag();
+            data.putInt("NativeMapId",nativeMapId);data.putLong("NativeEpoch",nativeEpoch);
             for(var block:blocks.entrySet()) {
                 CompoundTag entry=new CompoundTag();entry.putLong("Pos",block.getKey());
                 entry.put("State",NbtUtils.writeBlockState(block.getValue()));list.add(entry);

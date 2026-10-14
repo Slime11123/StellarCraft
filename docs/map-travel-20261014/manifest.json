@@ -1,0 +1,68 @@
+{
+  "protocolVersion": 6,
+  "feedbackFormat": "SCFEED3",
+  "requiresAtomicDeployment": true,
+  "installed": true,
+  "inGameVerified": false,
+  "files": [
+    {
+      "source": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\sb-mod\\build\\manual\\stellarcraft_shm.dll",
+      "candidate": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\docs\\map-travel-20261014\\candidate\\stellarcraft_shm.dll",
+      "sha256": "52BA1646BAA2DC1FF9E3252796FD56BAB4A285A0A85297B47AC40DF369BEDEEE",
+      "destination": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\stellarcraft_shm.dll",
+      "previouslyExisted": true,
+      "previousSha256": "775D54714BA82F571120530CD37AFC20979F2A2086120DC36365283107189113"
+    },
+    {
+      "source": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\mc-mod\\build\\libs\\stellarcraft-0.1.0-dx12.jar",
+      "candidate": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\docs\\map-travel-20261014\\candidate\\stellarcraft-0.1.0.jar",
+      "sha256": "98125B0C4BD4B4AD50C73F39F064A850EAA452A7872AA94E2A246993FF57DC8F",
+      "destination": "D:\\Release 2.7.4\\.minecraft\\versions\\1.20.1-Fabric 0.19.5\\mods\\stellarcraft-0.1.0.jar",
+      "previouslyExisted": true,
+      "previousSha256": "5C0CC56ECCC1B81BD4BDA89DEE08EB9B1A210B15AFFA5B8997D379D5444126A5"
+    },
+    {
+      "source": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\sb-mod\\lua\\block_visuals.lua",
+      "candidate": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\docs\\map-travel-20261014\\candidate\\block_visuals.lua",
+      "sha256": "5E89B096F3B82AE66B2CD35A4C9077A47CCA38AF6928805C2F4C18816DA2EA6D",
+      "destination": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\block_visuals.lua",
+      "previouslyExisted": true,
+      "previousSha256": "8C9B18A38722DB2181F6C06BBCB5614873C3718AA5819C5DB6B1DC15D8768709"
+    },
+    {
+      "source": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\sb-mod\\lua\\main.lua",
+      "candidate": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\docs\\map-travel-20261014\\candidate\\main.lua",
+      "sha256": "D05D227A045BC53059CA851BA035C75AB2AD47CE169CA7EB6B892CE221F3615D",
+      "destination": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\main.lua",
+      "previouslyExisted": true,
+      "previousSha256": "56C6477D892AF2809AEEDE2BE8A05F8ED51BC9FD6CDA2F1B27F5102B36EA9657"
+    },
+    {
+      "source": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\sb-mod\\lua\\native_particles.lua",
+      "candidate": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\docs\\map-travel-20261014\\candidate\\native_particles.lua",
+      "sha256": "835D4002B457223378EB172F8343C6642681152519E3CD1842C8D17CC606D63F",
+      "destination": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\native_particles.lua",
+      "previouslyExisted": true,
+      "previousSha256": "178E5674A58F30346FB050840E6A2D5F1BDAD438402247AE38C16E7898C21CED"
+    },
+    {
+      "source": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\sb-mod\\lua\\native_world.lua",
+      "candidate": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\docs\\map-travel-20261014\\candidate\\native_world.lua",
+      "sha256": "B79A75749D8E0F68BD96653CB0C9BACA0D164246EC9ABFA5EBE057F340B25C37",
+      "destination": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\native_world.lua",
+      "previouslyExisted": true,
+      "previousSha256": "7C8EA5CDBECE311A082769E58FC28C2E82E212CED839C3A6501A0FD15F8FB99A"
+    },
+    {
+      "source": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\sb-mod\\lua\\world_lifecycle.lua",
+      "candidate": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\docs\\map-travel-20261014\\candidate\\world_lifecycle.lua",
+      "sha256": "4C135D91FF12F6B9F9236B93C93DDE040ACD8952C689BF960D0817C6132B3D4F",
+      "destination": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\world_lifecycle.lua",
+      "previouslyExisted": false
+    }
+  ],
+  "installedDate": "2026-10-14",
+  "qaBytes": 0,
+  "gameProcessesBeforeInstall": 0,
+  "assistantStartedGame": false
+}

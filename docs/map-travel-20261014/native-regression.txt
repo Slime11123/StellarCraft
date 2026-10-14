@@ -1,0 +1,4 @@
+PASS: native-player-gate rebuilt: 557 mutated bytes and metadata rejection; late worker generation and disabled queue rejection.
+PASS: native-combat-gate rebuilt: 2989 mutated bytes; LIGHT/HEAVY ABI, empty return and fault rejection.
+PASS: actual DLL/Lua v6 event decoder, map changes/invalidations and preserved control bits.
+PASS: actual DLL/Lua 17 motion/pose regression cases.

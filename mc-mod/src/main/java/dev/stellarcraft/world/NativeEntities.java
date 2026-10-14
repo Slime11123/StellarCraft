@@ -25,9 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
 /** The integrated server owns native entities; hidden MC entities never enter this registry. */
 public final class NativeEntities {
     public static final String TAG="stellarcraft.native";
+    private static final String EPOCH_TAG="stellarcraft.epoch.";
     private static final ThreadLocal<Boolean> spawning=ThreadLocal.withInitial(()->false);
     private static final ConcurrentHashMap<Integer,Entity> entities=new ConcurrentHashMap<>();
     private static volatile List<Snapshot> snapshot=List.of();
+    private static volatile long snapshotEpoch;
     private static volatile int currentWorld;
     private static volatile net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> dimension;
     private static long feedbackSeq;
@@ -47,12 +49,31 @@ public final class NativeEntities {
                            float width,float height,int kind,int fuse,float yaw,float headYaw,float bodyYaw,
                            float pitch,int hurtTime,int deathTime,float hurtDir) {}
     private NativeEntities() {}
+    private static void stampEpoch(Entity e) {
+        e.getTags().removeIf(tag->tag.startsWith(EPOCH_TAG));
+        e.addTag(EPOCH_TAG+PlacedBlocks.nativeEpoch());
+    }
+    private static boolean acceptsEpoch(Set<String> tags,long epoch) {
+        return tags.contains(EPOCH_TAG+epoch) || epoch==0 && tags.stream().noneMatch(tag->tag.startsWith(EPOCH_TAG));
+    }
+    private static boolean currentEpoch(Entity e) {
+        long epoch=PlacedBlocks.nativeEpoch();
+        if(!acceptsEpoch(e.getTags(),epoch)) return false;
+        e.addTag(EPOCH_TAG+epoch);return true;
+    }
+    /** Integrated server thread only; never touches players or hidden/unregistered mobs. */
+    public static void clearForMapChange(ServerLevel level) {
+        snapshot=List.of();nativeTargets=List.of();
+        for(Entity e:List.copyOf(entities.values()))
+            if(e.level()==level && !currentEpoch(e)) e.discard();
+        feedbackAt.clear();visibleToPlayer.clear();embedded.clear();arrowHits.clear();arrowConfirmed.clear();arrowImpulses.clear();
+    }
     public static boolean owns(Entity e) {
         if(e==null) return false;
         Entity owner=entities.get(e.getId());
         return owner!=null&&owner.getUUID().equals(e.getUUID());
     }
-    public static List<Snapshot> snapshots() {return snapshot;}
+    public static List<Snapshot> snapshots() {return snapshotEpoch==PlacedBlocks.nativeEpoch()?snapshot:List.of();}
     public static boolean simulates(Entity e) {
         return NativeMovement.active()&&dimension!=null&&e.level().dimension().equals(dimension)
             &&System.currentTimeMillis()-feedbackAt.getOrDefault(e.getUUID(),0L)<500;
@@ -64,6 +85,7 @@ public final class NativeEntities {
             boolean arrow=e instanceof AbstractArrow a&&!(a instanceof net.minecraft.world.entity.projectile.ThrownTrident)
                 &&NativeMovement.owns(a.getOwner())&&ControlStateMachine.isSteve();
             if(spawning.get() || tnt || arrow || e.getTags().contains(TAG)) {
+                if(spawning.get() || !e.getTags().contains(TAG)) stampEpoch(e);
                 e.addTag(TAG);entities.put(e.getId(),e);e.noPhysics=true;
                 if(e instanceof AbstractArrow) {
                     arrowConfirmed.put(e.getUUID(),e.position());
@@ -79,11 +101,13 @@ public final class NativeEntities {
         });
         ServerTickEvents.END_SERVER_TICK.register(server->{
             if(!NativeMovement.active()) {snapshot=List.of();return;}
+            long epoch=PlacedBlocks.nativeEpoch();
             applyFeedback();
             ArrayList<Snapshot> next=new ArrayList<>();
             for(Entity e:entities.values()) {
                 if(e.isRemoved()) {entities.remove(e.getId(),e);continue;}
                 if(dimension==null||!e.level().dimension().equals(dimension)) continue;
+                if(!currentEpoch(e)) {e.discard();entities.remove(e.getId(),e);continue;}
                 e.noPhysics=true;e.fallDistance=0;
                 if(e instanceof Mob mob && mob.isAlive()&&simulates(e)) {
                     var player=e.level().getNearestPlayer(e,24);
@@ -128,6 +152,7 @@ public final class NativeEntities {
                     e instanceof LivingEntity living?living.getHurtDir():0));
             }
             snapshot=List.copyOf(next);
+            snapshotEpoch=epoch;
         });
     }
     public static void clientTick() {
@@ -140,7 +165,7 @@ public final class NativeEntities {
                 .map(e->new NativeTarget(e.sbUid(),e.getBoundingBox(),e.mirroredHealth())).toList();
             targetsAt=System.currentTimeMillis();
         } else nativeTargets=List.of();
-        if(level!=null) for(var state:snapshot) {
+        if(level!=null) for(var state:snapshots()) {
             var entity=level.getEntity(state.id());
             if(entity==null||!entity.getUUID().equals(state.uuid())) continue;
             if(entity instanceof PrimedTnt t) t.setFuse(state.fuse());
@@ -307,16 +332,20 @@ public final class NativeEntities {
             victim.setDeltaMovement(victim.getDeltaMovement().add(victim.position().subtract(center).normalize().scale(exposure)));
         }
         ExplosionDamageSink.blast(t.getUUID(),level,center);
-        Minecraft.getInstance().execute(()->NativeWorldEvents.send(3,0,center.x,center.y,center.z,radius,0));
+        int nativeWorld=NativeWorldEvents.worldToken();
+        Minecraft.getInstance().execute(()->NativeWorldEvents.send(3,0,center.x,center.y,center.z,radius,0,nativeWorld));
         System.out.println("[StellarCraft-TNT] native blast at="+center+" damage whitelist=native entities/SB enemies");
     }
     private static void applyFeedback() {
         String[] chosen=null;long best=feedbackSeq;
+        int nativeWorld=NativeWorldEvents.worldToken();
+        if(nativeWorld==0) return;
         for(int slot=0;slot<2;slot++) try {
             String[] lines=Files.readString(DIR.resolve("entities-feedback."+slot+".txt")).split("\\R");
-            if(lines.length<3||!lines[0].equals("SCFEED2")) continue;
+            if(lines.length<3||!lines[0].equals("SCFEED3")) continue;
             String[] header=lines[1].split(" ");long seq=Long.parseLong(header[0]),time=Long.parseLong(header[1]);
             int world=Integer.parseUnsignedInt(header[2]),count=Integer.parseInt(header[3]);
+            if(header.length!=5 || Integer.parseUnsignedInt(header[4])!=nativeWorld) continue;
             if(seq<=best||world!=currentWorld||Math.abs(System.currentTimeMillis()-time)>400||count<0||count>64||lines.length!=count+3||!lines[count+2].equals("END "+seq)) continue;
             chosen=lines;best=seq;
         } catch(Exception ignored) {}
@@ -351,7 +380,7 @@ public final class NativeEntities {
                 }
                 if(e instanceof ThrownEnderpearl pearl && pearl.getOwner() instanceof net.minecraft.server.level.ServerPlayer player) {
                     Vec3 landing=new Vec3(row[1],row[2],row[3]);
-                    Minecraft.getInstance().execute(()->NativeWorldEvents.send(8,0,landing.x,landing.y,landing.z,0,0));
+                    Minecraft.getInstance().execute(()->NativeWorldEvents.send(8,0,landing.x,landing.y,landing.z,0,0,nativeWorld));
                     e.discard();
                 }
             }

@@ -1,3 +1,63 @@
+最新 2026-10-14（低帧率/刷日志回归已修正安装，帧率待实机）：用户报告帧数极低。只读当前日志：重力校准/RootMotion/移动接管各1176次、飞行开启345次，主要是每帧重复初始化而非持续tick异常。原因是上轮每帧新建Controller/Pawn包装，而接管逻辑用Lua包装不等判断切换；另有每Tick全局查控制器开销。已改为epoch+原生PC/Pawn地址判身份，胶囊/地面缓存也按地址；ACTIVE使用当前epoch上下文与Controller.Pawn，仍核对Pawn/World身份，仅REBINDING全局查找，并将Controller EndPlay纳入失效屏障。切图清空功能和全部生命周期/伤害门禁保留，未关闭EVE联动。
+
+新1000不同包装回归在旧源码失败、修正后保持单次接管和最初RootMotion保存值；1000次ACTIVE准备不增加全局扫描，Pawn/Controller销毁重绑、旧Tick、运动/飞行/F4、台阶及战斗回归/语法通过。只读日志时游戏已关闭，核查无剑星/Java后备份并仅安装main.lua，源/候选/部署SHA256 CBB283F7F30573FC083E615EFCA7D3058A4F59148C91724A43CF634682CB54E7；其余六组件与map-clear-20261014清单一致。证据/回退：docs/perf-wrapper-20261014/DIAGNOSIS.md、manifest.json、installed-before-main.lua。未启动游戏、输入或写QA指令。
+
+下一步由用户普通启动/操作后只读新日志确认移动初始化不再逐帧重复，再根据用户帧率和新Profile判断实际改善；修正后FPS尚未测量，不宣称全部性能/原两类崩溃通过。游戏操作暂停仍生效，切图清空仍待实机。以下为历史记录。
+
+最新 2026-10-14（用户变更：切图清空旧 MC 生物/方块，已部署未实机）：已将上一候选“新地图恢复旧账本”改为按稳定地图名称变化清空。SbState原保留0x3C发布mapId，独立于带epoch的levelId；v6布局/大小与C导出ABI不变，Lua私有第14参数配套更新。首次观察只关联；真正换地图时账本方块/偏移清空并持久保存，集成服务端无掉落移除登记方块、丢弃登记旧实体；实体持久代次标签和渲染快照阻止旧生物由卸载区块重新出现。返回旧地图不恢复；F4、同地图重绑/复活保留。只清登记MC内容，不删除后台MC地形/生物或剑星场景/Eve/NPC。
+
+DLL/JAR构建/remap、实际账本空NBT持久化/往返清空/无方块仍清实体代次、旧实体标签/快照拒绝、新实体接受、mapId稳定且与运行token独立、实际DLL/Lua第14参数与失效/省略清零、生命周期/运动及17项DLL运动姿态和既有Java命中/跳劈回归通过。仅离线；实际服务端删除/保存重入与两类崩溃消失均未验收。未改动真实MC存档、启动游戏、发送输入或写QA指令。
+
+确认无剑星/Java、QA0字节后，备份旧七组件并成套安装；源/候选/部署哈希一致。证据/清单/回退：docs/map-clear-20261014/IMPLEMENTATION.md、manifest.json、before-install/。当前DLL E30E74B7A7DB85660113EEA010C0A8A7C4F9526C23655942587EDEF7B35ABC47；main.lua 2406903D4FB4C3A40AF4E0732FB928E01B2740265712A77A13FF57F416A03824；JAR A767AFBA7371B27BE3B775538A6AC7422F4247268B308AD1F45459B417A884FF。addon未改，须使用配套DLL/Lua/JAR。
+
+下一步仅在用户明确恢复游戏测试后，由用户普通操作验证换地图清空、回原地图不恢复、F4保留及新地图重新放置/生成。游戏测试暂停仍生效；两类崩溃与重受击原未验收状态保留。下方“重建/重同步旧地图内容”和旧部署哈希为历史，已被本次用户要求替代。
+
+最新 2026-10-14（EVE 切图/切回 EVE 崩溃：生命周期候选已实施并部署，实机未验收）：按 docs/REPAIR_EVE_MAP_TRAVEL_CRASH_2026-10-13.md 实施 World phase/epoch、LoadMap 预卸载及 InitGameState/EndPlay/ClientRestart/QuitGame 门禁。匹配 UE4SS d3d1004 源码证实 LoadMap 仅分发首个模组；已避开 BPModLoader 占用的 PostHook，以当前无冲突的 PreHook 停机，实际回调覆盖/顺序仍待实机核查。卸载只遗忘旧 UObject，不 IsValid/Destroy；旧 Tick、F4、命中及跨图事件拒绝。目标/来源只缓存标量并从新注册表复核，绕开 UEHelpers 旧控制器缓存。保持 v6 布局/现有伤害与受击门禁，levelId 包含 epoch，世界事件及 SCFEED3 反馈验证标识，MC 方块按新原生世界重同步。
+
+DLL/JAR 构建/remap、Lua 语法和生命周期毒化旧对象/同地址重入/旧闭包/旧事件回归、现有战斗/运动/台阶/身体/粒子/方块回归通过；557/2989 字节变异、实际 Java 发布及实际 DLL/Lua 事件/地图和17项运动姿态检查通过。两份原始转储/日志已备份；exe 与 UE4SS 的 timestamp/SizeOfImage/RSDS 均匹配。A 类对象索引读取及 B 类 RDX+39 近空写分别保留，B 类具体参数来源未确认，不能宣称两类崩溃已修复。
+
+确认无剑星/Java进程、QA0字节后，备份旧六组件并安装 DLL+五份Lua+JAR，七份源/候选/部署哈希一致。清单/备份/证据：docs/map-travel-20261014/manifest.json、before-install/。当前 DLL 52BA1646BAA2DC1FF9E3252796FD56BAB4A285A0A85297B47AC40DF369BEDEEE；main.lua D05D227A045BC53059CA851BA035C75AB2AD47CE169CA7EB6B892CE221F3615D；JAR 98125B0C4BD4B4AD50C73F39F064A850EAA452A7872AA94E2A246993FF57DC8F。其余哈希在manifest。布局仍v6，但本次组件须成套更换，addon未改。没有启动游戏、发送输入或写QA指令。
+
+下一步：等待用户明确恢复游戏测试后，由用户普通操作，多次验证原失败切图/MC→EVE/退出、新地图相机控制及方块重建，分别核查两类签名和生命周期通知；此前轻击验收保留，重受击/Timed HitStun仍未通过，本轮未扩展该任务。当前暂停要求优先，不沿用下方历史“请启动/采样”的邀请。以下为历史记录。
+
+最新 2026-10-14（Timed HitStun时长覆盖机制已明确，等待原版强击只读样本）：继续离线追真实创建链，确认1BC58A0复制0x9C创建参数到实例+68；1BC64C0..1BC64EB从实例+74读取正数Time覆盖，未提供时才读EffectTable+19C默认0.1。因此原版0.3秒应写入本地创建参数+0C并由原生初始化消费，不直接修改存活效果或状态内存。
+
+进一步发现1AD7880创建的是另一层效果登记对象（其+58存FName），不能当作5C0BD18运行实例（+58为目标owner）调用/读取，否则会错用对象类型。登记对象/运行实例/创建参数/目标owner必须分别认证。当前仍缺独立调用的完整实参、目标免疫、真实实例和到期撤销证据，未启用生产Timed HitStun、不宣称重动画修复。
+
+新增probe_hit_resources.py --watch-hit-stun（1..45秒有界）：仅VM_READ/QUERY，校验exe/PID/base，读取当前server manager+120稀疏表、有效位/活ID/实例vtable5C0BD18、HitStun ID2003000、目标owner及entity关联，保存创建参数和时长、观察出现/消失；改变或无效样本拒绝，不调用游戏函数/输入/写入。timeField90未确认语义，不称elapsed；样本缺失不等于已证明自动撤销原因。只读工具语法通过，尚未实采这一模式。
+
+进程核查无剑星。为补齐原版效果创建与恢复证据，已请用户自行启动剑星并停留Eve普通敌人区域、回复“已进入”，暂不攻击/不启动MC；下一步启动30秒只读采样后提示用户Eve原版强击一次。此前MC跳劈分类和7次Strong Show创建不重新测试。本轮未构建/部署/启动游戏或发送输入。当前部署哈希保持775D54714BA82F571120530CD37AFC20979F2A2086120DC36365283107189113。以下为历史记录。
+
+最新 2026-10-14（Timed HitStun独立调用审查继续，未接入未认证API）：按剩余P2继续离线，不重复测试跳劈分类/Show创建/轻击。hit-stun-evidence.py验证采样HitStun ID2003000仅BlockMove/BlockSkill、无Stat计算、无关联Show/链效果、定时LifeType2；8项错误ID/HP计算/状态/生命周期/链效果/Show负例拒绝通过。此为资源纯度，不是调用或恢复认证，nativeTimedInvocationCertified=false。
+
+核对当前exe中的反射注册表：SBApplyEffect native exec=269A020，26A8D50是返回UFunction的getter跳板（跳往CFD0E10），不是效果实现；不能将SDK声明、getter地址或字符串注册当成可调用效果ABI。当前native exec 269A020..269A15D只解析FName和ActorGUID然后返回，无效果创建调用，因此已排除使用此调试接口获得硬直的路线，不调用它、不改内存补救。证据effect-alias-references.txt、timed-effect-dispatch.txt。
+
+已追到真实效果owner/实例链：effect vtable5C0BD18、目标owner+58/来源owner+60，独立alias解析1BDA730、创建/执行候选1BDA9D0、初始化候选1BDC710及生命周期函数1BC3F10..1BC55A7。原来1B171A0其实是转发客户端命中表现的队列，不能冒充服务端Timed HitStun入口；诊断标签已纠正。通用效果链还会处理其他效果、生命值和网络事件，必须完整确认实参、0.3时间覆盖、目标免疫和撤销分支后才能选独立调用，不能整段重放。目前这些尚未完成认证，未新增生产效果调用或部署。
+
+当前安装仍Show返回值修正版775D54714BA82F571120530CD37AFC20979F2A2086120DC36365283107189113，重受击实机仍未通过。游戏进程核查无剑星，助手未启动游戏/发送输入/新增QA。下一步继续真实效果创建的Time覆盖与immune13/14/17和到期/死亡/地图撤销证明；暂不要求用户再攻击或重启。以下为历史记录。
+
+最新 2026-10-14 21:26（返回值修正版实测仍仅轻击；Show创建已确认，补到原版HitStun配置）：用户完成攻击并明确仍然只有轻击效果。24条HitContext中13条jumpHeavy=true，7条selectedHeavy=true/showRequested=true，未出现native show creation declined。新DLL已检查原生返回指针，因此7次确实创建了Strong Show；不再把定位集中于跳劈识别、创建失败或资源配置为空。当前重受击仍未通过。脱敏战斗日志/result.json在docs/jump-heavy-20261014/test-2126/，游戏由用户操作，助手无输入。
+
+只读PID2260当前普通角色与原生EffectTable；两个采样均拒绝0。原版HitStun行ID2003000，ActorState1=BlockMove(1)、ActorState2=BlockSkill(2)、其余0；StatType=None(0)、CalculationValue=0，Active/Loop/Deactive Show及四类关联效果数组均空；LifeType=2、默认LifeTime=0.1，而原版StrongAttack2_1命中结果显式Time=0.3。当前MC重Show没有配套这个效果。全身动画原版stopAtMove=1；243393AD..243393D5会在移动且无排除条件时清除播放记录。20A4A60读取CharacterMovement速度，角色vtable+680指向4064560（mov rax,[rcx+330];ret），20A6F40读取组件+EA8排除标志。配置证明缺少原版移动/技能阻止配套，是当前主要假设，但尚未获得命中期间动作停止时序，不能断言唯一根因。
+
+下一步审计原版技能命中效果的独立Timed HitStun调用、当前目标免疫BlockMove/BlockSkill/SkillCancel条件、0.3秒到期移除及F4/地图/死亡清理；只允许这一无HP修改的原版效果并尊重免疫，绝不重放SkillDamage、强制改优先级或写状态内存。SDK调试SBApplyEffect没有持续时间参数，默认0.1秒，不能直接拿它冒充原版0.3秒。本轮只增加只读/离线诊断工具，未新增生产调用、构建或部署。暂不需要用户再攻击；继续离线认证配套效果入口后才制作下一候选。以下为历史记录。
+
+最新 2026-10-14（Show返回值修正已备份安装）：用户正常退出后，进程核查确认剑星/Java均关闭。实际候选DLL/Lua事件回归及17项运动/姿态回归通过；核对候选与旧安装哈希，备份旧DLL后安装新版，候选/部署SHA256一致：775D54714BA82F571120530CD37AFC20979F2A2086120DC36365283107189113。备份路径与部署证据见docs/jump-heavy-20261014/show-return-candidate/manifest.json。协议仍v6，Lua/JAR/addon无需更换；QA文件0字节，未启动游戏或发送输入。
+
+本次只修正原生Show空返回被误记成功的缺陷，不能宣称重动画已修复。下一轮由用户正常启动/操作，在普通敌人对比轻击和下降跳劈；读取native show creation declined与selectedHeavy/showRequested，区分未创建Show和已创建但全身动画未表现。轻击/唯一HP保持已验收结果，不重做已通过测试。以下为历史记录。
+
+最新 2026-10-14（原生Show返回值误判已修正，候选待安装）：离线确认1C50396原版调用后在1C5039B测试RAX；2285E29返回Show指针，2285E3C返回0。现有native_hit_show::Show误声明void，invoke在原生正常拒绝时仍返回true，因此旧selectedHeavy/showRequested日志不能证明引擎创建了Show。已改为返回void*并检查非空；原生空返回记native show creation declined，保留HP且不请求第二套Show、不锁止后续命中；仅真正SEH异常记native show call faulted并锁止。普通LIGHT参数、重分支、优先级和伤害保持原样，未将其当全身动画根因或已修复。
+
+DLL构建、2989字节变异门禁、LIGHT/HEAVY九参stub、空返回后恢复/轻击空返回/SEH异常负例、Lua唯一伤害与样式配对回归通过。候选与manifest：docs/jump-heavy-20261014/show-return-candidate/；SHA256 775D54714BA82F571120530CD37AFC20979F2A2086120DC36365283107189113，协议仍v6，仅需更换DLL。实际安装仍旧v6 DLL；PID2228剑星和PID42964 Java在运行，已请求用户正常退出，未备份替换已加载文件、未启动或发送输入。下一步退出后备份安装并核对哈希，再根据原生是否确实创建Show定位重动画接受/停止；重受击未验收。以下为历史记录。
+
+最新 2026-10-14（下降跳劈重受击实机失败；全身动画配置补样完成）：用户明确反馈“仍然只有轻击效果”。上轮27条HitContext中13条jumpHeavy=true、2条selectedHeavy=true；两次重请求落在CH_M_NA_48、GUID1738。仅证明分类/请求已进入链路，不证明全身动作播放，重受击未验收，不能继续标为P2功能完成。保留轻击和唯一HP实现，不重复修改MC跳劈分类。
+
+用户自行启动剑星PID2228并停留Eve，助手仅只读，无游戏输入/QA。custom-paths-2228.json与custom-slots-2228.json均读取110Show/88实际角色，拒绝0。新增诊断只读取此前采样过的角色类，排除AnimInstance误读；FName显示序号取消错误的1000000上限，保留名称块/对象槽/版本/PID校验。全身CustomAnim资源通过角色+1318数组选择，原生20F3A70验证+2248的0x70步长槽、索引、活动状态与优先级。CH_M_NA_48配置及槽存在，静止样本优先级0，排除该类配置为空；六类候选60角色中45满足完整配置、15缺方向配置，不能仅以家族路径认定每个变体可播放。custom-animation-audit.json两项空配置/空槽负例通过。
+
+两个完整Strong动画键customPlayType=0、bodyType=0、index=0、priority=100、stopAtMove=1、retry=0。原生20F3D05..20F3D0A可按优先级拒绝，24364BC也处理播放失败；这些是确定的播放条件，不是已证明的失败根因。静止补样不能证明上轮攻击时槽状态/动画接受/模型权重。原版Strong技能表另有HitStun配置，是否是维持全身播放所需仍未认证，不重放技能伤害、不强制打断、不改原版优先级。新离线反汇编full-play-runtime.txt保存相关入口与方向选择（inverseHitDirection读取Show+70，当前上下文已提供此向量，未发现局部骨骼方向缺失证据）。
+
+本轮只改诊断/审查工具，未改生产战斗源码、构建或部署。当前安装仍candidate-v6/manifest.json四组件。下一步只处理“原版完整Strong请求→动画接受/停止→全身权重”的执行链，定位实际拒绝点后再制作修复候选；暂不要求用户再次攻击。以下为历史记录。
+
 最新 2026-10-13（用户确认轻击通过；跳劈重受击v6已实施/安装，实机待验收）：用户明确轻击已有攻击动画，按通过保留，不重查。按PLAN_MC_JUMP_CRITICAL_NATIVE_HEAVY_HIT_2026-10-13.md实施P0/P1/P2/P3：NativeJumpAttack保存不可变宿主运动快照（UUID、PID、MC世界、地图、传送epoch、时间、真实高度/速度/触地），须证明先离地上升再真实下降，样本<=250ms，原版攻击冷却>0.9且排除疾跑、流体、骑乘、攀爬、失明、滑翔/飞行等。Player.attack HEAD捕获重置前冷却；只拦截一次主目标Entity.hurt调用，在try/finally内限定伤害上下文，横扫/箭矢/TNT不继承重标记，不改fallDistance或MC最终伤害/暴击倍率。实际1.20.1 Player.attack字节码和remap注入点构建检查通过。
 
 协议同步v6，布局仍32字节；weapon低8位类型、bit8跳劈视觉，flags仍唯一serial；元数据和伤害批量逐位匹配，未知位/重标记箭矢及TNT只拒绝视觉。一次有效命中只选择LIGHT或HEAVY。只读用户自行启动的PID52216：110Show/207动画/128条Eve剑技能、155原生实体，拒绝0；StrongAttack2_1 SkillID1001007 HitLevel=1，读取当前target+1AC抗打断门槛。MC映射到普通强击等级1、原生装备加成0，不借用Eve装备属性或强制true。目标当前门槛<=1且原有身份/线程/状态/标签条件全部满足时，六类CH_M_NA_09/11/46/47/48/49选择原版完整StrongAttack的两个CustomAnim方向键；源快照/通知/根子图与IoStore缺失子资源、原生2459E0A..2459E15 null拒绝已审计，完整Strong根无ChangeAttachTo/伤害键，不调用SkillDamage或HitStun。40/45变体路径未认证重分支，28/52原有缺证据，重请求保守降级到可允许的轻反馈；未认证者没有被扩大白名单。

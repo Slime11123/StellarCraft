@@ -188,6 +188,17 @@ static native_hit_context::Context prepare_hit_context(lua_State* L,const native
     return prepare(session,request,result,identity,after,control,target,true,static_cast<uint32_t>(now));
 }
 
+// Lifecycle barrier: owned state only, including when UObjects are already gone.
+extern "C" __declspec(dllexport) int sc_world_barrier_lua(lua_State*) {
+    native_player_damage::enabled=false;
+    ++native_player_damage::worldGeneration;
+    native_player_damage::watched=0;
+    native_player_damage::refreshed=0;
+    std::lock_guard<std::mutex> lock(native_player_damage::hitMutex);
+    native_player_damage::readHit=native_player_damage::nextHit;
+    return 0;
+}
+
 extern "C" __declspec(dllexport) int sc_native_hits_lua(lua_State* L) {
     lua_newtable(L);int index=0;
     // Lua must revalidate the captured enemy through GameThread-only game
@@ -332,7 +343,7 @@ static void write_player_frame(uintptr_t base,
                                                      double x, double y, double z,
                                                      float yaw, float pitch, uint32_t teleport = 0,
                                                      uint64_t motionFrame = 0, uint32_t contacts = 0,
-                                                     double vx = 0, double vy = 0, double vz = 0, uint32_t level = 0)
+                                                     double vx = 0, double vy = 0, double vz = 0, uint32_t level = 0, uint32_t map = 0)
 {
     if (!base) return;
     uint8_t* s = reinterpret_cast<uint8_t*>(base) + kOffSbState;
@@ -370,6 +381,7 @@ static void write_player_frame(uintptr_t base,
     *reinterpret_cast<uint32_t*>(s + 0x0C) = teleport;
     auto* state = reinterpret_cast<P::SbState*>(s);
     state->levelId = (low&P::kSbInGame)?level:0;
+    state->mapId = (low&P::kSbInGame)?map:0;
     state->motionTimeMs = GetTickCount64();
     state->motionFrame = motionFrame;
     state->motionEpoch = GetCurrentProcessId();
@@ -462,7 +474,7 @@ extern "C" __declspec(dllexport) int sc_write_player_lua(lua_State* L)
     write_player_frame(reinterpret_cast<uintptr_t>(g_pBase), flags, x, y, z, yaw, pitch, teleport,
         (uint64_t)luaL_optinteger(L,8,0), (uint32_t)luaL_optinteger(L,9,0),
         luaL_optnumber(L,10,0),luaL_optnumber(L,11,0),luaL_optnumber(L,12,0),
-        static_cast<uint32_t>(luaL_optinteger(L,13,0)));
+        static_cast<uint32_t>(luaL_optinteger(L,13,0)),static_cast<uint32_t>(luaL_optinteger(L,14,0)));
     return 0;
 }
 

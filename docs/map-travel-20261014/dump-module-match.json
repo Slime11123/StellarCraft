@@ -1,0 +1,34 @@
+[
+  {
+    "dump": "UE4CC-Windows-9C5238B7422F167EF5952AA757664457_0000",
+    "module": "SB-Win64-Shipping.exe",
+    "metadataMatch": true,
+    "rsdsMatch": true,
+    "image": 362287104,
+    "timestamp": 1785346932
+  },
+  {
+    "dump": "UE4CC-Windows-9C5238B7422F167EF5952AA757664457_0000",
+    "module": "UE4SS.dll",
+    "metadataMatch": true,
+    "rsdsMatch": true,
+    "image": 24641536,
+    "timestamp": 1750778038
+  },
+  {
+    "dump": "UE4CC-Windows-CDCBF20B43970FCA8FBFD4983F24B8C4_0000",
+    "module": "SB-Win64-Shipping.exe",
+    "metadataMatch": true,
+    "rsdsMatch": true,
+    "image": 362287104,
+    "timestamp": 1785346932
+  },
+  {
+    "dump": "UE4CC-Windows-CDCBF20B43970FCA8FBFD4983F24B8C4_0000",
+    "module": "UE4SS.dll",
+    "metadataMatch": true,
+    "rsdsMatch": true,
+    "image": 24641536,
+    "timestamp": 1750778038
+  }
+]

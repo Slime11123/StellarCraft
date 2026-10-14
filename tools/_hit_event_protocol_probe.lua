@@ -5,9 +5,9 @@ local publish=assert(package.loadlib(dll,"sc_write_player_lua"))
 print("READY");io.stdout:flush()
 for line in io.lines() do
     if line=="map-a" then
-        publish(1,10,20,30,0,0,0,1,1,0,0,0,0x12345678)
+        publish(1,10,20,30,0,0,0,1,1,0,0,0,0x12345678,0x11223344)
     elseif line=="map-b" then
-        publish(1,10,20,30,0,0,0,2,1,0,0,0,0x87654321)
+        publish(1,10,20,30,0,0,0,2,1,0,0,0,0x87654321,0x55667788)
     elseif line=="map-invalid" then
         publish(0,10,20,30,0,0,0,3,0,0,0,0,0x87654321)
     elseif line=="map-missing" then

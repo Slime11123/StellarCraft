@@ -9,7 +9,7 @@ static_assert(sizeof(Payload)==0x98&&alignof(Payload)==8);
 static_assert(sizeof(String)==0x10);
 struct Result {bool requested{},heavy{};const char* reason="show unavailable";};
 using Construct=void*(__fastcall*)(void*);
-using Show=void(__fastcall*)(void*,const native_combat::ControlGuid*,const String*,float,bool,const void*,bool,bool,bool);
+using Show=void*(__fastcall*)(void*,const native_combat::ControlGuid*,const String*,float,bool,const void*,bool,bool,bool);
 template<class T> inline void store(Payload& payload,std::size_t at,const T& value) {
     std::memcpy(payload.data+at,&value,sizeof value);
 }
@@ -53,16 +53,17 @@ inline bool heavy_level(float required) {
     // original comparison, never force target resistance or borrow Eve gear.
     return std::isfinite(required)&&required>=0&&1.f>=required;
 }
-inline bool invoke(Show call,void* facade,const native_combat::ControlGuid& control,const Payload& payload,bool heavy=false) {
+inline bool invoke(Show call,void* facade,const native_combat::ControlGuid& control,const Payload& payload,bool heavy=false,bool* fault=nullptr) {
     const wchar_t* path=heavy?L"Hit/Result_Hit_Stand_Sword_StrongAttack":L"Hit/Result_Hit_Stand_Sword_LightAttack_NoAnim";
     const auto length=static_cast<std::int32_t>(std::wcslen(path)+1);
     const String text{path,length,length};
     __try {
         // Original nine-argument ABI. Full strong keys are enabled only after
         // the original level comparison passes; priority/tag rules still apply.
-        call(facade,&control,&text,0.f,heavy,&payload,false,true,true);
-        return true;
-    } __except(EXCEPTION_EXECUTE_HANDLER) {return false;}
+        // Original caller 1C5039B checks RAX before using the show. A null
+        // return is a normal native refusal, not successful creation or a fault.
+        return call(facade,&control,&text,0.f,heavy,&payload,false,true,true)!=nullptr;
+    } __except(EXCEPTION_EXECUTE_HANDLER) {if(fault) *fault=true;return false;}
 }
 inline Result request(std::uintptr_t object,const native_hit_context::Context& context,float budget) {
     Result out;static bool faulted=false;
@@ -85,8 +86,10 @@ inline Result request(std::uintptr_t object,const native_hit_context::Context& c
     if(!construct(reinterpret_cast<Construct>(base+0x1C49290),payload)||!fill(payload,context,base+0x5C11108)) {
         faulted=true;out.reason="native hit constructor rejected";return out;
     }
-    if(!invoke(reinterpret_cast<Show>(base+0x22857E0),reinterpret_cast<void*>(facade),context.control,payload,heavy)) {
-        faulted=true;out.reason="native show call rejected";return out;
+    bool callFault=false;
+    if(!invoke(reinterpret_cast<Show>(base+0x22857E0),reinterpret_cast<void*>(facade),context.control,payload,heavy,&callFault)) {
+        if(callFault) faulted=true;
+        out.reason=callFault?"native show call faulted":"native show creation declined";return out;
     }
     out.requested=true;out.heavy=heavy;
     out.reason=heavy?"native full strong show requested; original priority retained":context.request.heavyRequested

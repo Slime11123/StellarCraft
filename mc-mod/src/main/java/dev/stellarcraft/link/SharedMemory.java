@@ -113,6 +113,7 @@ public final class SharedMemory {
         s.viewW      = sbState.getInt(Proto.SB_VIEW_W);
         s.viewH      = sbState.getInt(Proto.SB_VIEW_H);
         s.gameHour   = sbState.getFloat(Proto.SB_GAME_HOUR);
+        s.mapId      = sbState.getInt(Proto.SB_MAP_ID);
         s.motionTimeMs = sbState.getLong(Proto.SB_MOTION_TIME);
         s.motionFrame = sbState.getLong(Proto.SB_MOTION_FRAME);
         s.motionEpoch = sbState.getInt(Proto.SB_MOTION_EPOCH);
@@ -400,7 +401,7 @@ public final class SharedMemory {
         public long motionTimeMs, motionFrame;
         public int motionEpoch, contactFlags;
         public double velocityX, velocityY, velocityZ;
-        public int flags, levelId, teleportSeq, viewW, viewH;
+        public int flags, levelId, mapId, teleportSeq, viewW, viewH;
         public double posX, posY, posZ;
         public float yaw, pitch, gameHour;
     }

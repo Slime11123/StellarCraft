@@ -1,0 +1,8 @@
+PASS: actual main lifecycle; no old UObject calls; old scheduled tick/F4 rejected; repeat unload; same-address/map reuse; UID/token isolation; wrong-world and missing-export rejection
+PASS: unique damage/context retained; packed jump-heavy pairing, unknown bits and mismatched style exclusion; existing arrow/TNT directions
+PASS: native floor/light/world/stale gates, fast arrow wall trace and fuse-driven smoke
+PASS: resource sequence animation, 120Hz updates, camera, warm pool reuse, 64-object limit, distance/lifetime and reset
+PASS: crouch/stand feet, height drift x1000, jump edges, flight ascent/hover/descent/native ceiling/floor, F4 restoration and re-entry
+PASS: native step ascent, height limit, blocked headroom rollback, steep surface rejection
+PASS: 1000 distinct wrappers, one body actor; F4 reuse; real pawn replacement
+PASS: model replacement snaps its own pose; same-model animation interpolates; 100 equipment switches

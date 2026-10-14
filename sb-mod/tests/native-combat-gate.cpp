@@ -9,12 +9,14 @@
 // attach to the game or invoke any game code.
 static int showCalls=0;
 static bool expectedHeavy=false;
+static bool declineShow=false;
+static bool faultShow=false;
 static void* __fastcall stub_construct(void* value) {
     auto& payload=*static_cast<native_hit_show::Payload*>(value);
     std::memset(payload.data,0,sizeof payload.data);
     const std::uintptr_t table=0xABC;native_hit_show::store(payload,0,table);return value;
 }
-static void __fastcall stub_show(void* facade,const native_combat::ControlGuid* control,
+static void* __fastcall stub_show(void* facade,const native_combat::ControlGuid* control,
     const native_hit_show::String* text,float value,bool hitLevel,const void* data,bool absolute,bool original,bool immediate) {
     assert(facade==reinterpret_cast<void*>(0x123)&&control->words[3]==4);
     assert(std::wcscmp(text->data,expectedHeavy?L"Hit/Result_Hit_Stand_Sword_StrongAttack":L"Hit/Result_Hit_Stand_Sword_LightAttack_NoAnim")==0);
@@ -28,6 +30,8 @@ static void __fastcall stub_show(void* facade,const native_combat::ControlGuid* 
     std::memcpy(&target,payload->data+0x88,sizeof target);
     assert(source.x==0&&position.x==100&&bone==0&&local.x==0&&local.y==0&&local.z==0&&target.words[3]==4);
     ++showCalls;
+    if(faultShow) RaiseException(EXCEPTION_ACCESS_VIOLATION,0,0,nullptr);
+    return declineShow?nullptr:reinterpret_cast<void*>(0x456);
 }
 int main(int argc,char** argv) {
     assert(argc==2);
@@ -101,7 +105,19 @@ int main(int argc,char** argv) {
     assert(!native_hit_target::heavy_path(L"/Game/Art/Character/Monster/CH_M_NA_40/"));
     assert(!native_hit_target::heavy_path(L"/Game/Art/Character/Monster/CH_M_NA_45/"));
     expectedHeavy=true;assert(native_hit_show::invoke(stub_show,reinterpret_cast<void*>(0x123),control,payload,true));
-    assert(showCalls==2);expectedHeavy=false;
+    assert(showCalls==2);
+    declineShow=true;bool callFault=false;
+    assert(!native_hit_show::invoke(stub_show,reinterpret_cast<void*>(0x123),control,payload,true,&callFault));
+    assert(!callFault&&showCalls==3);
+    declineShow=false;
+    assert(native_hit_show::invoke(stub_show,reinterpret_cast<void*>(0x123),control,payload,true,&callFault));
+    assert(!callFault&&showCalls==4);
+    faultShow=true;
+    assert(!native_hit_show::invoke(stub_show,reinterpret_cast<void*>(0x123),control,payload,true,&callFault));
+    assert(callFault&&showCalls==5);faultShow=false;expectedHeavy=false;
+    declineShow=true;callFault=false;
+    assert(!native_hit_show::invoke(stub_show,reinterpret_cast<void*>(0x123),control,payload,false,&callFault));
+    assert(!callFault&&showCalls==6);declineShow=false;
     auto invalidHit=hit;invalidHit.ready=false;assert(!native_hit_show::fill(payload,invalidHit,0xABC));
     std::vector<unsigned char> ue(0x3180),actor(0x600);
     const auto object=reinterpret_cast<std::uintptr_t>(ue.data()),entity=reinterpret_cast<std::uintptr_t>(actor.data());

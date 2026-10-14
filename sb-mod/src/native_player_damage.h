@@ -16,14 +16,16 @@ inline std::atomic<std::uint32_t> guid{0},attacker{0},blocked{0};
 inline std::atomic<ULONGLONG> refreshed{0};
 inline std::atomic<double> total{0};
 inline std::atomic<bool> enabled{false};
+inline std::atomic<std::uint64_t> worldGeneration{0};
 struct HitSource {std::uint32_t guid{},type{};float x{},y{},z{};};
 struct Hit {std::uint64_t id,time;std::uint32_t player,source,world;float damage;std::uint32_t sourceObject;HitSource origin;};
 inline std::mutex hitMutex;
 inline std::array<Hit,128> hits{};
 inline std::uint64_t nextHit=0,readHit=0;
 inline std::atomic<std::uint32_t> world{0};
-inline void record(float damage,int source,std::uint32_t sourceObject,HitSource origin) {
+inline void record(float damage,int source,std::uint32_t sourceObject,HitSource origin,std::uint64_t generation) {
     std::lock_guard<std::mutex> lock(hitMutex);
+    if(!enabled||generation!=worldGeneration) return;
     auto id=++nextHit;
     hits[id%hits.size()]={id,GetTickCount64(),guid.load(),source>0?static_cast<std::uint32_t>(source):0,world.load(),damage,sourceObject,origin};
     if(nextHit-readHit>hits.size()) readHit=nextHit-hits.size();
@@ -125,6 +127,7 @@ inline bool engine_stat_thread(DWORD gameThread) {
     return taskGraph;
 }
 __declspec(noinline) inline bool __fastcall intercept(void* actor,int stat,void* context,float amount,std::uint8_t a,std::uint8_t b,int source) {
+    const auto generation=worldGeneration.load();
     const auto base=reinterpret_cast<std::uintptr_t>(GetModuleHandleW(nullptr));
     const auto caller=reinterpret_cast<std::uintptr_t>(_ReturnAddress());
     const auto watchedActor=watched.load();
@@ -158,7 +161,7 @@ __declspec(noinline) inline bool __fastcall intercept(void* actor,int stat,void*
             std::uintptr_t manager=0;HitSource origin;
             if(source>0&&native_combat::read(base+0x7032568,manager)&&manager)
                 origin=hit_source(base,manager,sourceObject,static_cast<std::uint32_t>(source),watchedActor);
-            record(static_cast<float>(delta),source,sourceObject,origin);
+            record(static_cast<float>(delta),source,sourceObject,origin,generation);
         }
         return false;
     }

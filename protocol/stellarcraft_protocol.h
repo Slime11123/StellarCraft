@@ -160,13 +160,13 @@ namespace stellarcraft::proto
     {
         std::uint32_t seq;
         std::uint32_t flags;          // SbFlags
-        std::uint32_t levelId;        // stable id for the current level/map (hash of level name)
+        std::uint32_t levelId;        // runtime world identity (map hash + local epoch)
         std::uint32_t teleportSeq;    // MC teleports its player to pos when this changes
         double        posX, posY, posZ;  // SB player feet, MC coords (authoritative spawn/anchor)
         float         yaw, pitch;        // authoritative look (MC degrees)
         std::uint32_t viewportW, viewportH;
         float         gameHour;          // 0..24, drives MC daylight
-        std::uint32_t pad;
+        std::uint32_t mapId;          // stable map-name hash; independent of pawn/world epoch
         std::uint64_t motionTimeMs;
         std::uint64_t motionFrame;
         std::uint32_t motionEpoch, contactFlags; // host PID; ground=1, blocked X/Y/Z=2/4/8

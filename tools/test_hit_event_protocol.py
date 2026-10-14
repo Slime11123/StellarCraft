@@ -28,6 +28,8 @@ def main():
             assert child.stdout.readline().strip() == 'PASS'
             seq, actual_flags, level = struct.unpack('<III', ctypes.string_at(base + 0x100, 12))
             assert seq % 2 == 0 and actual_flags == flags and level == expected
+            expected_map={'map-a':0x11223344,'map-b':0x55667788}.get(command,0)
+            assert struct.unpack('<I',ctypes.string_at(base+0x100+0x3C,4))[0]==expected_map
         ring, capacity = base + 0x10000, 0xFF80
         records = (struct.pack('<IIfffIII', 9, 42, 1, 2, 3, 0x7FC12345, 22, 5)
             + struct.pack('<IIfffIII', 10, 42, .6, .8, 0, 0x7FC12345, 22, 5)

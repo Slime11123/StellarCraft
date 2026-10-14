@@ -50,14 +50,14 @@ function M.explosion(world,loc,radius)
     end
 end
 function M.smoke(world,loc) emit(world,"smoke",loc,{X=0,Y=0,Z=30},.45,.8) end
-function M.tick(world,at)
+function M.tick(world,at,controller)
     local now=os.clock()
     for i=#emitters,1,-1 do
         local e=emitters[i]
         if e.wave>=6 then table.remove(emitters,i)
         elseif now-e.born>=e.wave*.05 then wave(world,e) end
     end
-    local pc=UEHelpers.GetPlayerController()
+    local pc=controller or UEHelpers.GetPlayerController()
     local camera=pc and pc:IsValid() and pc.PlayerCameraManager
     local rotation=camera and camera:IsValid() and camera:GetCameraRotation()
     for i=#live,1,-1 do
@@ -80,6 +80,9 @@ function M.tick(world,at)
     end
 end
 function M.stats() return {live=#live,pooled=#pool,objects=created,emitters=#emitters} end
+function M.forget_world()
+    live,pool,emitters={},{},{};created=0
+end
 function M.reset()
     for _,list in ipairs({live,pool}) do for _,s in ipairs(list) do
         if s.actor:IsValid() then s.actor:K2_DestroyActor() end

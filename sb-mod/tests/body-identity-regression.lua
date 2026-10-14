@@ -23,4 +23,9 @@ visuals.hide_body();visuals.update_body(pawn(500),1,90)
 assert(actors==1,"F4 re-entry recreated same native body")
 visuals.update_body(pawn(600),1,90)
 assert(actors==2 and destroyed==1,"A genuinely new pawn must replace its body")
+valid.IsValid=function()error("old body validated")end
+visuals.forget_world();visuals.forget_world()
+valid.IsValid=function()return true end
+visuals.update_body(pawn(600),1,90)
+assert(actors==3 and destroyed==1,"same-address new epoch must recreate body without touching old body")
 print("PASS: 1000 distinct wrappers, one body actor; F4 reuse; real pawn replacement")

@@ -1,0 +1,4 @@
+PASS: DLL/JAR build and remap; actual Java map ledger/epoch/persistence and existing hit/jump/world-event tests.
+PASS: actual DLL/Lua stable map field 0x3C, invalid/missing clearing and preserved flags.
+PASS: Lua lifecycle and movement; all production Lua syntax; 17 DLL motion/pose cases.
+PASS: seven source/candidate/installed hashes match, QA empty. No game launch/input; real gameplay pending.

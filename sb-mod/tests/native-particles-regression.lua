@@ -43,4 +43,11 @@ time=time+2;M.tick(world,{X=99999,Y=0,Z=0})
 assert(M.stats().live==0,"Distant particles retained live objects")
 M.reset();assert(M.stats().objects==0)
 for _,a in ipairs(actors) do assert(not a.alive,"Reset leaked particle actor") end
+M.smoke(world,centre)
+for _,a in ipairs(actors) do
+    a.IsValid=function()error("old particle validated")end
+    a.K2_DestroyActor=function()error("old particle destroyed")end
+end
+M.forget_world();M.forget_world()
+assert(M.stats().objects==0 and M.stats().live==0 and M.stats().pooled==0)
 print("PASS: resource sequence animation, 120Hz updates, camera, warm pool reuse, 64-object limit, distance/lifetime and reset")

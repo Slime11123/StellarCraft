@@ -12,6 +12,7 @@ local rocketModel,rocketPool,trail=nil,{},{}
 local lastRead,lastPhysics,lastFeedback,feedbackSeq=0,0,0,0
 local manifestSeq,manifestTime,lastSeen,entries=nil,0,0,{}
 local worldAddress,buildWorld
+local nativeToken=0
 local color={R=0,G=0,B=0,A=0}
 local function to_ue(x,y,z,off) return {X=-(x-off.X)*100,Y=-(z-off.Z)*100,Z=(y-off.Y)*100} end
 local function to_mc(loc,off) return -loc.X/100+off.X,loc.Z/100+off.Y,-loc.Y/100+off.Z end
@@ -26,6 +27,14 @@ local function clear()
     entities,lights={},{};manifestSeq=nil;entries={};lastSeen=0
 end
 function M.reset() clear() end
+function M.forget_world()
+    Particles.forget_world()
+    entities,lights,rocketPool,trail={},{},{},{}
+    manifestSeq,manifestTime,lastSeen,entries=nil,0,0,{}
+    lastRead,lastPhysics,lastFeedback=0,0,0
+    worldAddress,buildWorld=nil,nil
+    nativeToken=0
+end
 local function native_clear_ray(pawn,target,from,to)
     local glib=StaticFindObject("/Script/Engine.Default__KismetSystemLibrary")
     local ok,blocked=pcall(function() return glib:LineTraceSingle(pawn,from,to,0,false,{pawn,target},0,{},true,color,color,0) end)
@@ -48,7 +57,9 @@ function M.native_exposure(pawn,target,off,x,y,z)
 end
 function M.bind(pawn,worldId)
     local address=pawn:GetWorld():GetAddress()
-    if worldAddress~=address or buildWorld~=worldId then clear();worldAddress=address;buildWorld=worldId end
+    if worldAddress~=address then M.forget_world()
+    elseif buildWorld~=worldId then clear() end
+    worldAddress,buildWorld=address,worldId
 end
 local function spawn(world,loc)
     local actor=world:SpawnActor(StaticFindObject("/Script/Engine.StaticMeshActor"),loc,{Pitch=0,Yaw=0,Roll=0})
@@ -92,22 +103,23 @@ local function feedback(rows,time,world)
     feedbackSeq=feedbackSeq+1
     local file=io.open(dir.."entities-feedback."..(feedbackSeq%2)..".txt","w")
     if not file then return end
-    file:write(string.format("SCFEED2\n%d %.0f %.0f %d\n",feedbackSeq,time,world,#rows))
+    file:write(string.format("SCFEED3\n%d %.0f %.0f %d %u\n",feedbackSeq,time,world,#rows,nativeToken))
     for _,row in ipairs(rows) do file:write(row.."\n") end
     file:write("END "..feedbackSeq.."\n");file:close()
 end
-function M.tick(pawn,off,worldId)
+function M.tick(pawn,off,worldId,controller,worldToken)
     if not pawn or not pawn:IsValid() or not off or not worldId then return end
     local world=pawn:GetWorld();M.bind(pawn,worldId)
+    nativeToken=worldToken or 0
     local now=os.clock()
-    Particles.tick(world,pawn:K2_GetActorLocation())
+    Particles.tick(world,pawn:K2_GetActorLocation(),controller)
     for i=#trail,1,-1 do
         local s=trail[i];local age=now-s.born
         if age>.35 then
             s.actor:SetActorHiddenInGame(true);rocketPool[#rocketPool+1]=s.actor;table.remove(trail,i)
         else
             s.actor:SetActorScale3D({X=1-age/.35,Y=1-age/.35,Z=1-age/.35})
-            local pc=UEHelpers.GetPlayerController()
+            local pc=controller or UEHelpers.GetPlayerController()
             if pc and pc:IsValid() then s.actor:K2_SetActorRotation(pc.PlayerCameraManager:GetCameraRotation(),true) end
         end
     end

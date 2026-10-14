@@ -141,6 +141,14 @@ end
 local hands = {faces={},lastSeen=0,lastRead=0}
 local body = {faces={},lastSeen=0,lastRead=0}
 
+-- Map teardown owns the old objects. Never validate/destroy stale wrappers here.
+function M.forget_world()
+    hands={faces={},lastSeen=0,lastRead=0}
+    body={faces={},lastSeen=0,lastRead=0}
+    materials,textures={},{}
+    parent,colorParameter,parentParameters=nil,nil,nil
+end
+
 local function blend_pose(a,b,t)
     local out={Translation={},Rotation={},Scale3D={}}
     for _,axis in ipairs({"X","Y","Z"}) do

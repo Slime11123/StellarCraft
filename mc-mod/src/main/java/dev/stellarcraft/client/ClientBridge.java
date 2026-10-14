@@ -39,6 +39,7 @@ public final class ClientBridge {
     private long tickCounter = 0;
     private net.minecraft.client.multiplayer.ClientLevel preparedLevel;
     private int nativePid;
+    private int nativeWorldToken;
     private long lastCorrectionLog;
     private int damageGuid;
     private double damageTotal;
@@ -74,6 +75,14 @@ public final class ClientBridge {
 
     public CollisionField collisionField() { return collision; }
     public int hostPid() {return mem.sbPid();}
+    public int hostWorldToken() {
+        var sb=mem.readSbState();
+        return sb!=null && (sb.flags & Proto.SbFlags.IN_GAME)!=0 ? sb.levelId : 0;
+    }
+    public int hostMapId() {
+        var sb=mem.readSbState();
+        return sb!=null && (sb.flags & Proto.SbFlags.IN_GAME)!=0 ? sb.mapId : 0;
+    }
     public void publishPose(int slot,int entity,java.util.UUID uuid,byte[] bytes) {
         mem.writeNativePose(slot,dev.stellarcraft.world.PlacedBlocks.worldId(),entity,uuid,bytes);
     }
@@ -88,6 +97,11 @@ public final class ClientBridge {
         if (sb == null) return; // mid-write; retry next tick
         long age = dev.stellarcraft.NativeLink.tickCount() - mem.sbHeartbeat();
         boolean nativeScene = age >= 0 && age < 5000 && (sb.flags & Proto.SbFlags.IN_GAME) != 0;
+        int token=nativeScene ? sb.levelId : 0;
+        if(token!=nativeWorldToken) {
+            nativeWorldToken=token;damagePrimed=false;combatCursor=mem.combatHead();
+            dev.stellarcraft.world.NativeActors.clear();
+        }
         NativeMovement.tick(mc, nativeScene);
         dev.stellarcraft.world.NativeJumpAttack.update(mc,sb,mem.sbPid(),age);
         long head=mem.combatHead();

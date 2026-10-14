@@ -19,3 +19,11 @@ if($LASTEXITCODE -ne 0) {throw 'Packet test failed'}
 if($LASTEXITCODE -ne 0) {throw 'Jump attack test compile failed'}
 & (Join-Path $JdkDirectory 'bin\java.exe') -cp "$output;$classPath" NativeJumpAttackTest
 if($LASTEXITCODE -ne 0) {throw 'Jump attack test failed'}
+& (Join-Path $JdkDirectory 'bin\javac.exe') -proc:none -cp $classPath -d $output (Join-Path $PSScriptRoot 'WorldEventEpochTest.java')
+if($LASTEXITCODE -ne 0) {throw 'World event test compile failed'}
+& (Join-Path $JdkDirectory 'bin\java.exe') -cp "$output;$classPath" WorldEventEpochTest
+if($LASTEXITCODE -ne 0) {throw 'World event test failed'}
+& (Join-Path $JdkDirectory 'bin\javac.exe') -proc:none -cp $classPath -d $output (Join-Path $PSScriptRoot 'NativeMapClearTest.java')
+if($LASTEXITCODE -ne 0) {throw 'Map clear test compile failed'}
+& (Join-Path $JdkDirectory 'bin\java.exe') -cp "$output;$classPath" NativeMapClearTest
+if($LASTEXITCODE -ne 0) {throw 'Map clear test failed'}

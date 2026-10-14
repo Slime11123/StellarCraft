@@ -4,6 +4,7 @@ local BLOCK_OPS_PER_TICK = 8
 local BLOCK_PLACE, BLOCK_BREAK, BLOCK_CLEAR_ALL = 1, 0, 2
 local gBlockQueue = {}
 local gBlockActors = {}
+local gFrameOff = nil
 local gBlockLive, gBlockFailed, gBlockDropped, gBlockLastLogMs = 0, 0, 0, 0
 local gBlockMeshName, gBlockScale, gBlockDisabled = nil, 1.0, false
 local ops, cleared = {}, 0
@@ -12,6 +13,7 @@ local function despawn_block(x, y, z) ops[#ops+1] = ('B%d,%d,%d'):format(x, y, z
 local function clear_block_actors() cleared = cleared + 1; ops[#ops+1] = 'CLEAR' end
 
 local function drain_block_queue()
+    if not gFrameOff then return end
     if #gBlockQueue == 0 then return end
 
     -- Take the pending list wholesale and start a fresh one for whatever cannot be serviced
@@ -29,9 +31,13 @@ local function drain_block_queue()
         else
             budget = budget - 1
             if op[1] == BLOCK_PLACE then
-                spawn_block(op[2], op[3], op[4])
+                spawn_block(op[2], op[3], op[4], op[5], op[6])
             elseif op[1] == BLOCK_BREAK then
                 despawn_block(op[2], op[3], op[4])
+            elseif op[1] == 3 then
+                select_build_frame(op[5])
+            elseif op[1] == 4 then
+                NativeWorld.light(UEHelpers.GetPlayer(),gFrameOff,op[2],op[3],op[4],op[5],gBuildWorldId,op[6])
             else
                 clear_block_actors()
             end
@@ -59,6 +65,9 @@ end
 -- ---- 1. a burst larger than one tick is fully serviced, in order, with none lost -----
 for i = 1, 20 do gBlockQueue[#gBlockQueue+1] = { BLOCK_PLACE, i, 0, 0 } end
 gBlockQueue[#gBlockQueue+1] = { BLOCK_CLEAR_ALL, 0, 0, 0 }
+drain_block_queue()
+assert(#ops==0 and #gBlockQueue==21, 'uncalibrated world must retain its queue')
+gFrameOff={X=0,Y=0,Z=0}
 local ticks = 0
 while #gBlockQueue > 0 and ticks < 50 do drain_block_queue(); ticks = ticks + 1 end
 

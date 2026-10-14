@@ -12,7 +12,7 @@ function actor:GetAddress() return 123 end
 function actor:GetClass() return {GetFName=function()return{ToString=function()return "CH_NPC_Raven_Blueprint_C"end}end} end
 function actor:K2_GetActorLocation() return{X=0,Y=0,Z=300}end
 function actor:K2_GetActorRotation()return{Yaw=0}end
-local env=setmetatable({UNITS_PER_BLOCK=100,gFrameOff={X=0,Y=0,Z=0},gBuildWorldId=55,
+local env=setmetatable({World={epoch=0,levelId=1234,accepts=function(_,epoch)return epoch==0 end},UNITS_PER_BLOCK=100,gFrameOff={X=0,Y=0,Z=0},gBuildWorldId=55,
     os={clock=function()return clock end},FindAllOf=function()return{actor}end,
     write_actor=function(...)published[#published+1]={...}end,set_actor_count=function(n,world)registry={n,world}end,
     native_enemy_damage=function(guid,kind,damage,budget,cause,address,x,y,z,serial,uid,world,pid,eventKind,weapon,seq,timeLow,dx,dy,dz)
@@ -88,4 +88,18 @@ assert(applied==7 and #contexts==4,"unknown style rejects only the visual contex
 events={{type=9,uid=published[1][1],a=0,b=0,c=0,timeLow=107,flags=11,weapon=0x101},
     {type=1,uid=published[1][1],a=7,d=0,flags=11,weapon=1}};api.events()
 assert(applied==8 and #contexts==4,"packed style mismatch does not match a different origin")
+local worldOps=0
+env.enqueue_block_op=function()worldOps=worldOps+1 end
+env.pearl_teleport=function()worldOps=worldOps+1 end
+env.NativeWorld.explosion=function()worldOps=worldOps+1 end
+for _,kind in ipairs({3,5,7,8}) do
+    events={{type=kind,weapon=1233,a=0,b=0,c=0,d=0,flags=0,uid=0}};api.events()
+    assert(worldOps==0,"late world event crossed native generation")
+end
+events={{type=5,weapon=1234,a=0,b=0,c=0,d=0,flags=0,uid=0}};api.events()
+assert(worldOps==1,"current generation block event rejected")
+env.FindAllOf=function()return {}end
+actor.IsValid=function()error("freed cached actor touched")end
+events={{type=1,uid=published[1][1],a=7,d=0,flags=12,weapon=1}};api.events()
+assert(applied==8,"removed actor still received delayed damage")
 print("PASS: unique damage/context retained; packed jump-heavy pairing, unknown bits and mismatched style exclusion; existing arrow/TNT directions")

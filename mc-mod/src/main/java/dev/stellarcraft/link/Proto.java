@@ -120,6 +120,7 @@ public final class Proto {
     public static final int SB_VIEW_W     = 0x30;
     public static final int SB_VIEW_H     = 0x34;
     public static final int SB_GAME_HOUR  = 0x38;
+    public static final int SB_MAP_ID     = 0x3C; // formerly reserved, stable across pawn rebinds
 
     public static final class SbFlags {
         public static final int IN_GAME   = 1 << 0;

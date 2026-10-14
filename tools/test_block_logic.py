@@ -55,6 +55,7 @@ local BLOCK_OPS_PER_TICK = @@BUDGET@@
 local BLOCK_PLACE, BLOCK_BREAK, BLOCK_CLEAR_ALL = 1, 0, 2
 local gBlockQueue = {}
 local gBlockActors = {}
+local gFrameOff = nil
 local gBlockLive, gBlockFailed, gBlockDropped, gBlockLastLogMs = 0, 0, 0, 0
 local gBlockMeshName, gBlockScale, gBlockDisabled = nil, 1.0, false
 local ops, cleared = {}, 0
@@ -67,6 +68,9 @@ local function clear_block_actors() cleared = cleared + 1; ops[#ops+1] = 'CLEAR'
 -- ---- 1. a burst larger than one tick is fully serviced, in order, with none lost -----
 for i = 1, 20 do gBlockQueue[#gBlockQueue+1] = { BLOCK_PLACE, i, 0, 0 } end
 gBlockQueue[#gBlockQueue+1] = { BLOCK_CLEAR_ALL, 0, 0, 0 }
+drain_block_queue()
+assert(#ops==0 and #gBlockQueue==21, 'uncalibrated world must retain its queue')
+gFrameOff={X=0,Y=0,Z=0}
 local ticks = 0
 while #gBlockQueue > 0 and ticks < 50 do drain_block_queue(); ticks = ticks + 1 end
 

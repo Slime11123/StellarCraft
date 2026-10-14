@@ -1,0 +1,4 @@
+PASS: actual Java v6 hit publisher; raw timestamps, pairing, wrap, full-ring atomicity and HP fallback
+PASS: host jump rise/apex/descent/landing/ledge; cooldown, exclusions, identities and 250ms boundaries; damage unchanged
+PASS: actual world-event publisher; old/zero/inactive/mid-write tokens rejected; raw unsigned token preserved; delayed pearl rejected after rebind
+PASS: actual map ledger cleared/persisted; first/same/zero map preserved; returning map and empty-map cleanup; old creature epochs and snapshots rejected, new creatures accepted

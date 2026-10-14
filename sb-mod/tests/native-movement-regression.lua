@@ -11,6 +11,7 @@ local anim={RootMotionMode=2,IsValid=function() return true end}
 function anim:SetRootMotionMode(mode) self.RootMotionMode=mode end
 pawn.Mesh={GetAnimInstance=function() return anim end}
 function pawn:IsValid() return true end
+function pawn:GetAddress() return 100 end
 function pawn:K2_GetActorLocation() return {X=native.X,Y=native.Y,Z=native.Z} end
 function pawn:K2_SetActorLocation(loc, sweep)
     assert(sweep, "movement must sweep native collision")
@@ -46,12 +47,16 @@ function pc:IsLookInputIgnored() return self.look or false end
 function pc:SetIgnoreMoveInput(on) self.move=on end
 function pc:SetIgnoreLookInput(on) self.look=on end
 function pc:IsValid() return true end
+function pc:GetAddress() return 200 end
 function pc:GetControlRotation() return {Yaw=0,Pitch=0} end
 function pc:SetControlRotation() end
 local helpers={GetPlayer=function() return pawn end,GetPlayerController=function() return pc end}
 local testTime=0
 local env=setmetatable({os={clock=function() return testTime end},advanceTime=function(dt) testTime=testTime+dt end,
-    require=function(name) return name=="UEHelpers" and helpers or {} end,
+    require=function(name)
+        if name=="world_lifecycle" then return {new=function()return {context={pawn=pawn,pc=pc}}end} end
+        return name=="UEHelpers" and helpers or {}
+    end,
     print=function() end}, {__index=_G})
 local tests=[[
 local pawn=UEHelpers.GetPlayer()
@@ -83,6 +88,15 @@ write_player=function(flags,x,y,z,yaw,pitch,seq,frame,contacts,vx,vy,vz,level)
 end
 local function ack() publish_player_frame(); st.x,st.y,st.z,st.teleportAck=published.x,published.y,published.z,published.seq end
 steveMode=true; apply_mc_transform(); ack()
+local initialPhysics=gNativePhysics
+local controller=UEHelpers.GetPlayerController()
+for i=1,1000 do
+    local p=setmetatable({}, {__index=pawn,__newindex=function(_,k,v)pawn[k]=v end})
+    local c=setmetatable({}, {__index=controller,__newindex=function(_,k,v)controller[k]=v end})
+    isolate_native_input(p,c)
+    assert(gNativePhysics==initialPhysics and gNativePhysics.rootMotionMode==2,
+        "fresh wrappers for the same native pawn/controller reinitialized locomotion")
+end
 assert(UEHelpers.GetPlayerController():IsMoveInputIgnored(),"Eve input is still active")
 assert(UEHelpers.GetPlayer().CharacterMovement.MaxWalkSpeed==0,"Eve locomotion is still active")
 assert(UEHelpers.GetPlayer().JumpMaxCount==1,"MC must not trigger Eve double-jump")

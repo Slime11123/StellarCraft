@@ -2,7 +2,7 @@ local path=arg[1]
 local time,frame=1,nil
 local written,actors={},{}
 local smokeCount=0
-local particles={reset=function()end,tick=function()end,smoke=function()smokeCount=smokeCount+1 end,explosion=function()end}
+local particles={forget_world=function()end,reset=function()end,tick=function()end,smoke=function()smokeCount=smokeCount+1 end,explosion=function()end}
 local cameraRotation={Pitch=-35,Yaw=34,Roll=0}
 local pc={PlayerCameraManager={IsValid=function()return true end,GetCameraRotation=function()return cameraRotation end},
     IsValid=function()return true end,GetControlRotation=function()return {Pitch=0,Yaw=214,Roll=0} end}
@@ -70,5 +70,12 @@ time=3.2;frame=manifest(8,7,0,5,0,2,60);M.tick(pawn,off,8)
 assert(smokeCount==1,"TNT fuse did not emit smoke")
 time=3.3;frame=manifest(8,7,0,5,0,2,60);M.tick(pawn,off,8)
 assert(smokeCount==1,"Paused/unchanged fuse kept emitting smoke")
+for _,a in ipairs(actors) do
+    a.IsValid=function()error("old actor validated during world change")end
+    a.K2_DestroyActor=function()error("old actor destroyed during world change")end
+end
+world.GetAddress=function()return 456 end
+M.bind(pawn,8);M.forget_world();M.forget_world()
+assert(true,"world change must forget without touching old actors")
 M.reset()
 print('PASS: native floor/light/world/stale gates, fast arrow wall trace and fuse-driven smoke')

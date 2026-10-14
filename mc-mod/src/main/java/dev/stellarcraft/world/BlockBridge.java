@@ -52,7 +52,8 @@ public final class BlockBridge {
     private static final java.util.concurrent.ConcurrentHashMap<Long,Intent> intents=new java.util.concurrent.ConcurrentHashMap<>();
     private static final ThreadLocal<Boolean> nativeUse=ThreadLocal.withInitial(() -> false);
     private static long[] syncPositions=new long[0];
-    private static int syncIndex,syncedPid,syncedWorld;
+    private static int syncIndex,syncedPid,syncedWorld,syncedNativeWorld;
+    private static volatile boolean mapClearPending;
     public static boolean isNativeUse() {return nativeUse.get();}
 
     private BlockBridge() {}
@@ -136,8 +137,36 @@ public final class BlockBridge {
         PlacedBlocks.ensureLevel(mc.level);
         var bridge=dev.stellarcraft.client.ClientBridge.get();
         int pid=bridge==null ? 0 : bridge.hostPid(), world=PlacedBlocks.worldId();
-        if(syncedPid==pid && syncedWorld==world) return;
-        syncedPid=pid;syncedWorld=world;
+        int nativeWorld=bridge==null ? 0 : bridge.hostWorldToken();
+        if(nativeWorld==0) {syncPositions=new long[0];syncIndex=0;return;}
+        if(mapClearPending) return;
+        int mapId=bridge.hostMapId();
+        var previous=PlacedBlocks.enterNativeMap(mapId);
+        if(previous!=null) {
+            syncPositions=new long[0];syncIndex=0;intents.clear();
+            var server=mc.getSingleplayerServer();
+            var dimension=mc.level.dimension();
+            if(server!=null) {
+                mapClearPending=true;
+                server.execute(()->{
+                    try {
+                        var level=server.getLevel(dimension);
+                        if(level!=null) {
+                            NativeEntities.clearForMapChange(level);
+                            for(var entry:previous.entrySet()) {
+                                var pos=BlockPos.of(entry.getKey());
+                                if(level.getBlockState(pos).is(entry.getValue().getBlock()))
+                                    level.setBlock(pos,net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),2);
+                            }
+                        }
+                    } finally {mapClearPending=false;}
+                });
+            }
+            System.out.println("[StellarCraft-Map] cleared old map ledger blocks="+previous.size()+" epoch="+PlacedBlocks.nativeEpoch());
+            return;
+        }
+        if(syncedPid==pid && syncedWorld==world && syncedNativeWorld==nativeWorld) return;
+        syncedPid=pid;syncedWorld=world;syncedNativeWorld=nativeWorld;
         write(0,0,0,3,world);
         write(0, 0, 0, ACTION_CLEAR_ALL, 0);
         syncPositions=PlacedBlocks.positions();syncIndex=0;
@@ -147,6 +176,7 @@ public final class BlockBridge {
         PlacedBlocks.ensureLevel(mc.level);PlacedBlocks.tick();
         if(mc.level==null) return;
         syncAll();
+        if(mapClearPending) return;
         for(int n=0;n<16 && syncIndex<syncPositions.length;n++) {
             long packed=syncPositions[syncIndex++];if(PlacedBlocks.contains(packed)) forward(packed,true);
         }
@@ -154,6 +184,8 @@ public final class BlockBridge {
     }
 
     private static void write(int x, int y, int z, int action, int model) {
+        int nativeWorld=NativeWorldEvents.worldToken();
+        if(nativeWorld==0) return;
         ByteBuffer ev = ByteBuffer.allocate(Proto.MC_EVENT_SIZE).order(ByteOrder.LITTLE_ENDIAN);
         ev.putInt(Proto.EV_BLOCK_CHANGE);
         ev.putInt(model);             // unsigned CRC32 of native model asset; zero = no model
@@ -162,7 +194,7 @@ public final class BlockBridge {
         ev.putFloat((float) z);
         ev.putFloat((float)PlacedBlocks.offset(net.minecraft.core.BlockPos.asLong(x,y,z)));
         ev.putInt(action);
-        ev.putInt(0);                 // weapon unused
+        ev.putInt(nativeWorld);       // world event: native generation, not a combat weapon
         ev.flip();
 
         long claimed = eventRing.claim(Proto.MC_EVENT_SIZE);

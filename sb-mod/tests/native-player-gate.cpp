@@ -12,6 +12,16 @@ extern "C" MH_STATUS WINAPI MH_EnableHook(LPVOID) {assert(false);return MH_ERROR
 // attach to the game or invoke any game code.
 int main(int argc,char** argv) {
     assert(argc==2);
+    // A worker captured before a world barrier must not enqueue after rebinding.
+    native_player_damage::enabled=true;native_player_damage::worldGeneration=10;
+    const auto head=native_player_damage::nextHit;
+    native_player_damage::record(1,1,1,{},9);
+    assert(native_player_damage::nextHit==head);
+    native_player_damage::record(1,1,1,{},10);
+    assert(native_player_damage::nextHit==head+1);
+    native_player_damage::enabled=false;
+    native_player_damage::record(1,1,1,{},10);
+    assert(native_player_damage::nextHit==head+1);
     // This process is the offline test executable, not the certified game.
     // A rejected refresh must preserve the prior lease; explicit release clears it.
     native_player_damage::installed=true;native_player_damage::enabled=true;

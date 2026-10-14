@@ -13,7 +13,12 @@
 --     mc.z = -sb.y / 100    (UE +Y forward -> MC -Z north)
 --   yaw/pitch in degrees; exact sign/offset will be pinned during integration.
 
-local UEHelpers = require("UEHelpers")
+local World = require("world_lifecycle").new()
+-- UEHelpers caches PlayerController across maps; use only this tick's fresh registry objects.
+local UEHelpers = setmetatable({
+    GetPlayer=function() return World.context and World.context.pawn end,
+    GetPlayerController=function() return World.context and World.context.pc end,
+}, {__index=require("UEHelpers")})
 local BlockVisuals = require("block_visuals")
 local NativeWorld = require("native_world")
 
@@ -27,8 +32,9 @@ local gBuildWorldId = nil
 local gBlockActors = {}
 local gGroundIgnore, gGroundIgnorePawn = nil, nil
 local function ground_ignore(pawn)
-    if not gGroundIgnore or gGroundIgnorePawn~=pawn then
-        gGroundIgnore={pawn};gGroundIgnorePawn=pawn
+    local address=pawn:GetAddress()
+    if not gGroundIgnore or gGroundIgnorePawn~=address then
+        gGroundIgnore={pawn};gGroundIgnorePawn=address
         for _,actor in pairs(gBlockActors) do
             if actor:IsValid() then gGroundIgnore[#gGroundIgnore+1]=actor end
         end
@@ -38,7 +44,7 @@ end
 local function select_build_frame(worldId)
     local pawn=UEHelpers.GetPlayer()
     if not pawn or not pawn:IsValid() or not gFrameOff then return end
-    local name=pawn:GetWorld():GetFullName()
+    local name=World.context.worldName
     local hash=0
     for i=1,#name do hash=(hash*131+name:byte(i))%4294967296 end
     local path=DLL_PATH:match("^(.*)/").."/block-assets/world-"..string.format("%.0f-%.0f",worldId,hash)..".origin"
@@ -58,9 +64,10 @@ end
 local gCapsulePawn, gCapsuleHalf = nil, 90.0
 
 local function capsule_half_height(pawn)
-    if gCapsulePawn == pawn then return gCapsuleHalf end
+    local address=pawn:GetAddress()
+    if gCapsulePawn == address then return gCapsuleHalf end
     local ok, height = pcall(function() return pawn.CapsuleComponent:GetScaledCapsuleHalfHeight() end)
-    gCapsulePawn, gCapsuleHalf = pawn, ok and height or 90.0
+    gCapsulePawn, gCapsuleHalf = address, ok and height or 90.0
     return gCapsuleHalf
 end
 
@@ -77,6 +84,7 @@ local read_mc_state = nil
 local native_enemy_damage = nil
 local native_player_guard = nil
 local nativeHits,publishHit
+local world_barrier
 
 -- Forward declaration for the native-block plumbing, which is defined further down (it needs
 -- helpers declared later in the file) but has to be reachable from the event pump above it.
@@ -102,6 +110,7 @@ local function load_bridge()
     -- must be a lua_CFunction (int (*)(lua_State*)). Our DLL exports those.
     nativeHits=package.loadlib(DLL_PATH,"sc_native_hits_lua")
     publishHit=package.loadlib(DLL_PATH,"sc_combat_hit_lua")
+    world_barrier=package.loadlib(DLL_PATH,"sc_world_barrier_lua")
     write_player     = package.loadlib(DLL_PATH, "sc_write_player_lua")
     write_actor      = package.loadlib(DLL_PATH, "sc_write_actor_lua")
     set_actor_count  = package.loadlib(DLL_PATH, "sc_set_actor_count_lua")
@@ -150,7 +159,7 @@ local function native_level_id(pawn)
     return hash
 end
 
-local function publish_player_frame()
+local function publish_player_frame(levelId,mapId)
     local pawn = UEHelpers.GetPlayer()
     if not pawn or not pawn:IsValid() then
         return false
@@ -205,7 +214,7 @@ local function publish_player_frame()
     local vy=gMotionFeedback.vy
     pcall(function() if not gMotionFeedback.gliding then vy=pawn.CharacterMovement.Velocity.Z/2000 end end)
     write_player(flags, mcX, mcY, mcZ, yaw, pitch, gTeleportSerial,
-        gMotionFeedback.frame,contacts,gMotionFeedback.vx,vy,gMotionFeedback.vz,native_level_id(pawn))
+        gMotionFeedback.frame,contacts,gMotionFeedback.vx,vy,gMotionFeedback.vz,levelId or native_level_id(pawn),mapId or 0)
     return true
 end
 
@@ -551,9 +560,18 @@ local function enemy_stats(actor,damage,budget,cause,hit)
     return ok and result or nil
 end
 local gLastActorSample = -1
-local gActorCandidates, gActorWorld, gActorRefresh = nil, nil, -10
 local gCombatSources={}
 local gActorDiagnosticAt=-10
+local function resolve_registered_actor(ref)
+    if not ref or ref.epoch~=World.epoch then return nil end
+    local all=collect_character_actors(World.context and World.context.world) or {}
+    for _,actor in ipairs(all) do
+        if actor:GetAddress()==ref.address and actor:IsValid() then
+            local stats=enemy_stats(actor)
+            if stats and stats.ready and stats.guid==ref.guid and stats.type==ref.type then return actor end
+        end
+    end
+end
 local function enemy_bounds(actor)
     local radius,half
     for _,name in ipairs({"BodyCollision","CapsuleComponent"}) do
@@ -578,7 +596,8 @@ local function consume_native_hits()
             if source and source~=false and os.clock()-source.time<.5 then
                 -- The hit callback captured the effect's actual origin owner.
                 -- Revalidate against this world's exact native/UE enemy mapping.
-                local stats=enemy_stats(source.actor)
+                local actor=resolve_registered_actor(source)
+                local stats=actor and enemy_stats(actor)
                 if stats and stats.ready and stats.guid==source.guid and stats.type==hit.sourceType then
                     x,y,z=-hit.sourceX/100+gFrameOff.X,hit.sourceZ/100+gFrameOff.Y,-hit.sourceY/100+gFrameOff.Z
                     guid,flags=source.guid,1
@@ -594,20 +613,9 @@ local function mirror_actors(center, world)
     if now - gLastActorSample < 0.2 then return end
     gLastActorSample = now
 
-    -- Rescan/classify the registry slowly; cached enemy positions still refresh at 5 Hz.
+    -- Fresh registry wrappers only. IsValid on a cached freed pointer is itself unsafe.
     local worldAddress=world and world:GetAddress() or 0
-    if not gActorCandidates or gActorWorld~=worldAddress or now-gActorRefresh>2 then
-        local candidates=collect_character_actors(world)
-        if candidates then
-            gActorCandidates={}
-            for _,actor in ipairs(candidates) do
-                local okEnemy,enemy=pcall(function() return actor:IsValid() and is_enemy_class(actor:GetClass():GetFName():ToString()) end)
-                if okEnemy and enemy then gActorCandidates[#gActorCandidates+1]=actor end
-            end
-            gActorWorld,gActorRefresh=worldAddress,now
-        end
-    end
-    local all = gActorCandidates
+    local all = collect_character_actors(world)
     if not all then return end
 
     -- Report enemy positions in Minecraft's frame too (see gFrameOff). `center` already
@@ -677,10 +685,10 @@ local function mirror_actors(center, world)
                             if stats.invulnerable or okDamage and canDamage==false then flags=flags|16 end
                             write_actor(uid,flags,mx,my-half/100,mz,yaw,width,height,healthFrac,
                                 info.ActorGuid,info.CharacterDataId,gBuildWorldId or 0,uid)
-                            gActorsByName[uid]=actor
+                            gActorsByName[uid]={address=actor:GetAddress(),guid=stats.guid,type=stats.type,epoch=World.epoch}
                             if stats.guid and stats.guid>0 then
                                 if gCombatSources[stats.guid]~=nil then gCombatSources[stats.guid]=false
-                                else gCombatSources[stats.guid]={actor=actor,guid=stats.guid,time=now} end
+                                else gCombatSources[stats.guid]={address=actor:GetAddress(),guid=stats.guid,type=stats.type,time=now,epoch=World.epoch} end
                             end
                             count=count+1
                         end
@@ -762,8 +770,13 @@ local function apply_events()
     local ok, events = pcall(read_events)
     if not ok or type(events) ~= "table" then return end
 
+    local epoch=World.epoch
     for _, ev in ipairs(events) do
+        if not World:accepts(epoch) then return end
         local t = ev.type
+        -- Non-combat world events use their previously unused weapon field as
+        -- a native world-generation token. Combat keeps its existing v6 packing.
+        if (t==5 or t==7 or t==3 or t==8) and ev.weapon~=World.levelId then goto next_event end
         if t==9 or t==10 then
             local mc=read_mc_state and read_mc_state()
             local fresh=mc and mc.worldId==gBuildWorldId and mc.flags&256~=0 and ev.timeLow~=nil
@@ -796,7 +809,7 @@ local function apply_events()
             if pearl_teleport then pearl_teleport(ev.a,ev.b,ev.c) end
         elseif t == 6 or t == 1 then
             local origin,direction=gHitOrigin,gHitDirection;gHitOrigin,gHitDirection=nil,nil
-            local actor = gActorsByName[ev.uid]
+            local actor = resolve_registered_actor(gActorsByName[ev.uid])
             local mc=read_mc_state and read_mc_state()
             local serial=math.floor(ev.flags or 0)
             if mc and mc.mcPid~=gDamagePid then gDamageSerial,gDamagePid=0,mc.mcPid end
@@ -823,6 +836,7 @@ local function apply_events()
                 end
             end
         end
+        ::next_event::
     end
 end
 
@@ -911,10 +925,12 @@ local function restore_native_input()
 end
 
 local function isolate_native_input(pawn, pc)
-    if not gNativeInput or gNativeInput.pc ~= pc then
+    local pcAddress,pawnAddress=pc:GetAddress(),pawn:GetAddress()
+    if not gNativeInput or gNativeInput.pcAddress~=pcAddress or gNativeInput.pawnAddress~=pawnAddress
+        or gNativeInput.epoch~=World.epoch then
         restore_native_input()
         local move, look = pc:IsMoveInputIgnored(), pc:IsLookInputIgnored()
-        gNativeInput={pc=pc,move=move,look=look}
+        gNativeInput={pc=pc,move=move,look=look,pcAddress=pcAddress,pawnAddress=pawnAddress,epoch=World.epoch}
         if not move then pc:SetIgnoreMoveInput(true) end
         if not look then pc:SetIgnoreLookInput(true) end
         local component = pawn.CharacterMovement
@@ -2010,7 +2026,101 @@ local function protect_mc_host()
         gGuardActive,gGuardBlocked,gGuardIdentity=result.active,result.blocked,identityDetail
     end
 end
+-- This path must stay Lua/scalar-only: even IsValid can dereference freed memory.
+local function forget_world()
+    gActorsByName,gCombatSources,gUidByName={},{},{}
+    -- gUidCounter stays monotonic so delayed hits cannot identify a new actor.
+    gLastActorSample=-1
+    gGroundIgnore,gGroundIgnorePawn,gGroundCenter=nil,nil,nil
+    gCapsulePawn,gCapsuleHalf=nil,90.0
+    gBlockActors,gBlockQueue,gBlockModels={},{},{}
+    gBlockMesh,gBlockClass,gBlockMeshName=nil,nil,nil
+    gBlockSearchDone=false;gBlockLive=0
+    gBlockDisabled=false;gBlockFailStreak=0;gBlockFirstErr=nil
+    gFrameOff,gBuildWorldId=nil,nil
+    gMotionFeedback={frame=0,contacts=0,vx=0,vy=0,vz=0}
+    gMoveAnchorSb,gMoveAnchorMc,gBoomSaved=nil,nil,nil;gBoomApplied=false
+    gMcCamera,gCameraController,gPreviousViewTarget,gPreviousControlRotation=nil,nil,nil,nil
+    gCameraPose,gBodyLook,gViewTargetCheck=nil,nil,0
+    gNativeInput,gNativePhysics,gJumpProbe=nil,nil,nil;gJumpHeld=false
+    gFlightClock,gFlightVelocity=nil,0
+    gHitOrigin,gHitDirection=nil,nil
+    gEveHidden=nil;mcInput=false
+    NativeWorld.forget_world()
+    BlockVisuals.forget_world()
+end
+
+local function suspend_world(reason)
+    if not World:invalidate() then return end
+    gTeleportSerial=gTeleportSerial+1
+    -- DLL barrier touches only owned state/queues; no engine lookup or UObject call.
+    if world_barrier then world_barrier() end
+    if write_player then write_player(0,0,0,0,0,0,gTeleportSerial,0,0,0,0,0,0) end
+    if set_actor_count then set_actor_count(0,0) end
+    if read_events then read_events() end
+    forget_world()
+    World:wait()
+    print(string.format("[StellarCraft-Lifecycle] phase=%s epoch=%d reason=%s\n",World.phase,World.epoch,reason))
+end
+
+local function fresh_world_context()
+    -- Do not call UEHelpers.GetPlayerController: its internal cache survives travel.
+    for _,pc in ipairs(FindAllOf("PlayerController") or {}) do
+        if pc:IsValid() and pc:IsLocalPlayerController() then
+            local pawn=pc.Pawn
+            if pawn and pawn:IsValid() and pawn:GetClass():GetFName():ToString():match("^CH_P_EVE_") then
+                local world=pawn:GetWorld()
+                if world and world:IsValid() and pc:GetWorld():GetAddress()==world:GetAddress() then
+                    local current=World.context
+                    local same=current and current.worldAddress==world:GetAddress()
+                    local name=same and current.worldName or world:GetFullName()
+                    return {pawn=pawn,pc=pc,world=world,worldName=name,worldAddress=world:GetAddress(),
+                        pawnAddress=pawn:GetAddress(),pcAddress=pc:GetAddress(),levelId=same and World.levelId or native_level_id(pawn)}
+                end
+            end
+        end
+    end
+end
+
+local function prepare_world()
+    if World.phase~="ACTIVE" and World.phase~="REBINDING" then return false end
+    if World.phase=="ACTIVE" then
+        -- This context is scoped to the current epoch and invalidated synchronously
+        -- by LoadMap, pawn/controller EndPlay and QuitGame before object teardown.
+        -- Do not globally enumerate every UObject again on each 8 ms tick.
+        local current=World.context
+        local pc=current.pc
+        local pawn=pc:IsValid() and pc.Pawn
+        if not pawn or not pawn:IsValid() or pawn:GetAddress()~=current.pawnAddress
+            or pawn:GetWorld():GetAddress()~=current.worldAddress then
+            suspend_world("identity changed without LoadMap")
+            -- Missing/changed identity is not proof that old resources are safe to destroy.
+            World:ready()
+            return false
+        end
+        current.pawn=pawn
+        return true
+    end
+    local context=fresh_world_context()
+    if not context then return false end
+    if context.levelId==0 then return false end
+    context.mapId=context.levelId
+    -- SbState.levelId is a runtime identity; disk origins still use worldName.
+    -- Re-entering the same map (even at the same address) must have a new token.
+    context.levelId=(context.levelId+World.epoch)%4294967296
+    if context.levelId==0 then context.levelId=1 end
+    -- Drop anything produced during loading before publishing a new active frame.
+    if world_barrier then world_barrier() end
+    if read_events then read_events() end
+    if not World:activate(context) then return false end
+    gTickTrace=true
+    print(string.format("[StellarCraft-Lifecycle] phase=ACTIVE epoch=%d level=%u\n",World.epoch,World.levelId))
+    return true
+end
+
 local function tick()
+    if not prepare_world() then return false end
+    local epoch=World.epoch
     -- Full-chain breadcrumbs for the FIRST tick after entering STEVE (armed by the F4 handler).
     -- The per-tick chain is long -- transform, publish, enemy mirror, event pump, block
     -- spawning, ground sampling -- and a native crash anywhere in it leaves no Lua error and no
@@ -2020,6 +2130,7 @@ local function tick()
     if not profile then profile={};gProfile[steveMode and "MC" or "EVE"]=profile end
     local lastStage,lastClock=nil,os.clock()
     local function ts(name)
+        if not World:accepts(epoch) then return false end
         local clock=os.clock()
         if lastStage then
             local entry=profile[lastStage] or {total=0,count=0,max=0}
@@ -2028,9 +2139,10 @@ local function tick()
             profile[lastStage]=entry
         end
         lastStage,lastClock=name,clock
-        if ttrace then print("[StellarCraft] tick step: " .. name .. "\n") end
+        if ttrace then print(string.format("[StellarCraft] tick step: %s phase=%s epoch=%d queued=%d\n",name,World.phase,epoch,#gBlockQueue)) end
+        return true
     end
-    ts("begin")
+    if not ts("begin") then return false end
 
     -- Mirror the MC-side input-ownership bit (McFlags bit 8 = CONTROL_STEVE) locally. This
     -- runs BEFORE publish_player_frame so the level we publish each frame is current.
@@ -2048,12 +2160,12 @@ local function tick()
     protect_mc_host()
     -- ground sampler and the actor mirror are both centred on the pawn, so it has to be moved
     -- into place first or they would keep describing where the player used to be.
-    ts("transform")
+    if not ts("transform") then return false end
     local transformOk, transformErr = pcall(apply_mc_transform)
     if not transformOk then print("[StellarCraft] camera/transform failed: " .. tostring(transformErr) .. "\n") end
 
-    ts("publish")
-    local ok2, wrote = pcall(publish_player_frame)
+    if not ts("publish") then return false end
+    local ok2, wrote = pcall(publish_player_frame,World.levelId,World.context.mapId)
     if not ok2 then
         print(string.format("[StellarCraft] publish_player_frame failed: %s\n", tostring(wrote)))
     end
@@ -2063,7 +2175,7 @@ local function tick()
     --
     -- Both halves only matter while a world is loaded; on the title screen the actor
     -- enumeration returns nothing and the event ring is empty, so this is cheap.
-    ts("mirror")
+    if not ts("mirror") then return false end
     local pawn = UEHelpers.GetPlayer()
     if pawn and pawn:IsValid() then
         local okLoc, loc = pcall(function() return pawn:K2_GetActorLocation() end)
@@ -2079,19 +2191,19 @@ local function tick()
     end
 
     pcall(consume_native_hits)
-    ts("events")
+    if not ts("events") then return false end
     pcall(apply_events)
 
     -- Walk the queued native-block operations (a few per tick, see BLOCK_OPS_PER_TICK).
-    ts("blocks")
+    if not ts("blocks") then return false end
     pcall(drain_block_queue)
-    ts("nativeWorld")
-    local nativeWorldOk,nativeWorldErr=pcall(NativeWorld.tick,pawn,gFrameOff,gBuildWorldId)
+    if not ts("nativeWorld") then return false end
+    local nativeWorldOk,nativeWorldErr=pcall(NativeWorld.tick,pawn,gFrameOff,gBuildWorldId,UEHelpers.GetPlayerController(),World.levelId)
     if not nativeWorldOk then print("[StellarCraft-World] tick failed: "..tostring(nativeWorldErr).."\n") end
 
     -- Sample the native ground around the player and stream it to Minecraft, so MC's pick
     -- raycast can land on Stellar Blade's ground and the player can place blocks.
-    ts("ground")
+    if not ts("ground") then return false end
     publish_ground_frame()
 
     -- Hide Eve's body while STEVE owns the character (the F4 latch). This is CHARACTER
@@ -2111,10 +2223,10 @@ local function tick()
     end
     -- Re-assert every frame (cheap, idempotent): the game can re-show the mesh on cutscenes
     -- or respawn, and we want Steve to stay unobstructed.
-    ts("visibility")
+    if not ts("visibility") then return false end
     apply_eve_visibility(steveMode)
 
-    ts("complete")
+    if not ts("complete") then return false end
     if os.clock()-gProfileSince>10 then
         for mode,stages in pairs(gProfile) do
             local parts={}
@@ -2139,6 +2251,43 @@ local function init()
         return
     end
 
+    if not world_barrier or not RegisterLoadMapPreHook or not RegisterInitGameStatePostHook or not RegisterHook then
+        print("[StellarCraft-Lifecycle] required barrier unavailable; world work disabled\n")
+        return
+    end
+    -- d3d1004 only dispatches the FIRST mod's LoadMap hook. No installed mod
+    -- registers PreHook; BPModLoader owns PostHook, so use InitGameState instead.
+    -- These callbacks run synchronously in the engine operation, not via Async.
+    local hooksOk,hooksError=pcall(function()
+        RegisterLoadMapPreHook(function() suspend_world("LoadMap pre") end)
+        RegisterInitGameStatePostHook(function(Context)
+            if World.phase=="ACTIVE" then suspend_world("InitGameState without LoadMap pre") end
+            local world=Context:get():GetWorld()
+            if world and world:IsValid() then World:ready(world:GetAddress()) end
+        end)
+        RegisterHook("/Script/Engine.KismetSystemLibrary:QuitGame",function() suspend_world("QuitGame pre") end)
+        RegisterHook("/Script/Engine.Actor:ReceiveEndPlay",function(Context)
+            local current=World.context
+            if current then
+                local address=Context:get():GetAddress()
+                if address==current.pawnAddress or address==current.pcAddress then suspend_world("player/controller EndPlay") end
+            end
+        end)
+        RegisterHook("/Script/Engine.PlayerController:ClientRestart",function()end,function(Context)
+            if World.phase=="WAITING_NEW_WORLD" then
+                local world=Context:get():GetWorld()
+                if world and world:IsValid() then World:ready(world:GetAddress()) end
+            end
+        end)
+    end)
+    if not hooksOk then
+        suspend_world("hook registration failed")
+        print("[StellarCraft-Lifecycle] "..tostring(hooksError).."; world work disabled\n")
+        return
+    end
+    suspend_world("startup")
+    World:ready() -- Startup may occur after InitGameState; acquire only fresh registry objects.
+
     -- Reset to EVE on every startup. The mapping can outlive a session (the game keeps it
     -- alive between launches), so the F4 latch may still be set from the last time the player
     -- switched to Steve. Force it clear here so the game ALWAYS boots in EVE mode.
@@ -2156,6 +2305,7 @@ local function init()
     -- "who owns the player" directly — press once = Steve, press again = Eve.
     if set_control then
         RegisterKeyBind(Key.F4, function()
+            if World.phase~="ACTIVE" then return end
             steveMode = not steveMode
             -- Narrate the whole first tick of this STEVE session (see tick()). Armed here rather
             -- than once per launch, so it also covers the second and third switch.
@@ -2170,14 +2320,16 @@ local function init()
     end
 
     -- UObject creation and mesh/material updates belong on the UE game thread. Avoid
-    -- queueing another tick while one is pending, including during loading stalls.
-    local tickPending = false
+    -- Keep one pending task per epoch. A discarded old task must not stall a new map.
+    local pendingEpoch = nil
     LoopAsync(8, function()
-        if not tickPending then
-            tickPending = true
+        if pendingEpoch~=World.epoch and (World.phase=="ACTIVE" or World.phase=="REBINDING") then
+            local epoch=World.epoch
+            pendingEpoch=epoch
             ExecuteInGameThread(function()
-                local ok, err = pcall(tick)
-                tickPending = false
+                local ok, err = true,nil
+                if epoch==World.epoch and (World.phase=="ACTIVE" or World.phase=="REBINDING") then ok,err=pcall(tick) end
+                if pendingEpoch==epoch then pendingEpoch=nil end
                 if not ok then print("[StellarCraft] tick failed: " .. tostring(err) .. "\n") end
             end)
         end
