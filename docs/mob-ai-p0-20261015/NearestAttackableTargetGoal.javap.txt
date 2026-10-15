@@ -1,0 +1,101 @@
+net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal
+Input SHA256: D5D5503DC29E1A076F89F5E8D19C6E0C3866F3D87EF3900E9D244D28891B3339
+  public boolean canUse();
+    Code:
+       0: aload_0
+       1: getfield      #63                 // Field randomInterval:I
+       4: ifle          28
+       7: aload_0
+       8: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+      11: invokevirtual #107                // Method net/minecraft/world/entity/Mob.getRandom:()Lnet/minecraft/util/RandomSource;
+      14: aload_0
+      15: getfield      #63                 // Field randomInterval:I
+      18: invokeinterface #112,  2          // InterfaceMethod net/minecraft/util/RandomSource.nextInt:(I)I
+      23: ifeq          28
+      26: iconst_0
+      27: ireturn
+      28: aload_0
+      29: invokevirtual #116                // Method findTarget:()V
+      32: aload_0
+      33: getfield      #118                // Field target:Lnet/minecraft/world/entity/LivingEntity;
+      36: ifnull        43
+      39: iconst_1
+      40: goto          44
+      43: iconst_0
+      44: ireturn
+
+
+  protected void findTarget();
+    Code:
+       0: aload_0
+       1: getfield      #57                 // Field targetType:Ljava/lang/Class;
+       4: ldc           #136                // class net/minecraft/world/entity/player/Player
+       6: if_acmpeq     18
+       9: aload_0
+      10: getfield      #57                 // Field targetType:Ljava/lang/Class;
+      13: ldc           #138                // class net/minecraft/server/level/ServerPlayer
+      15: if_acmpne     64
+      18: aload_0
+      19: aload_0
+      20: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+      23: invokevirtual #142                // Method net/minecraft/world/entity/Mob.level:()Lnet/minecraft/world/level/Level;
+      26: aload_0
+      27: getfield      #97                 // Field targetConditions:Lnet/minecraft/world/entity/ai/targeting/TargetingConditions;
+      30: aload_0
+      31: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+      34: aload_0
+      35: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+      38: invokevirtual #145                // Method net/minecraft/world/entity/Mob.getX:()D
+      41: aload_0
+      42: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+      45: invokevirtual #148                // Method net/minecraft/world/entity/Mob.getEyeY:()D
+      48: aload_0
+      49: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+      52: invokevirtual #151                // Method net/minecraft/world/entity/Mob.getZ:()D
+      55: invokevirtual #157                // Method net/minecraft/world/level/Level.getNearestPlayer:(Lnet/minecraft/world/entity/ai/targeting/TargetingConditions;Lnet/minecraft/world/entity/LivingEntity;DDD)Lnet/minecraft/world/entity/player/Player;
+      58: putfield      #118                // Field target:Lnet/minecraft/world/entity/LivingEntity;
+      61: goto          134
+      64: aload_0
+      65: aload_0
+      66: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+      69: invokevirtual #142                // Method net/minecraft/world/entity/Mob.level:()Lnet/minecraft/world/level/Level;
+      72: aload_0
+      73: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+      76: invokevirtual #142                // Method net/minecraft/world/entity/Mob.level:()Lnet/minecraft/world/level/Level;
+      79: aload_0
+      80: getfield      #57                 // Field targetType:Ljava/lang/Class;
+      83: aload_0
+      84: aload_0
+      85: invokevirtual #87                 // Method getFollowDistance:()D
+      88: invokevirtual #159                // Method getTargetSearchArea:(D)Lnet/minecraft/world/phys/AABB;
+      91: invokedynamic #178,  0            // InvokeDynamic #0:test:()Ljava/util/function/Predicate;
+      96: invokevirtual #182                // Method net/minecraft/world/level/Level.getEntitiesOfClass:(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;
+      99: aload_0
+     100: getfield      #97                 // Field targetConditions:Lnet/minecraft/world/entity/ai/targeting/TargetingConditions;
+     103: aload_0
+     104: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+     107: aload_0
+     108: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+     111: invokevirtual #145                // Method net/minecraft/world/entity/Mob.getX:()D
+     114: aload_0
+     115: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+     118: invokevirtual #148                // Method net/minecraft/world/entity/Mob.getEyeY:()D
+     121: aload_0
+     122: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+     125: invokevirtual #151                // Method net/minecraft/world/entity/Mob.getZ:()D
+     128: invokevirtual #186                // Method net/minecraft/world/level/Level.getNearestEntity:(Ljava/util/List;Lnet/minecraft/world/entity/ai/targeting/TargetingConditions;Lnet/minecraft/world/entity/LivingEntity;DDD)Lnet/minecraft/world/entity/LivingEntity;
+     131: putfield      #118                // Field target:Lnet/minecraft/world/entity/LivingEntity;
+     134: return
+
+
+  public void start();
+    Code:
+       0: aload_0
+       1: getfield      #101                // Field mob:Lnet/minecraft/world/entity/Mob;
+       4: aload_0
+       5: getfield      #118                // Field target:Lnet/minecraft/world/entity/LivingEntity;
+       8: invokevirtual #191                // Method net/minecraft/world/entity/Mob.setTarget:(Lnet/minecraft/world/entity/LivingEntity;)V
+      11: aload_0
+      12: invokespecial #193                // Method net/minecraft/world/entity/ai/goal/target/TargetGoal.start:()V
+      15: return
+

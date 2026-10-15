@@ -65,6 +65,10 @@ extern "C" __declspec(dllexport) int sc_enemy_damage_lua(lua_State* L) {
     lua_pushnumber(L,result.before);lua_setfield(L,-2,"before");
     lua_pushnumber(L,result.after);lua_setfield(L,-2,"after");
     lua_pushnumber(L,result.maximum);lua_setfield(L,-2,"maximum");
+    lua_pushnumber(L,result.shieldBefore);lua_setfield(L,-2,"shieldBefore");
+    lua_pushnumber(L,result.shieldAfter);lua_setfield(L,-2,"shieldAfter");
+    lua_pushnumber(L,result.shieldMaximum);lua_setfield(L,-2,"shieldMaximum");
+    lua_pushstring(L,result.damageRoute);lua_setfield(L,-2,"damageRoute");
     lua_pushinteger(L,result.sourceKey);lua_setfield(L,-2,"sourceKey");
     lua_pushboolean(L,result.invulnerable);lua_setfield(L,-2,"invulnerable");
     lua_pushstring(L,result.reason);lua_setfield(L,-2,"reason");

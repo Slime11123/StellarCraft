@@ -1,0 +1,33 @@
+NativeMobAiState.captureTag:(Ljava/util/Set;ZZ)Ljava/lang/String;
+     304: astore        6
+     306: aload         6
+     308: ifnull        318
+     311: aload_0
+     312: aload         6
+     314: invokevirtual #155                // Method net/minecraft/class_1297.method_5780:(Ljava/lang/String;)Z
+     317: pop
+     318: aload         5
+     320: iconst_1
+     321: invokevirtual #1553               // Method net/minecraft/class_1308.method_5977:(Z)V
+     324: getstatic     #1053               // Field java/lang/System.out:Ljava/io/PrintStream;
+     327: aload_0
+     328: invokevirtual #248                // Method net/minecraft/class_1297.method_5628:()I
+     331: aload_0
+     332: invokevirtual #1557               // Method net/minecraft/class_1297.method_5864:()Lnet/minecraft/class_1299;
+     335: invokestatic  #1058               // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     338: invokedynamic #1562,  0           // InvokeDynamic #22:makeConcatWithConstants:(ILjava/lang/String;)Ljava/lang/String;
+     343: invokevirtual #1069               // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+     346: return
+
+  private static boolean lambda$acceptsEpoch$2(java.lang.String);
+    Code:
+       0: aload_0
+       1: ldc           #57                 // String stellarcraft.epoch.
+       3: invokevirtual #1369               // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+       6: ireturn
+
+  private static boolean lambda$stampEpoch$1(java.lang.String);
+    Code:
+       0: aload_0
+       1: ldc           #57                 // String stellarcraft.epoch.
+       3: invokevirtual #1369               // Method java/lang/Strin

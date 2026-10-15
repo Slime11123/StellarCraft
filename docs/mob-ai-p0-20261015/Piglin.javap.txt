@@ -1,0 +1,26 @@
+net.minecraft.world.entity.monster.piglin.Piglin
+Input SHA256: D5D5503DC29E1A076F89F5E8D19C6E0C3866F3D87EF3900E9D244D28891B3339
+  protected void customServerAiStep();
+    Code:
+       0: aload_0
+       1: invokevirtual #465                // Method level:()Lnet/minecraft/world/level/Level;
+       4: invokevirtual #558                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+       7: ldc_w         #560                // String piglinBrain
+      10: invokeinterface #566,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+      15: aload_0
+      16: invokevirtual #567                // Method getBrain:()Lnet/minecraft/world/entity/ai/Brain;
+      19: aload_0
+      20: invokevirtual #465                // Method level:()Lnet/minecraft/world/level/Level;
+      23: checkcast     #569                // class net/minecraft/server/level/ServerLevel
+      26: aload_0
+      27: invokevirtual #573                // Method net/minecraft/world/entity/ai/Brain.tick:(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;)V
+      30: aload_0
+      31: invokevirtual #465                // Method level:()Lnet/minecraft/world/level/Level;
+      34: invokevirtual #558                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+      37: invokeinterface #576,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+      42: aload_0
+      43: invokestatic  #580                // Method net/minecraft/world/entity/monster/piglin/PiglinAi.updateActivity:(Lnet/minecraft/world/entity/monster/piglin/Piglin;)V
+      46: aload_0
+      47: invokespecial #582                // Method net/minecraft/world/entity/monster/piglin/AbstractPiglin.customServerAiStep:()V
+      50: return
+

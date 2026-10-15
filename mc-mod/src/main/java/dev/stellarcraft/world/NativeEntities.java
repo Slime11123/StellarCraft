@@ -85,13 +85,18 @@ public final class NativeEntities {
             boolean arrow=e instanceof AbstractArrow a&&!(a instanceof net.minecraft.world.entity.projectile.ThrownTrident)
                 &&NativeMovement.owns(a.getOwner())&&ControlStateMachine.isSteve();
             if(spawning.get() || tnt || arrow || e.getTags().contains(TAG)) {
+                boolean previouslyNative=e.getTags().contains(TAG);
                 if(spawning.get() || !e.getTags().contains(TAG)) stampEpoch(e);
                 e.addTag(TAG);entities.put(e.getId(),e);e.noPhysics=true;
                 if(e instanceof AbstractArrow) {
                     arrowConfirmed.put(e.getUUID(),e.position());
                     if(e.getTags().contains("stellarcraft.embedded")) embedded.add(e.getUUID());
                 }
-                if(e instanceof Mob mob) mob.setNoAi(true);
+                if(e instanceof Mob mob) {
+                    String originalAi=NativeMobAiState.captureTag(e.getTags(),previouslyNative,mob.isNoAi());
+                    if(originalAi!=null) e.addTag(originalAi);
+                    mob.setNoAi(true);
+                }
                 System.out.println("[StellarCraft-Entities] native spawn id="+e.getId()+" type="+e.getType());
             }
         });

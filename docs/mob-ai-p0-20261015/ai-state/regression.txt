@@ -1,0 +1,1 @@
+PASS: original true/false NoAI survives forced-NoAI NBT reload; legacy/unknown/corrupt provenance is never guessed; unrelated tags preserved

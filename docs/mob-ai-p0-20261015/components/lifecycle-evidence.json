@@ -1,0 +1,87 @@
+{
+  "exeSha256": "573AAFF1C9455F85EA6036EF6F6CCB0774DE4164722A296276FBBFC7FA87545C",
+  "sdkSha256": "87B1A4BC07426787C831426267DC92D7378C053A1DC4C6A7A69738DBEE03C532",
+  "enumSha256": "B8E7D4FEF76AAA27D4CFFBD276FD3DE7A92E61786087A2C12BEE3D70BC0FBCC1",
+  "toolSha256": "82ACE79AAF4AA33F0287A5768AC1A71DA7BFF002E3312120C0CF2E2782B390A9",
+  "mode": "components",
+  "staticAnchorsPassed": 8,
+  "anchors": [
+    {
+      "label": "HP debit checks Immortal state",
+      "rva": "0x1a64e8a",
+      "bytes": "e8b1fcffff"
+    },
+    {
+      "label": "HP write converts stat value",
+      "rva": "0x1a64ec9",
+      "bytes": "e852272100"
+    },
+    {
+      "label": "Additional damage path state check",
+      "rva": "0x1bb13b4",
+      "bytes": "e88737ebff"
+    },
+    {
+      "label": "AI positioning reads state count",
+      "rva": "0x1be60cf",
+      "bytes": "e83cebe7ff"
+    },
+    {
+      "label": "AI positioning resolves actor manager",
+      "rva": "0x1be60d8",
+      "bytes": "e8631bebff"
+    },
+    {
+      "label": "Immortal state ID 27",
+      "rva": "0x1a64e82",
+      "bytes": "ba1b000000"
+    },
+    {
+      "label": "UsePlayerAIPositioning state ID 104",
+      "rva": "0x1be60c7",
+      "bytes": "ba68000000"
+    },
+    {
+      "label": "Immortal HP lower bound 1.0f",
+      "rva": "0x6749128",
+      "bytes": "0000803f"
+    }
+  ],
+  "regions": [
+    {
+      "label": "Actor-state presence query",
+      "rva": "0x1a64b40",
+      "size": 197,
+      "sha256": "B7FEFF04F199C71D6CF9F4376EBEF4182206195E79887ABF19A126D7610715E7"
+    },
+    {
+      "label": "Actor-state integer count query",
+      "rva": "0x1a64c10",
+      "size": 197,
+      "sha256": "EBFBCD64FAC4CEDC3837D50751D2D36115A9E8C7066AB3004C89D99E66D54D37"
+    },
+    {
+      "label": "HP debit respects Immortal lower bound",
+      "rva": "0x1a64e79",
+      "size": 93,
+      "sha256": "9E0FE348EEDE7AB89E1C3BBCB99C7094CB229F1231E319A568F7AC5F5503CB2E"
+    },
+    {
+      "label": "Additional damage path rejects Immortal state",
+      "rva": "0x1bb13ac",
+      "size": 21,
+      "sha256": "6664E9C3297E7A3813FD60D7A4A95E0138B26DC07BDFE060385470F9BFE847FB"
+    },
+    {
+      "label": "AI positioning state selects manager actor index",
+      "rva": "0x1be60ad",
+      "size": 81,
+      "sha256": "15741658E2624B480C88EB723A986C6CABF5DC5DF814214DF842BFA240D722DD"
+    }
+  ],
+  "nativeMobLifecycleCertified": false,
+  "nativeMobHitCertified": false,
+  "runtimeTested": false,
+  "productionModified": false,
+  "note": "Static call/pointer evidence only. No runtime lifetime, thread or proxy qualification certification."
+}

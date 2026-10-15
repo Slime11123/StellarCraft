@@ -1,0 +1,10 @@
+[2026-10-15 11:00:12.6375288] [Lua] [StellarCraft-Combat] guid=3639 type=205039001 world=3756781474 epoch=6 serial=8 route=shield HP 44000.0 -> 44000.0 / 44000.0 Shield 2160.0 -> 0.0 / 2160.0: shield decreased
+[2026-10-15 11:00:12.6383925] [Lua] [StellarCraft] event type=1 uid=20 mc=8.00 -> native=2160 route=shield tier=Elite maxHp=44000 applied=true
+[2026-10-15 11:00:13.6557975] [Lua] [StellarCraft-Combat] guid=3639 type=205039001 world=3756781474 epoch=6 serial=9 route=hp HP 44000.0 -> 40480.0 / 44000.0 Shield 0.0 -> 0.0 / 2160.0: health decreased
+[2026-10-15 11:00:13.6562727] [Lua] [StellarCraft] event type=1 uid=20 mc=8.00 -> native=3520 route=hp tier=Elite maxHp=44000 applied=true
+[2026-10-15 11:00:15.1947735] [Lua] [StellarCraft-Combat] guid=3639 type=205039001 world=3756781474 epoch=6 serial=11 route=hp HP 40480.0 -> 36960.0 / 44000.0 Shield 0.0 -> 0.0 / 2160.0: health decreased
+[2026-10-15 11:00:15.1953653] [Lua] [StellarCraft] event type=1 uid=20 mc=8.00 -> native=3520 route=hp tier=Elite maxHp=44000 applied=true
+[2026-10-15 11:00:15.7901904] [Lua] [StellarCraft-Combat] guid=3639 type=205039001 world=3756781474 epoch=6 serial=12 route=hp HP 36960.0 -> 33441.0 / 44000.0 Shield 0.0 -> 0.0 / 2160.0: health decreased
+[2026-10-15 11:00:15.7908417] [Lua] [StellarCraft] event type=1 uid=20 mc=8.00 -> native=3519 route=hp tier=Elite maxHp=44000 applied=true
+[2026-10-15 11:00:16.4850034] [Lua] [StellarCraft-Combat] guid=3639 type=205039001 world=3756781474 epoch=6 serial=13 route=hp HP 33441.0 -> 29921.0 / 44000.0 Shield 0.0 -> 0.0 / 2160.0: health decreased
+[2026-10-15 11:00:16.4855633] [Lua] [StellarCraft] event type=1 uid=20 mc=8.00 -> native=3520 route=hp tier=Elite maxHp=44000 applied=true

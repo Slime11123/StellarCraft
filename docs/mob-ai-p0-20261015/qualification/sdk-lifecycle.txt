@@ -1,0 +1,423 @@
+SB.hpp:13471
+    void ServerRequest_CreateActor(uint32 inCharacterTableID, FVector InPosition, FRotator InRotation, bool inIsPlayer, bool inCheatCmd, int32 inPlayerId, uint32 inEventSpawnId, uint8 inSpawnIndex, FName inSpawnPointName, bool bInPossess);
+
+SB.hpp:13569
+    void ClientBroadcast_CreateActor(uint32 inTurn, int32 InActorGUID, int32 inCharacterTableID, FVector InPosition, FRotator InRotation, bool inIsPlayer, int32 inPlayerId, bool bInPossess);
+
+SB.hpp:13567
+    void ClientBroadcast_DespawnActor(uint32 inTurn, int32 InActorGUID);
+
+SB.hpp:16639
+    void SBCharacterDespawnFromTag(FString InTag);
+
+SB.hpp:2098
+struct FSBCharacterTableProperty : public FSBTablePropertyBase
+{
+    uint32 ID;                                                                        // 0x0010 (size: 0x4)
+    FName Rank;                                                                       // 0x0014 (size: 0x8)
+    FString Type;                                                                     // 0x0020 (size: 0x10)
+    FName Tribe;                                                                      // 0x0030 (size: 0x8)
+    FName OverrideTribe;                                                              // 0x0038 (size: 0x8)
+    TArray<FName> ConditionList_OverrideTribe;                                        // 0x0040 (size: 0x10)
+    TArray<FName> Tags;                                                               // 0x0050 (size: 0x10)
+    TArray<FName> LinkSkillRandomActiveStepFlagArray;                                 // 0x0060 (size: 0x10)
+    FName Flag;                                                                       // 0x0070 (size: 0x8)
+    int32 MaxHP;                                                                      // 0x0078 (size: 0x4)
+    int32 MaxShield;                                                                  // 0x007C (size: 0x4)
+    int32 MaxStamina;                                                                 // 0x0080 (size: 0x4)
+    float PhysicAttackPower;                                                          // 0x0084 (size: 0x4)
+    float RangeAttackPower;                                                           // 0x0088 (size: 0x4)
+    float ShieldAttackPower;                                                          // 0x008C (size: 0x4)
+    float StaminaAttackPower;                                                         // 0x0090 (size: 0x4)
+    float ShieldBlock;                                                                // 0x0094 (size: 0x4)
+    float BaseDamageReductionByShield;                                                // 0x0098 (size: 0x4)
+    float DamageReductionPerShieldBock;                                               // 0x009C (size: 0x4)
+    float ShieldRegenPerSecond;                                                       // 0x00A0 (size: 0x4)
+    float ShieldRegenPerSecondWhenBattle;                                             // 0x00A4 (size: 0x4)
+    float StaminaRegenPerSecond;                                                      // 0x00A8 (size: 0x4)
+    float HPRegenPerSecond;                                                           // 0x00AC (size: 0x4)
+    int32 BetaGauge;                                                                  // 0x00B0 (size: 0x4)
+    int32 MaxBetaGauge;                                                               // 0x00B4 (size: 0x4)
+    int32 BurstGauge;                                                                 // 0x00B8 (size: 0x4)
+    int32 MaxBurstGauge;                                                              // 0x00BC (size: 0x4)
+    int32 MaxTachyGauge;                                                              // 0x00C0 (size: 0x4)
+    int32 UnlockBurstGauge;                                                           // 0x00C4 (size: 0x4)
+    int32 UnlockTachyGauge;                                                           // 0x00C8 (size: 0x4)
+    int32 UnlockTPSMode;                                                              // 0x00CC (size: 0x4)
+    int32 GainTachyGaugeOnDead;                                                       // 0x00D0 (size: 0x4)
+    int32 MoveSpeed;                                                                  // 0x00D4 (size: 0x4)
+    float AttackSpeed;                                                                // 0x00D8 (size: 0x4)
+    float CriticalPercentage;                                                         // 0x00DC (size: 0x4)
+    float CriticalValueRate;                                                          // 0x00E0 (size: 0x4)
+    float ShieldIgnorePercentage;                                                     // 0x00E4 (size: 0x4)
+    float SmallWeightTypeDamageAdditiveRate;                                          // 0x00E8 (size: 0x4)
+    float LargeWeightTypeDamageAdditiveRate;                                          // 0x00EC (size: 0x4)
+    float RangeAttackDamageAdditiveRate;                                              // 0x00F0 (size: 0x4)
+    float MeleeAttackDamageReductionRate;                                             // 0x00F4 (size: 0x4)
+    float RangeAttackDamageReductionRate;                                             // 0x00F8 (size: 0x4)
+    float DownStateDamageAdditiveRate;                                                // 0x00FC (size: 0x4)
+    float GroggyStateDamageAdditiveRate;                                              // 0x0100 (size: 0x4)
+    float AirborneStateDamageAdditiveRate;                                            // 0x0104 (size: 0x4)
+    float FireAttributeDamageReductionRate;                                           // 0x0108 (size: 0x4)
+    float IceAttributeDamageReductionRate;                                            // 0x010C (size: 0x4)
+    float LightningAttributeDamageReductionRate;                                      // 0x0110 (size: 0x4)
+    float PoisonAttributeDamageReductionRate;                                         // 0x0114 (size: 0x4)
+    float AdditiveFixedDamage;                                                        // 0x0118 (size: 0x4)
+    float LowHpDamageAdditiveRate;                                                    // 0x011C (size: 0x4)
+    float HighHpDamageAdditiveRate;                                                   // 0x0120 (size: 0x4)
+    float DOTDamageAdditiveRate;                                                      // 0x0124 (size: 0x4)
+    float FinalHPDamageReduceRate;                                                    // 0x0128 (size: 0x4)
+    float FinalShieldDamageReduceRate;                                                // 0x012C (size: 0x4)
+    float BetaGaugeAdditiveRate;                                                      // 0x0130 (size: 0x4)
+    float Luck;                                                                       // 0x0134 (size: 0x4)
+    float DrainHpByAttackPowerRate;                                                   // 0x0138 (size: 0x4)
+    float DrainHpFixedValue;                                                          // 0x013C (size: 0x4)
+    float SprintableStaminaValue;                                                     // 0x0140 (size: 0x4)
+    TArray<FName> EffectAliasWhenZeroHPArray;                                         // 0x0148 (size: 0x10)
+    TArray<FName> EffectAliasWhenZeroShieldArray;                                     // 0x0158 (size: 0x10)
+    TArray<FName> EffectAliasWhenZeroStaminaArray;                                    // 0x0168 (size: 0x10)
+    TArray<FName> EffectAliasByRageSkillArray;                                        // 0x0178 (size: 0x10)
+    TArray<FName> EffectAliasBy1ComboSkillArray;                                      // 0x0188 (size: 0x10)
+    TArray<FName> EffectAliasBy2ComboSkillArray;                                      // 0x0198 (size: 0x10)
+    TArray<FName> EffectAliasBy3ComboSkillArray;                                      // 0x01A8 (size: 0x10)
+    TArray<FName> EffectAliasBy4ComboSkillArray;                                      // 0x01B8 (size: 0x10)
+    TArray<FName> EffectAliasBy5ComboSkillArray;                                      // 0x01C8 (size: 0x10)
+    TArray<FName> EffectAliasByCriticalHitArray;                                      // 0x01D8 (size: 0x10)
+    TArray<FName> EffectAliasToTargetByCriticalHitArray;                              // 0x01E8 (size: 0x10)
+    TEnumAsByte<ESBActorWeightType> WeightType;                                       // 0x01F8 (size: 0x1)
+    float MeshScale;                                                                  // 0x01FC (size: 0x4)
+    float TargetFilterRadius;                                                         // 0x0200 (size: 0x4)
+    float ProjectileTargetFilterRadius;                                               // 0x0204 (size: 0x4)
+    float RuleMoveBlockAreaRadius;                                                    // 0x0208 (size: 0x4)
+    float RuleMoveBlockAreaZHeight;                                                   // 0x020C (size: 0x4)
+    float RuleMoveBlockAreaOffsetX;                                                   // 0x0210 (size: 0x4)
+    float RuleMoveBlockAreaOffsetY;                                                   // 0x0214 (size: 0x4)
+    float RuleMoveBlockAreaOffsetZ;                                                   // 0x0218 (size: 0x4)
+    float RuleMoveBlockCheckRadius;                                                   // 0x021C (size: 0x4)
+    TArray<FName> DefaultEffectArray;                                                 // 0x0220 (size: 0x10)
+    TArray<FName> EffectAliasByPlayerCount2;                                          // 0x0230 (size: 0x10)
+    TArray<FName> EffectAliasByPlayerCount3;                                          // 0x0240 (size: 0x10)
+    TArray<FName> EffectAliasByPlayerCount4;                                          // 0x0250 (size: 0x10)
+    TArray<FName> EffectAliasArrayForStoryMode;                                       // 0x0260 (size: 0x10)
+    FName DifficultyStatGroupAlias;                                                   // 0x0270 (size: 0x8)
+    TArray<FName> DefaultEquipmentAliasArray;                                         // 0x0278 (size: 0x10)
+    FString AttackerEffectWhenDead;                                                   // 0x0288 (size: 0x10)
+    FName DeadAlias;                                                                  // 0x0298 (size: 0x8)
+    float DespawnTimeAfterDeath;                                                      // 0x02A0 (size: 0x4)
+    FString DespawnShow;                                                              // 0x02A8 (size: 0x10)
+    FString SpawnShow;                                                                // 0x02B8 (size: 0x10)
+    TArray<FName> SpawnEffectList;                                                    // 0x02C8 (size: 0x10)
+    FString MonsterWarpShow;                                                          // 0x02D8 (size: 0x10)
+    TArray<FName> MonsterWarpEffectList;                                              // 0x02E8 (size: 0x10)
+    FName CollisionGroupName1;                                                        // 0x02F8 (size: 0x8)
+    float CollisionGroupGauge1;                                                       // 0x0300 (size: 0x4)
+    TArray<FName> EffectAliasArrayWhenCollisionGroupGaugeZero1;                       // 0x0308 (size: 0x10)
+    FName CollisionGroupName2;                                                        // 0x0318 (size: 0x8)
+    float CollisionGroupGauge2;                                                       // 0x0320 (size: 0x4)
+    TArray<FName> EffectAliasArrayWhenCollisionGroupGaugeZero2;                       // 0x0328 (size: 0x10)
+    FName CollisionGroupName3;                                                        // 0x0338 (size: 0x8)
+    float CollisionGroupGauge3;                                                       // 0x0340 (size: 0x4)
+    TArray<FName> EffectAliasArrayWhenCollisionGroupGaugeZero3;                       // 0x0348 (size: 0x10)
+    FName CollisionGroupName4;                                                        // 0x0358 (size: 0x8)
+    float CollisionGroupGauge4;                                                       // 0x0360 (size: 0x4)
+    TArray<FName> EffectAliasArrayWhenCollisionGroupGaugeZero4;                       // 0x0368 (size: 0x10)
+    FName CollisionGroupName5;                                                        // 0x0378 (size: 0x8)
+    float CollisionGroupGauge5;                                                       // 0x0380 (size: 0x4)
+    TArray<FName> EffectAliasArrayWhenCollisionGroupGaugeZero5;                       // 0x0388 (size: 0x10)
+    TArray<FName> StanceAliasArray;                                                   // 0x0398 (size: 0x10)
+    FName DefaultStanceAlias;                                                         // 0x03A8 (size: 0x8)
+    float GetupTime;                                                                  // 0x03B0 (size: 0x4)
+    FName GetupMoveAlias;                                                             // 0x03B4 (size: 0x8)
+    float GroggyEndTime;                                                              // 0x03BC (size: 0x4)
+    TArray<FName> JumpEffectArray;                                                    // 0x03C0 (size: 0x10)
+    TArray<FName> SprintEffectArray;                                                  // 0x03D0 (size: 0x10)
+    float VelocityWhenWallHitBounce;                                                  // 0x03E0 (size: 0x4)
+    float VelocityDelayWhenWallHitBounce;                                             // 0x03E4 (size: 0x4)
+    FString BehaviorTreeRes;                                                          // 0x03E8 (size: 0x10)
+    FName DefaultDetectAIAlias;                                                       // 0x03F8 (size: 0x8)
+    FName NarrowDetectAIAlias;                                                        // 0x0400 (size: 0x8)
+    FName DetectViewingSocketName;                                                    // 0x0408 (size: 0x8)
+    float AIAuditorySenseRadius;                                                      // 0x0410 (size: 0x4)
+    float AIAuditorySenseDecibel;                                                     // 0x0414 (size: 0x4)
+    float AIAuditorySenseDuration;                                                    // 0x0418 (size: 0x4)
+    TEnumAsByte<ESBActorType> ActorType;                                              // 0x041C (size: 0x1)
+    FName RefAppearance;                                                              // 0x0420 (size: 0x8)
+    int32 HitDefenseLevel;                                                            // 0x0428 (size: 0x4)
+    float BackSideHitAngle;                                                           // 0x042C (size: 0x4)
+    float InteractionRange;                                                           // 0x0430 (size: 0x4)
+    float InteractionAngle;                                                           // 0x0434 (size: 0x4)
+    FString Interaction;                                                              // 0x0438 (size: 0x10)
+    float InteractionUpperHeight;                                                     // 0x0448 (size: 0x4)
+    float InteractionLowerHeight;                                                     // 0x044C (size: 0x4)
+    FName RewardGroupAlias;                                                           // 0x0450 (size: 0x8)
+    TEnumAsByte<ESBItemBucketType> RewardSpawnBucketType;                             // 0x0458 (size: 0x1)
+    TEnumAsByte<ESBItemOverrideSaveType> RewardOverrideSaveType;                      // 0x0459 (size: 0x1)
+    FString RewardFormationAssetPath;                                                 // 0x0460 (size: 0x10)
+    bool bDisableCollisionWhenDead;                                                   // 0x0470 (size: 0x1)
+    float DisableCollisionDelayTime;                                                  // 0x0474 (size: 0x4)
+    FString UITextWhenDead;                                                           // 0x0478 (size: 0x10)
+    int32 StackRecoveryPotion;                                                        // 0x0488 (size: 0x4)
+    int32 StackBullet1;                                                               // 0x048C (size: 0x4)
+    int32 StackBullet2;                                                               // 0x0490 (size: 0x4)
+    int32 StackBullet3;                                                               // 0x0494 (size: 0x4)
+    int32 StackBullet4;                                                               // 0x0498 (size: 0x4)
+    int32 StackBullet5;                                                               // 0x049C (size: 0x4)
+    int32 StackBullet6;                                                               // 0x04A0 (size: 0x4)
+    int32 StackConsumable1;                                                           // 0x04A4 (size: 0x4)
+    int32 StackConsumable2;                                                           // 0x04A8 (size: 0x4)
+    int32 StackConsumable3;                                                           // 0x04AC (size: 0x4)
+    int32 StackConsumable4;                                                           // 0x04B0 (size: 0x4)
+    int32 StackConsumable5;                                                           // 0x04B4 (size: 0x4)
+    int32 StackConsumable6;                                                           // 0x04B8 (size: 0x4)
+    int32 StackConsumable7;                                                           // 0x04BC (size: 0x4)
+    int32 GearSlotCount;                                                              // 0x04C0 (size: 0x4)
+    int32 ExoSpineSlotCount;                                                          // 0x04C4 (size: 0x4)
+    float FishingAttackPower;                                                         // 0x04C8 (size: 0x4)
+    bool bEncroachmentable;                                                           // 0x04CC (size: 0x1)
+    FName EncroachmentType;                                                           // 0x04D0 (size: 0x8)
+    bool bExcludingRuleMoveIgnoreTarget;                                              // 0x04D8 (size: 0x1)
+    FString RelativeShowPath;                                                         // 0x04E0 (size: 0x10)
+    float LockOnCameraBoomHeight;                                                     // 0x04F0 (size: 0x4)
+    float LockOnCameraBoomLeftRight;                                                  // 0x04F4 (size: 0x4)
+    float LockOnCameraBoomLength;                                                     // 0x04F8 (size: 0x4)
+    bool bKeepData;                                                                   // 0x04FC (size: 0x1)
+    bool bUseDistancePooling;                                                         // 0x04FD (size: 0x1)
+    bool bUseDelayBattleStanceTime;                                                   // 0x04FE (size: 0x1)
+    bool bApplyDamageWhenPlayerAlive;                                                 // 0x04FF (size: 0x1)
+    TEnumAsByte<ESBScanDisplayType> ScanDisplayType;                                  // 0x0500 (size: 0x1)
+    FString Name;                                                                     // 0x0508 (size: 0x10)
+    TEnumAsByte<ESBEquipType> OverrideEquip;                                          // 0x0518 (size: 0x1)
+    bool bSequenceCharacter;                                                          // 0x0519 (size: 0x1)
+    FString OverrideCharacterSoundSet;                                                // 0x0520 (size: 0x10)
+    FName FileSuffix;                                                                 // 0x0530 (size: 0x8)
+    TArray<FSBJsonEffect> AttackerEffectWhenDeadArray;                                // 0x0538 (size: 0x10)
+
+}; // Size: 0x548
+
+SB.hpp:1364
+struct FSBCharacterAppearanceTableProperty : public FSBTablePropertyBase
+{
+    uint32 ID;                                                                        // 0x0010 (size: 0x4)
+    FName CharacterAssetPath;                                                         // 0x0014 (size: 0x8)
+    float CapsuleRadius;                                                              // 0x001C (size: 0x4)
+    float CapsuleHalfHeight;                                                          // 0x0020 (size: 0x4)
+    FName BodyMesh;                                                                   // 0x0024 (size: 0x8)
+    FName FaceMesh;                                                                   // 0x002C (size: 0x8)
+    FName BodyAnimAssetPath;                                                          // 0x0034 (size: 0x8)
+    FName FaceAnimAssetPath;                                                          // 0x003C (size: 0x8)
+    TEnumAsByte<ESBMeshAttachType> FaceAttachType;                                    // 0x0044 (size: 0x1)
+    FName BattleToPeacefulShowPath;                                                   // 0x0048 (size: 0x8)
+    FName PeacefulToBattleShowPath;                                                   // 0x0050 (size: 0x8)
+    FName PeacefulToBattleShowPath_LockOn;                                            // 0x0058 (size: 0x8)
+    FName BattleToPeacefulShowPath_Move;                                              // 0x0060 (size: 0x8)
+    FName PeacefulToBattleShowPath_Move;                                              // 0x0068 (size: 0x8)
+    FName PeacefulToBattleShowPath_Move_LockOn;                                       // 0x0070 (size: 0x8)
+    FName BattleToPeacefulShowPath_NoneAnim;                                          // 0x0078 (size: 0x8)
+    FName PeacefulToBattleShowPath_NoneAnim;                                          // 0x0080 (size: 0x8)
+    FName PeacefulToBattleShowPath_NoneAnim_LockOn;                                   // 0x0088 (size: 0x8)
+    FName IdleToGroggyShowPath;                                                       // 0x0090 (size: 0x8)
+    FName IdleToDownShowPath;                                                         // 0x0098 (size: 0x8)
+    FName IdleToDeadShowPath;                                                         // 0x00A0 (size: 0x8)
+    FName IdleToAirborneShowPath;                                                     // 0x00A8 (size: 0x8)
+    FName DownToIdleShowPath;                                                         // 0x00B0 (size: 0x8)
+    FName GroggyToIdleShowPath;                                                       // 0x00B8 (size: 0x8)
+    FName AirborneToIdleShowPath;                                                     // 0x00C0 (size: 0x8)
+    FName GroggyToAirborneShowPath;                                                   // 0x00C8 (size: 0x8)
+    FName DownToAirborneShowPath;                                                     // 0x00D0 (size: 0x8)
+    FName GroggyToDownShowPath;                                                       // 0x00D8 (size: 0x8)
+    FName AirborneToDownShowPath;                                                     // 0x00E0 (size: 0x8)
+    FString StartSlopeShow;                                                           // 0x00E8 (size: 0x10)
+    FString EndSlopeShow;                                                             // 0x00F8 (size: 0x10)
+    FName FishingAimToTakeBackShowPath;                                               // 0x0108 (size: 0x8)
+    FName FishingTakeBackToAimShowPath;                                               // 0x0110 (size: 0x8)
+    FName FishingTakeBackToCastingShowPath;                                           // 0x0118 (size: 0x8)
+    FName FishingCastingToWaitShowPath;                                               // 0x0120 (size: 0x8)
+    FName FishingWaitToFightShowPath;                                                 // 0x0128 (size: 0x8)
+    FName FishingWaitToIdleShowPath;                                                  // 0x0130 (size: 0x8)
+    FName FishingFightToIdleShowPath;                                                 // 0x0138 (size: 0x8)
+    FName FishingCatchShowPath;                                                       // 0x0140 (size: 0x8)
+    FName FishingLureChangeShowPath;                                                  // 0x0148 (size: 0x8)
+    FName FileSuffix;                                                                 // 0x0150 (size: 0x8)
+
+}; // Size: 0x158
+
+SB.hpp:2281
+struct FSBCharacterTribeTableProperty : public FSBTablePropertyBase
+{
+    uint32 ID;                                                                        // 0x0010 (size: 0x4)
+    FName TargetTribe1;                                                               // 0x0014 (size: 0x8)
+    TEnumAsByte<ESBTribeRelation> TargetRelation1;                                    // 0x001C (size: 0x1)
+    FName TargetTribe2;                                                               // 0x0020 (size: 0x8)
+    TEnumAsByte<ESBTribeRelation> TargetRelation2;                                    // 0x0028 (size: 0x1)
+    FName TargetTribe3;                                                               // 0x002C (size: 0x8)
+    TEnumAsByte<ESBTribeRelation> TargetRelation3;                                    // 0x0034 (size: 0x1)
+    FName TargetTribe4;                                                               // 0x0038 (size: 0x8)
+    TEnumAsByte<ESBTribeRelation> TargetRelation4;                                    // 0x0040 (size: 0x1)
+    FName TargetTribe5;                                                               // 0x0044 (size: 0x8)
+    TEnumAsByte<ESBTribeRelation> TargetRelation5;                                    // 0x004C (size: 0x1)
+    FName TargetTribe6;                                                               // 0x0050 (size: 0x8)
+    TEnumAsByte<ESBTribeRelation> TargetRelation6;                                    // 0x0058 (size: 0x1)
+    FName TargetTribe7;                                                               // 0x005C (size: 0x8)
+    TEnumAsByte<ESBTribeRelation> TargetRelation7;                                    // 0x0064 (size: 0x1)
+    FName TargetTribe8;                                                               // 0x0068 (size: 0x8)
+    TEnumAsByte<ESBTribeRelation> TargetRelation8;                                    // 0x0070 (size: 0x1)
+    FName TargetTribe9;                                                               // 0x0074 (size: 0x8)
+    TEnumAsByte<ESBTribeRelation> TargetRelation9;                                    // 0x007C (size: 0x1)
+    FName TargetTribe10;                                                              // 0x0080 (size: 0x8)
+    TEnumAsByte<ESBTribeRelation> TargetRelation10;                                   // 0x0088 (size: 0x1)
+    FName FileSuffix;                                                                 // 0x008C (size: 0x8)
+
+}; // Size: 0x98
+
+SB.hpp:1594
+struct FSBCharacterDetectAITableProperty : public FSBTablePropertyBase
+{
+    float AISightSenseHorizontalAngle;                                                // 0x0010 (size: 0x4)
+    float AISightSenseVerticalAngle;                                                  // 0x0014 (size: 0x4)
+    float AISightSenseNearDistance;                                                   // 0x0018 (size: 0x4)
+    float AISightSenseVerticalDistance;                                               // 0x001C (size: 0x4)
+    bool AISightSenseIgnoreBlocking;                                                  // 0x0020 (size: 0x1)
+    bool AISightSenseIgnoreBlockingWhenDetectTarget;                                  // 0x0021 (size: 0x1)
+    float AIDetectCheckDistance;                                                      // 0x0024 (size: 0x4)
+    float AIObserveCheckDistance;                                                     // 0x0028 (size: 0x4)
+    float AIPursuitDistance;                                                          // 0x002C (size: 0x4)
+    float AIPursuitFixedDistance;                                                     // 0x0030 (size: 0x4)
+    float AIPursuitVerticaDistance;                                                   // 0x0034 (size: 0x4)
+    float AIIncreaseAggroGaguePerSecond;                                              // 0x0038 (size: 0x4)
+    float AIIncreaseDoubtAggroGaguePerSecond;                                         // 0x003C (size: 0x4)
+    float AIDecreaseLevel0AggroGaguePerSecond;                                        // 0x0040 (size: 0x4)
+    float AIDecreaseLevel1AggroGaguePerSecond;                                        // 0x0044 (size: 0x4)
+    FName FileSuffix;                                                                 // 0x0048 (size: 0x8)
+
+}; // Size: 0x50
+
+SB.hpp:8535
+struct FSBSkillTargetFilterTableProperty : public FSBTablePropertyBase
+{
+    uint32 ID;                                                                        // 0x0010 (size: 0x4)
+    TEnumAsByte<ESBTargetActor> TargetType;                                           // 0x0014 (size: 0x1)
+    bool bMultipleTargets;                                                            // 0x0015 (size: 0x1)
+    bool bDynamicShapeScale;                                                          // 0x0016 (size: 0x1)
+    float MinShapeScale;                                                              // 0x0018 (size: 0x4)
+    float MaxShapeScale;                                                              // 0x001C (size: 0x4)
+    float NearDistance;                                                               // 0x0020 (size: 0x4)
+    float FarDistance;                                                                // 0x0024 (size: 0x4)
+    TEnumAsByte<ESBActorSortType> SortType;                                           // 0x0028 (size: 0x1)
+    float CheckHitStepTimeWhenSortParry;                                              // 0x002C (size: 0x4)
+    float ShapeForwardDistance;                                                       // 0x0030 (size: 0x4)
+    float ShapeRightDistance;                                                         // 0x0034 (size: 0x4)
+    float ShapeUpDistance;                                                            // 0x0038 (size: 0x4)
+    TEnumAsByte<ESBCheckShape> TargetCheckShape;                                      // 0x003C (size: 0x1)
+    float TargetCheckValue1;                                                          // 0x0040 (size: 0x4)
+    float TargetCheckValue2;                                                          // 0x0044 (size: 0x4)
+    float TargetCheckValue3;                                                          // 0x0048 (size: 0x4)
+    TEnumAsByte<ESBActorState> ActorState1;                                           // 0x004C (size: 0x1)
+    TEnumAsByte<ESBActorState> ActorState2;                                           // 0x004D (size: 0x1)
+    TEnumAsByte<ESBActorState> ActorState3;                                           // 0x004E (size: 0x1)
+    TEnumAsByte<ESBActorState> ActorState4;                                           // 0x004F (size: 0x1)
+    TEnumAsByte<ESBActorState> ActorState5;                                           // 0x0050 (size: 0x1)
+    TEnumAsByte<ESBActorState> NonActorState1;                                        // 0x0051 (size: 0x1)
+    TEnumAsByte<ESBActorState> NonActorState2;                                        // 0x0052 (size: 0x1)
+    TEnumAsByte<ESBActorState> NonActorState3;                                        // 0x0053 (size: 0x1)
+    TEnumAsByte<ESBActorState> NonActorState4;                                        // 0x0054 (size: 0x1)
+    TEnumAsByte<ESBActorState> NonActorState5;                                        // 0x0055 (size: 0x1)
+    TEnumAsByte<ESBActorStatType> ActorStat1;                                         // 0x0056 (size: 0x1)
+    TEnumAsByte<ESBActorStatCheckType> ActorStatCheck1;                               // 0x0057 (size: 0x1)
+    int32 ActorStatCheckValue1;                                                       // 0x0058 (size: 0x4)
+    float CheckMinAngleToTarget;                                                      // 0x005C (size: 0x4)
+    float CheckMaxAngleToTarget;                                                      // 0x0060 (size: 0x4)
+    bool bDisableBlockingCheck;                                                       // 0x0064 (size: 0x1)
+    bool bBlockingCheckWithTopLocation;                                               // 0x0065 (size: 0x1)
+    bool bValidEngineHandle;                                                          // 0x0066 (size: 0x1)
+    TEnumAsByte<ESBConditionCheckType> CheckBattleMode;                               // 0x0067 (size: 0x1)
+    TArray<FName> CheckActiveEffectAliasArray;                                        // 0x0068 (size: 0x10)
+    TArray<FName> CheckActiveNoneEffectAliasArray;                                    // 0x0078 (size: 0x10)
+    TArray<FName> CheckActiveEffectAliasArrayWhenEasyMode;                            // 0x0088 (size: 0x10)
+    TArray<FName> CheckActiveNoneEffectAliasArrayWhenEasyMode;                        // 0x0098 (size: 0x10)
+    float GroundHeightToTarget;                                                       // 0x00A8 (size: 0x4)
+    TEnumAsByte<ESBConditionCheckType> bSwimming;                                     // 0x00AC (size: 0x1)
+    TEnumAsByte<ESBConditionCheckType> bEncroachmentable;                             // 0x00AD (size: 0x1)
+    TEnumAsByte<ESBConditionCheckType> bDead;                                         // 0x00AE (size: 0x1)
+    bool bNotSupportedZoneEventActor;                                                 // 0x00AF (size: 0x1)
+    FName FileSuffix;                                                                 // 0x00B0 (size: 0x8)
+
+}; // Size: 0xB8
+
+SB.hpp:1440
+struct FSBCharacterCollisionShapeInfo
+{
+    FName Name;                                                                       // 0x0000 (size: 0x8)
+    TEnumAsByte<ESBCharacterCollisionShapeType> ShapeType;                            // 0x0008 (size: 0x1)
+    FString SkeletalMeshName;                                                         // 0x0010 (size: 0x10)
+    FName SocketName;                                                                 // 0x0020 (size: 0x8)
+    bool bMeleeAttackCollision;                                                       // 0x0028 (size: 0x1)
+    bool bRangeAttackCollision;                                                       // 0x0029 (size: 0x1)
+    bool bOnlyJustActiveCollision;                                                    // 0x002A (size: 0x1)
+    float WeakPointDamageAdditiveRate;                                                // 0x002C (size: 0x4)
+    bool bKeepShapeScale;                                                             // 0x0030 (size: 0x1)
+    FName ShowKeyTag;                                                                 // 0x0034 (size: 0x8)
+    bool bRootAxisRelativeLocation;                                                   // 0x003C (size: 0x1)
+    FVector RelativeLocation;                                                         // 0x0040 (size: 0xC)
+    bool bRootAxisRelativeRotation;                                                   // 0x004C (size: 0x1)
+    FRotator RelativeRotation;                                                        // 0x0050 (size: 0xC)
+    float ValidAngle;                                                                 // 0x005C (size: 0x4)
+    FRotator ValidAngleRotation;                                                      // 0x0060 (size: 0xC)
+    FVector BoxExtent;                                                                // 0x006C (size: 0xC)
+    float CapsuleHalfHeight;                                                          // 0x0078 (size: 0x4)
+    float CapsuleRadius;                                                              // 0x007C (size: 0x4)
+
+}; // Size: 0x80
+
+SB.hpp:1420
+struct FSBCharacterAttackedCollisionGroup
+{
+    FName GroupName;                                                                  // 0x0000 (size: 0x8)
+    bool bDefaultActive;                                                              // 0x0008 (size: 0x1)
+    bool bPhotoMode;                                                                  // 0x0009 (size: 0x1)
+    bool bPhotoModeImportantPart;                                                     // 0x000A (size: 0x1)
+    TArray<FName> ShapeNameArray;                                                     // 0x0010 (size: 0x10)
+
+}; // Size: 0x20
+
+enum ESBActorLifeState {
+    ESBActorLifeState_None = 0,
+    ESBActorLifeState_Spawn = 1,
+    ESBActorLifeState_Coma = 2,
+    ESBActorLifeState_Dead = 3,
+    ESBActorLifeState_Despawn = 4,
+    ESBActorLifeState_Destroy = 5,
+    ESBActorLifeState_Spawning = 6,
+    ESBActorLifeState_MAX = 7,
+};
+
+enum ESBTribeRelation {
+    TribeRelation_None = 0,
+    TribeRelation_Ally = 1,
+    TribeRelation_Enemy = 2,
+    TribeRelation_MAX = 3,
+};
+
+enum ESBActorType {
+    ActorType_None = 0,
+    ActorType_PC = 1,
+    ActorType_NPC = 2,
+    ActorType_Monster = 3,
+    ActorType_BossMonster = 4,
+    ActorType_MAX = 5,
+};
+
+enum ESBTargetActor {
+    Target_None = 0,
+    Target_Self = 1,
+    Target_SpecifiedTargetes = 2,
+    Target_Ally = 3,
+    Target_AllyWithSelf = 4,
+    Target_Enemy = 5,
+    Target_All = 6,
+    Target_AllWithoutSelf = 7,
+    Target_Owner = 8,
+    Target_LockOn = 9,
+    Target_AIDetectTarget = 10,
+    Target_AIDetectSubTarget = 11,
+    Target_MAX = 12,
+};

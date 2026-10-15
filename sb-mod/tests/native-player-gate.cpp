@@ -39,9 +39,9 @@ int main(int argc,char** argv) {
     auto sections=IMAGE_FIRST_SECTION(nt);
     auto mem=static_cast<unsigned char*>(VirtualAlloc(nullptr,0x7070000,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE));
     assert(mem);std::memcpy(mem,file.data(),4096);
-    const unsigned offsets[]={0x1AD6AB0,0x1BA8720,0x1A97B20,0xE36F9B,0x1A64CE0,0x1BA881E,0x1A97C44,0x1CC2590,0x1AAC32C,0x1C71B1F,0x1C97E3E,0x1BA87E6,0x1BA8823,0x1B1F7FC,0x1BA875F,0x1BA87B3,0x1AD6A10,0x1AD6A60,0x1BC609A,0x1BC64CF,0x1A30C90};
-    const unsigned sizes[]={32,32,16,6,32,5,12,74,6,13,14,61,20,66,36,41,33,25,4,4,25};
-    for(int i=0;i<21;i++) {
+    const unsigned offsets[]={0x1AD6AB0,0x1BA8720,0x1A97B20,0xE36F9B,0x1A64CE0,0x1BA881E,0x1A97C44,0x1CC2590,0x1AAC32C,0x1C71B1F,0x1C97E3E,0x1BA87E6,0x1BA8823,0x1B1F7FC,0x1BA875F,0x1BA87B3,0x1AD6A10,0x1AD6A60,0x1BC609A,0x1BC64CF,0x1A30C90,0x1BA8893,0x1BA882B,0x1BA8968,0x1A6512A,0x1A64D52,0x1A65A96,0x1A65A60};
+    const unsigned sizes[]={32,32,16,6,32,5,12,74,6,13,14,61,20,66,36,41,33,25,4,4,25,27,12,187,159,48,1,4};
+    for(int i=0;i<sizeof offsets/sizeof *offsets;i++) {
         bool found=false;
         for(unsigned j=0;j<nt->FileHeader.NumberOfSections;j++) {
             auto& s=sections[j];auto delta=offsets[i]-s.VirtualAddress;
@@ -88,7 +88,7 @@ int main(int argc,char** argv) {
     assert(!native_player_damage::hit_source(base,0,123,1000020,address(victim)).guid);
     std::puts("PASS: effect origin/position, victim/GUID/type/vtable, dead/free/stale source, malformed hash and cyclic/out-of-range chain rejection");
     unsigned mutations=0;
-    for(int i=0;i<21;i++) for(unsigned j=0;j<sizes[i];j++) {
+    for(int i=0;i<sizeof offsets/sizeof *offsets;i++) for(unsigned j=0;j<sizes[i];j++) {
         mem[offsets[i]+j]^=1;assert(!native_player_damage::certified(base));mem[offsets[i]+j]^=1;
         ++mutations;
     }

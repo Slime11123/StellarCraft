@@ -1,0 +1,5 @@
+C:\Users\StickySlime\Documents\Codex\Projects\StellarCraft\sb-mod\build\manual\lua.exe: sb-mod/tests/world-character-query-regression.lua:24: assertion failed!
+stack traceback:
+	[C]: in function 'assert'
+	sb-mod/tests/world-character-query-regression.lua:24: in main chunk
+	[C]: in ?

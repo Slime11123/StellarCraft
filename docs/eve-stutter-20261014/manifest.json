@@ -1,0 +1,38 @@
+{
+  "installed": true,
+  "date": "2026-10-14",
+  "protocolVersion": 6,
+  "source": "C:\\Users\\StickySlime\\Documents\\Codex\\Projects\\StellarCraft\\sb-mod\\lua\\main.lua",
+  "destination": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\main.lua",
+  "sha256": "3E3B1D28EBF467CACF2068190C98A43A058529340DAB42E519629620E1339A32",
+  "previousSha256": "CBB283F7F30573FC083E615EFCA7D3058A4F59148C91724A43CF634682CB54E7",
+  "unchanged": [
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\stellarcraft_shm.dll",
+      "sha256": "E30E74B7A7DB85660113EEA010C0A8A7C4F9526C23655942587EDEF7B35ABC47"
+    },
+    {
+      "path": "D:\\Release 2.7.4\\.minecraft\\versions\\1.20.1-Fabric 0.19.5\\mods\\stellarcraft-0.1.0.jar",
+      "sha256": "A767AFBA7371B27BE3B775538A6AC7422F4247268B308AD1F45459B417A884FF"
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\block_visuals.lua",
+      "sha256": "5E89B096F3B82AE66B2CD35A4C9077A47CCA38AF6928805C2F4C18816DA2EA6D"
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\native_particles.lua",
+      "sha256": "835D4002B457223378EB172F8343C6642681152519E3CD1842C8D17CC606D63F"
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\native_world.lua",
+      "sha256": "B79A75749D8E0F68BD96653CB0C9BACA0D164246EC9ABFA5EBE057F340B25C37"
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\world_lifecycle.lua",
+      "sha256": "4C135D91FF12F6B9F9236B93C93DDE040ACD8952C689BF960D0817C6132B3D4F"
+    }
+  ],
+  "userReportsNoCrash": true,
+  "eveStutterInGameVerified": false,
+  "qaBytes": 0
+}

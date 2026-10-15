@@ -1,0 +1,128 @@
+SB.hpp:1594
+struct FSBCharacterDetectAITableProperty : public FSBTablePropertyBase
+{
+    float AISightSenseHorizontalAngle;                                                // 0x0010 (size: 0x4)
+    float AISightSenseVerticalAngle;                                                  // 0x0014 (size: 0x4)
+    float AISightSenseNearDistance;                                                   // 0x0018 (size: 0x4)
+    float AISightSenseVerticalDistance;                                               // 0x001C (size: 0x4)
+    bool AISightSenseIgnoreBlocking;                                                  // 0x0020 (size: 0x1)
+    bool AISightSenseIgnoreBlockingWhenDetectTarget;                                  // 0x0021 (size: 0x1)
+    float AIDetectCheckDistance;                                                      // 0x0024 (size: 0x4)
+    float AIObserveCheckDistance;                                                     // 0x0028 (size: 0x4)
+    float AIPursuitDistance;                                                          // 0x002C (size: 0x4)
+    float AIPursuitFixedDistance;                                                     // 0x0030 (size: 0x4)
+    float AIPursuitVerticaDistance;                                                   // 0x0034 (size: 0x4)
+    float AIIncreaseAggroGaguePerSecond;                                              // 0x0038 (size: 0x4)
+    float AIIncreaseDoubtAggroGaguePerSecond;                                         // 0x003C (size: 0x4)
+    float AIDecreaseLevel0AggroGaguePerSecond;                                        // 0x0040 (size: 0x4)
+    float AIDecreaseLevel1AggroGaguePerSecond;                                        // 0x0044 (size: 0x4)
+    FName FileSuffix;                                                                 // 0x0048 (size: 0x8)
+
+}; // Size: 0x50
+
+SB.hpp:8535
+struct FSBSkillTargetFilterTableProperty : public FSBTablePropertyBase
+{
+    uint32 ID;                                                                        // 0x0010 (size: 0x4)
+    TEnumAsByte<ESBTargetActor> TargetType;                                           // 0x0014 (size: 0x1)
+    bool bMultipleTargets;                                                            // 0x0015 (size: 0x1)
+    bool bDynamicShapeScale;                                                          // 0x0016 (size: 0x1)
+    float MinShapeScale;                                                              // 0x0018 (size: 0x4)
+    float MaxShapeScale;                                                              // 0x001C (size: 0x4)
+    float NearDistance;                                                               // 0x0020 (size: 0x4)
+    float FarDistance;                                                                // 0x0024 (size: 0x4)
+    TEnumAsByte<ESBActorSortType> SortType;                                           // 0x0028 (size: 0x1)
+    float CheckHitStepTimeWhenSortParry;                                              // 0x002C (size: 0x4)
+    float ShapeForwardDistance;                                                       // 0x0030 (size: 0x4)
+    float ShapeRightDistance;                                                         // 0x0034 (size: 0x4)
+    float ShapeUpDistance;                                                            // 0x0038 (size: 0x4)
+    TEnumAsByte<ESBCheckShape> TargetCheckShape;                                      // 0x003C (size: 0x1)
+    float TargetCheckValue1;                                                          // 0x0040 (size: 0x4)
+    float TargetCheckValue2;                                                          // 0x0044 (size: 0x4)
+    float TargetCheckValue3;                                                          // 0x0048 (size: 0x4)
+    TEnumAsByte<ESBActorState> ActorState1;                                           // 0x004C (size: 0x1)
+    TEnumAsByte<ESBActorState> ActorState2;                                           // 0x004D (size: 0x1)
+    TEnumAsByte<ESBActorState> ActorState3;                                           // 0x004E (size: 0x1)
+    TEnumAsByte<ESBActorState> ActorState4;                                           // 0x004F (size: 0x1)
+    TEnumAsByte<ESBActorState> ActorState5;                                           // 0x0050 (size: 0x1)
+    TEnumAsByte<ESBActorState> NonActorState1;                                        // 0x0051 (size: 0x1)
+    TEnumAsByte<ESBActorState> NonActorState2;                                        // 0x0052 (size: 0x1)
+    TEnumAsByte<ESBActorState> NonActorState3;                                        // 0x0053 (size: 0x1)
+    TEnumAsByte<ESBActorState> NonActorState4;                                        // 0x0054 (size: 0x1)
+    TEnumAsByte<ESBActorState> NonActorState5;                                        // 0x0055 (size: 0x1)
+    TEnumAsByte<ESBActorStatType> ActorStat1;                                         // 0x0056 (size: 0x1)
+    TEnumAsByte<ESBActorStatCheckType> ActorStatCheck1;                               // 0x0057 (size: 0x1)
+    int32 ActorStatCheckValue1;                                                       // 0x0058 (size: 0x4)
+    float CheckMinAngleToTarget;                                                      // 0x005C (size: 0x4)
+    float CheckMaxAngleToTarget;                                                      // 0x0060 (size: 0x4)
+    bool bDisableBlockingCheck;                                                       // 0x0064 (size: 0x1)
+    bool bBlockingCheckWithTopLocation;                                               // 0x0065 (size: 0x1)
+    bool bValidEngineHandle;                                                          // 0x0066 (size: 0x1)
+    TEnumAsByte<ESBConditionCheckType> CheckBattleMode;                               // 0x0067 (size: 0x1)
+    TArray<FName> CheckActiveEffectAliasArray;                                        // 0x0068 (size: 0x10)
+    TArray<FName> CheckActiveNoneEffectAliasArray;                                    // 0x0078 (size: 0x10)
+    TArray<FName> CheckActiveEffectAliasArrayWhenEasyMode;                            // 0x0088 (size: 0x10)
+    TArray<FName> CheckActiveNoneEffectAliasArrayWhenEasyMode;                        // 0x0098 (size: 0x10)
+    float GroundHeightToTarget;                                                       // 0x00A8 (size: 0x4)
+    TEnumAsByte<ESBConditionCheckType> bSwimming;                                     // 0x00AC (size: 0x1)
+    TEnumAsByte<ESBConditionCheckType> bEncroachmentable;                             // 0x00AD (size: 0x1)
+    TEnumAsByte<ESBConditionCheckType> bDead;                                         // 0x00AE (size: 0x1)
+    bool bNotSupportedZoneEventActor;                                                 // 0x00AF (size: 0x1)
+    FName FileSuffix;                                                                 // 0x00B0 (size: 0x8)
+
+}; // Size: 0xB8
+
+SB.hpp:11448
+class ASBAIController : public AAIController
+{
+}; // Size: 0x3E0
+
+SB.hpp:15194
+class USBBTTask_SbDetectTarget : public UBTTaskNode
+{
+    FString BaseBone;                                                                 // 0x0070 (size: 0x10)
+    TEnumAsByte<ESBAIDetectTargetFindOP> FindOP;                                      // 0x0080 (size: 0x1)
+    TEnumAsByte<ESBAIDetectTargetCancel> TargetCancel;                                // 0x0081 (size: 0x1)
+    bool bAlly;                                                                       // 0x0082 (size: 0x1)
+    bool bEnemy;                                                                      // 0x0083 (size: 0x1)
+    bool bDead;                                                                       // 0x0084 (size: 0x1)
+    bool bComa;                                                                       // 0x0085 (size: 0x1)
+    bool bEncroachmentable;                                                           // 0x0086 (size: 0x1)
+    bool bSubTarget;                                                                  // 0x0087 (size: 0x1)
+    TArray<FName> EffectAliasArray;                                                   // 0x0088 (size: 0x10)
+    TArray<FName> NoneEffectAliasArray;                                               // 0x0098 (size: 0x10)
+
+}; // Size: 0xA8
+
+SB.hpp:15272
+class USBBTTask_SbMoveToTarget : public UBTTaskNode
+{
+    TEnumAsByte<ESBMoveState> MoveState;                                              // 0x0070 (size: 0x1)
+    bool bSubTarget;                                                                  // 0x0071 (size: 0x1)
+    bool bCheckUseSkill;                                                              // 0x0072 (size: 0x1)
+    bool bIgnoreDistanceOfApproachWhenBlocking;                                       // 0x0073 (size: 0x1)
+    float DistanceOfApproach;                                                         // 0x0074 (size: 0x4)
+    TArray<FString> SkillType;                                                        // 0x0078 (size: 0x10)
+    bool bBackgroundTask;                                                             // 0x0088 (size: 0x1)
+    bool bCheckBrokenPath;                                                            // 0x0089 (size: 0x1)
+    FString BrokenPathShowPath;                                                       // 0x0090 (size: 0x10)
+    float WaitBrokenPathShowTime;                                                     // 0x00A0 (size: 0x4)
+    float KeepZeroSpeedForAnimGraphTime;                                              // 0x00A4 (size: 0x4)
+
+}; // Size: 0xA8
+
+SB.hpp:15006
+class USBBTDecorator_SbCheckTarget : public UBTDecorator
+{
+    TEnumAsByte<ESBTribeRelation> TargetRelation;                                     // 0x0068 (size: 0x1)
+
+}; // Size: 0x70
+
+SB.hpp:16604
+    void SBCreateCharacter(FName inCharacterAlias, float RelativeLocX, float RelativeLocY, float RelativeLocZ, float RelativeRotYaw);
+
+SB.hpp:13487
+    void ServerRequest_ActorLockOnTarget(uint32 InActorGUID, uint32 inTargetGUID);
+
+SB.hpp:13533
+    void ClientBroadcast_SkillHitResult(const uint32 inTurn, const uint32 inSkillGuid, uint32 inSkillResultID, const uint32 inCasterGUID, const uint32 inTargetGUID, TEnumAsByte<ESBSkillHitResult> inSkillHitResult, FName inAttackGroupName, const FHitResult& inHitResult, FVector inHitLocation, FVector inHitNormal, FName inHitBoneName, FVector inHitDirection, FVector inHitFoward, float inHitStopTime, bool inCriticalHit, TEnumAsByte<ESBSkillAttackDirection> inAttackDirection, FName inShowKeyTag);

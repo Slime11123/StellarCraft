@@ -36,6 +36,7 @@ $sources += @('dev\stellarcraft\world\mixin\NativePlayerMixin.java','dev\stellar
 $sources += @('dev\stellarcraft\world\mixin\NativeBlockUseMixin.java','dev\stellarcraft\world\mixin\NativeBlockItemMixin.java','dev\stellarcraft\world\mixin\GuiAlphaMixin.java','dev\stellarcraft\world\DamageBridge.java')
 $sources += @('dev\stellarcraft\world\mixin\NativeHudMixin.java')
 $sources += @('dev\stellarcraft\world\NativeEntities.java','dev\stellarcraft\world\NativeWorldEvents.java','dev\stellarcraft\render\EntityMeshBridge.java','dev\stellarcraft\world\mixin\NativeProjectileMixin.java')
+$sources += @('dev\stellarcraft\world\NativeMobAiState.java')
 $sources += @('dev\stellarcraft\world\mixin\NativeBoatMixin.java')
 $sources += @('dev\stellarcraft\world\NativeQa.java')
 $sources += @('dev\stellarcraft\world\mixin\NativeEntityDamageMixin.java')

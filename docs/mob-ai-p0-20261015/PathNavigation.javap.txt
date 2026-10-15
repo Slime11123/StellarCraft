@@ -1,0 +1,388 @@
+net.minecraft.world.entity.ai.navigation.PathNavigation
+Input SHA256: D5D5503DC29E1A076F89F5E8D19C6E0C3866F3D87EF3900E9D244D28891B3339
+  public final net.minecraft.world.level.pathfinder.Path createPath(double, double, double, int);
+    Code:
+       0: aload_0
+       1: dload_1
+       2: dload_3
+       3: dload         5
+       5: invokestatic  #156                // Method net/minecraft/core/BlockPos.containing:(DDD)Lnet/minecraft/core/BlockPos;
+       8: iload         7
+      10: invokevirtual #146                // Method createPath:(Lnet/minecraft/core/BlockPos;I)Lnet/minecraft/world/level/pathfinder/Path;
+      13: areturn
+
+
+  public net.minecraft.world.level.pathfinder.Path createPath(java.util.stream.Stream<net.minecraft.core.BlockPos>, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #165                // Method java/util/stream/Collectors.toSet:()Ljava/util/stream/Collector;
+       5: invokeinterface #171,  2          // InterfaceMethod java/util/stream/Stream.collect:(Ljava/util/stream/Collector;)Ljava/lang/Object;
+      10: checkcast     #173                // class java/util/Set
+      13: bipush        8
+      15: iconst_0
+      16: iload_2
+      17: invokevirtual #176                // Method createPath:(Ljava/util/Set;IZI)Lnet/minecraft/world/level/pathfinder/Path;
+      20: areturn
+
+
+  public net.minecraft.world.level.pathfinder.Path createPath(java.util.Set<net.minecraft.core.BlockPos>, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: bipush        8
+       4: iconst_0
+       5: iload_2
+       6: invokevirtual #176                // Method createPath:(Ljava/util/Set;IZI)Lnet/minecraft/world/level/pathfinder/Path;
+       9: areturn
+
+
+  public net.minecraft.world.level.pathfinder.Path createPath(net.minecraft.core.BlockPos, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #190                // Method com/google/common/collect/ImmutableSet.of:(Ljava/lang/Object;)Lcom/google/common/collect/ImmutableSet;
+       5: bipush        8
+       7: iconst_0
+       8: iload_2
+       9: invokevirtual #176                // Method createPath:(Ljava/util/Set;IZI)Lnet/minecraft/world/level/pathfinder/Path;
+      12: areturn
+
+
+  public net.minecraft.world.level.pathfinder.Path createPath(net.minecraft.core.BlockPos, int, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #190                // Method com/google/common/collect/ImmutableSet.of:(Ljava/lang/Object;)Lcom/google/common/collect/ImmutableSet;
+       5: bipush        8
+       7: iconst_0
+       8: iload_2
+       9: iload_3
+      10: i2f
+      11: invokevirtual #195                // Method createPath:(Ljava/util/Set;IZIF)Lnet/minecraft/world/level/pathfinder/Path;
+      14: areturn
+
+
+  public net.minecraft.world.level.pathfinder.Path createPath(net.minecraft.world.entity.Entity, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #202                // Method net/minecraft/world/entity/Entity.blockPosition:()Lnet/minecraft/core/BlockPos;
+       5: invokestatic  #190                // Method com/google/common/collect/ImmutableSet.of:(Ljava/lang/Object;)Lcom/google/common/collect/ImmutableSet;
+       8: bipush        16
+      10: iconst_1
+      11: iload_2
+      12: invokevirtual #176                // Method createPath:(Ljava/util/Set;IZI)Lnet/minecraft/world/level/pathfinder/Path;
+      15: areturn
+
+
+  protected net.minecraft.world.level.pathfinder.Path createPath(java.util.Set<net.minecraft.core.BlockPos>, int, boolean, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: iload_3
+       4: iload         4
+       6: aload_0
+       7: getfield      #83                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      10: getstatic     #91                 // Field net/minecraft/world/entity/ai/attributes/Attributes.FOLLOW_RANGE:Lnet/minecraft/world/entity/ai/attributes/Attribute;
+      13: invokevirtual #97                 // Method net/minecraft/world/entity/Mob.getAttributeValue:(Lnet/minecraft/world/entity/ai/attributes/Attribute;)D
+      16: d2f
+      17: invokevirtual #195                // Method createPath:(Ljava/util/Set;IZIF)Lnet/minecraft/world/level/pathfinder/Path;
+      20: areturn
+
+
+  protected net.minecraft.world.level.pathfinder.Path createPath(java.util.Set<net.minecraft.core.BlockPos>, int, boolean, int, float);
+    Code:
+       0: aload_1
+       1: invokeinterface #210,  1          // InterfaceMethod java/util/Set.isEmpty:()Z
+       6: ifeq          11
+       9: aconst_null
+      10: areturn
+      11: aload_0
+      12: getfield      #83                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      15: invokevirtual #214                // Method net/minecraft/world/entity/Mob.getY:()D
+      18: aload_0
+      19: getfield      #85                 // Field level:Lnet/minecraft/world/level/Level;
+      22: invokevirtual #218                // Method net/minecraft/world/level/Level.getMinBuildHeight:()I
+      25: i2d
+      26: dcmpg
+      27: ifge          32
+      30: aconst_null
+      31: areturn
+      32: aload_0
+      33: invokevirtual #221                // Method canUpdatePath:()Z
+      36: ifne          41
+      39: aconst_null
+      40: areturn
+      41: aload_0
+      42: getfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+      45: ifnull        76
+      48: aload_0
+      49: getfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+      52: invokevirtual #226                // Method net/minecraft/world/level/pathfinder/Path.isDone:()Z
+      55: ifne          76
+      58: aload_1
+      59: aload_0
+      60: getfield      #122                // Field targetPos:Lnet/minecraft/core/BlockPos;
+      63: invokeinterface #230,  2          // InterfaceMethod java/util/Set.contains:(Ljava/lang/Object;)Z
+      68: ifeq          76
+      71: aload_0
+      72: getfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+      75: areturn
+      76: aload_0
+      77: getfield      #85                 // Field level:Lnet/minecraft/world/level/Level;
+      80: invokevirtual #234                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+      83: ldc           #236                // String pathfind
+      85: invokeinterface #242,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+      90: iload_3
+      91: ifeq          107
+      94: aload_0
+      95: getfield      #83                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      98: invokevirtual #243                // Method net/minecraft/world/entity/Mob.blockPosition:()Lnet/minecraft/core/BlockPos;
+     101: invokevirtual #246                // Method net/minecraft/core/BlockPos.above:()Lnet/minecraft/core/BlockPos;
+     104: goto          114
+     107: aload_0
+     108: getfield      #83                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     111: invokevirtual #243                // Method net/minecraft/world/entity/Mob.blockPosition:()Lnet/minecraft/core/BlockPos;
+     114: astore        6
+     116: fload         5
+     118: iload_2
+     119: i2f
+     120: fadd
+     121: f2i
+     122: istore        7
+     124: new           #248                // class net/minecraft/world/level/PathNavigationRegion
+     127: dup
+     128: aload_0
+     129: getfield      #85                 // Field level:Lnet/minecraft/world/level/Level;
+     132: aload         6
+     134: iload         7
+     136: ineg
+     137: iload         7
+     139: ineg
+     140: iload         7
+     142: ineg
+     143: invokevirtual #252                // Method net/minecraft/core/BlockPos.offset:(III)Lnet/minecraft/core/BlockPos;
+     146: aload         6
+     148: iload         7
+     150: iload         7
+     152: iload         7
+     154: invokevirtual #252                // Method net/minecraft/core/BlockPos.offset:(III)Lnet/minecraft/core/BlockPos;
+     157: invokespecial #255                // Method net/minecraft/world/level/PathNavigationRegion."<init>":(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)V
+     160: astore        8
+     162: aload_0
+     163: getfield      #111                // Field pathFinder:Lnet/minecraft/world/level/pathfinder/PathFinder;
+     166: aload         8
+     168: aload_0
+     169: getfield      #83                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     172: aload_1
+     173: fload         5
+     175: iload         4
+     177: aload_0
+     178: getfield      #81                 // Field maxVisitedNodesMultiplier:F
+     181: invokevirtual #261                // Method net/minecraft/world/level/pathfinder/PathFinder.findPath:(Lnet/minecraft/world/level/PathNavigationRegion;Lnet/minecraft/world/entity/Mob;Ljava/util/Set;FIF)Lnet/minecraft/world/level/pathfinder/Path;
+     184: astore        9
+     186: aload_0
+     187: getfield      #85                 // Field level:Lnet/minecraft/world/level/Level;
+     190: invokevirtual #234                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     193: invokeinterface #264,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     198: aload         9
+     200: ifnull        230
+     203: aload         9
+     205: invokevirtual #267                // Method net/minecraft/world/level/pathfinder/Path.getTarget:()Lnet/minecraft/core/BlockPos;
+     208: ifnull        230
+     211: aload_0
+     212: aload         9
+     214: invokevirtual #267                // Method net/minecraft/world/level/pathfinder/Path.getTarget:()Lnet/minecraft/core/BlockPos;
+     217: putfield      #122                // Field targetPos:Lnet/minecraft/core/BlockPos;
+     220: aload_0
+     221: iload         4
+     223: putfield      #142                // Field reachRange:I
+     226: aload_0
+     227: invokevirtual #270                // Method resetStuckTimeout:()V
+     230: aload         9
+     232: areturn
+
+
+  public boolean moveTo(double, double, double, double);
+    Code:
+       0: aload_0
+       1: aload_0
+       2: dload_1
+       3: dload_3
+       4: dload         5
+       6: iconst_1
+       7: invokevirtual #278                // Method createPath:(DDDI)Lnet/minecraft/world/level/pathfinder/Path;
+      10: dload         7
+      12: invokevirtual #281                // Method moveTo:(Lnet/minecraft/world/level/pathfinder/Path;D)Z
+      15: ireturn
+
+
+  public boolean moveTo(net.minecraft.world.entity.Entity, double);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iconst_1
+       3: invokevirtual #284                // Method createPath:(Lnet/minecraft/world/entity/Entity;I)Lnet/minecraft/world/level/pathfinder/Path;
+       6: astore        4
+       8: aload         4
+      10: ifnull        27
+      13: aload_0
+      14: aload         4
+      16: dload_2
+      17: invokevirtual #281                // Method moveTo:(Lnet/minecraft/world/level/pathfinder/Path;D)Z
+      20: ifeq          27
+      23: iconst_1
+      24: goto          28
+      27: iconst_0
+      28: ireturn
+
+
+  public boolean moveTo(net.minecraft.world.level.pathfinder.Path, double);
+    Code:
+       0: aload_1
+       1: ifnonnull     11
+       4: aload_0
+       5: aconst_null
+       6: putfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+       9: iconst_0
+      10: ireturn
+      11: aload_1
+      12: aload_0
+      13: getfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+      16: invokevirtual #288                // Method net/minecraft/world/level/pathfinder/Path.sameAs:(Lnet/minecraft/world/level/pathfinder/Path;)Z
+      19: ifne          27
+      22: aload_0
+      23: aload_1
+      24: putfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+      27: aload_0
+      28: invokevirtual #289                // Method isDone:()Z
+      31: ifeq          36
+      34: iconst_0
+      35: ireturn
+      36: aload_0
+      37: invokevirtual #292                // Method trimPath:()V
+      40: aload_0
+      41: getfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+      44: invokevirtual #295                // Method net/minecraft/world/level/pathfinder/Path.getNodeCount:()I
+      47: ifgt          52
+      50: iconst_0
+      51: ireturn
+      52: aload_0
+      53: dload_2
+      54: putfield      #127                // Field speedModifier:D
+      57: aload_0
+      58: invokevirtual #299                // Method getTempMobPos:()Lnet/minecraft/world/phys/Vec3;
+      61: astore        4
+      63: aload_0
+      64: aload_0
+      65: getfield      #301                // Field tick:I
+      68: putfield      #303                // Field lastStuckCheck:I
+      71: aload_0
+      72: aload         4
+      74: putfield      #70                 // Field lastStuckCheckPos:Lnet/minecraft/world/phys/Vec3;
+      77: iconst_1
+      78: ireturn
+
+
+  public void tick();
+    Code:
+       0: aload_0
+       1: dup
+       2: getfield      #301                // Field tick:I
+       5: iconst_1
+       6: iadd
+       7: putfield      #301                // Field tick:I
+      10: aload_0
+      11: getfield      #148                // Field hasDelayedRecomputation:Z
+      14: ifeq          21
+      17: aload_0
+      18: invokevirtual #308                // Method recomputePath:()V
+      21: aload_0
+      22: invokevirtual #289                // Method isDone:()Z
+      25: ifeq          29
+      28: return
+      29: aload_0
+      30: invokevirtual #221                // Method canUpdatePath:()Z
+      33: ifeq          43
+      36: aload_0
+      37: invokevirtual #311                // Method followThePath:()V
+      40: goto          140
+      43: aload_0
+      44: getfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+      47: ifnull        140
+      50: aload_0
+      51: getfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+      54: invokevirtual #226                // Method net/minecraft/world/level/pathfinder/Path.isDone:()Z
+      57: ifne          140
+      60: aload_0
+      61: invokevirtual #299                // Method getTempMobPos:()Lnet/minecraft/world/phys/Vec3;
+      64: astore_1
+      65: aload_0
+      66: getfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+      69: aload_0
+      70: getfield      #83                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      73: invokevirtual #315                // Method net/minecraft/world/level/pathfinder/Path.getNextEntityPos:(Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/phys/Vec3;
+      76: astore_2
+      77: aload_1
+      78: getfield      #318                // Field net/minecraft/world/phys/Vec3.y:D
+      81: aload_2
+      82: getfield      #318                // Field net/minecraft/world/phys/Vec3.y:D
+      85: dcmpl
+      86: ifle          140
+      89: aload_0
+      90: getfield      #83                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      93: invokevirtual #321                // Method net/minecraft/world/entity/Mob.onGround:()Z
+      96: ifne          140
+      99: aload_1
+     100: getfield      #324                // Field net/minecraft/world/phys/Vec3.x:D
+     103: invokestatic  #105                // Method net/minecraft/util/Mth.floor:(D)I
+     106: aload_2
+     107: getfield      #324                // Field net/minecraft/world/phys/Vec3.x:D
+     110: invokestatic  #105                // Method net/minecraft/util/Mth.floor:(D)I
+     113: if_icmpne     140
+     116: aload_1
+     117: getfield      #327                // Field net/minecraft/world/phys/Vec3.z:D
+     120: invokestatic  #105                // Method net/minecraft/util/Mth.floor:(D)I
+     123: aload_2
+     124: getfield      #327                // Field net/minecraft/world/phys/Vec3.z:D
+     127: invokestatic  #105                // Method net/minecraft/util/Mth.floor:(D)I
+     130: if_icmpne     140
+     133: aload_0
+     134: getfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+     137: invokevirtual #330                // Method net/minecraft/world/level/pathfinder/Path.advance:()V
+     140: aload_0
+     141: getfield      #85                 // Field level:Lnet/minecraft/world/level/Level;
+     144: aload_0
+     145: getfield      #83                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     148: aload_0
+     149: getfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+     152: aload_0
+     153: getfield      #79                 // Field maxDistanceToWaypoint:F
+     156: invokestatic  #336                // Method net/minecraft/network/protocol/game/DebugPackets.sendPathFindingPacket:(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Mob;Lnet/minecraft/world/level/pathfinder/Path;F)V
+     159: aload_0
+     160: invokevirtual #289                // Method isDone:()Z
+     163: ifeq          167
+     166: return
+     167: aload_0
+     168: getfield      #140                // Field path:Lnet/minecraft/world/level/pathfinder/Path;
+     171: aload_0
+     172: getfield      #83                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     175: invokevirtual #315                // Method net/minecraft/world/level/pathfinder/Path.getNextEntityPos:(Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/phys/Vec3;
+     178: astore_1
+     179: aload_0
+     180: getfield      #83                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     183: invokevirtual #340                // Method net/minecraft/world/entity/Mob.getMoveControl:()Lnet/minecraft/world/entity/ai/control/MoveControl;
+     186: aload_1
+     187: getfield      #324                // Field net/minecraft/world/phys/Vec3.x:D
+     190: aload_0
+     191: aload_1
+     192: invokevirtual #344                // Method getGroundY:(Lnet/minecraft/world/phys/Vec3;)D
+     195: aload_1
+     196: getfield      #327                // Field net/minecraft/world/phys/Vec3.z:D
+     199: aload_0
+     200: getfield      #127                // Field speedModifier:D
+     203: invokevirtual #350                // Method net/minecraft/world/entity/ai/control/MoveControl.setWantedPosition:(DDDD)V
+     206: return
+

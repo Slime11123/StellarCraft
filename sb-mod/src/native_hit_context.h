@@ -1,7 +1,7 @@
 #pragma once
 #include "native_combat.h"
 
-// P1 only: prepare immutable hit data after the existing HP result. No show,
+// P1 only: prepare immutable hit data after the native damage result. No show,
 // animation, effect or other game function is called from this module.
 namespace native_hit_context {
 struct Vec3 {float x{},y{},z{};};
@@ -32,7 +32,9 @@ inline Context prepare(Session& session,const Request& request,const native_comb
     native_combat::ControlGuid control,Vec3 target,bool fresh,std::uint32_t nowLow=0) {
     Context out;
     if(!damage.ready||!damage.applied||damage.invulnerable||!std::isfinite(damage.before)||!std::isfinite(damage.after)
-        ||damage.after<=0||damage.after>=damage.before) {out.reason="no surviving damaged target";return out;}
+        ||!std::isfinite(damage.shieldBefore)||!std::isfinite(damage.shieldAfter)
+        ||damage.shieldBefore<0||damage.shieldAfter<0||damage.after<=0
+        ||!(damage.after<damage.before||damage.shieldAfter<damage.shieldBefore)) {out.reason="no surviving damaged target";return out;}
     if(!fresh||!request.pid||!request.world||!request.hostLevel||!request.uid||!request.serial) {out.reason="stale hit session";return out;}
     // Unsigned subtraction also handles the 49.7-day Windows low32 wrap.
     if(nowLow-request.timeLow>500u) {out.reason="expired hit capture";return out;}

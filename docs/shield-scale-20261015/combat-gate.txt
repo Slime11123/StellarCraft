@@ -1,0 +1,4 @@
+native-combat-gate.cpp
+PASS: reported 44000 HP/2160 Shield case requests 172.8 shield damage; native truncation stub leaves 1988; 13 hits break with zero HP loss; next hit costs 3520 HP; MaxShield refresh and HP independence
+PASS: real actor settlement with injected native calls; shield/break/next HP/refill/no-slot; type=1/7 ABI; readback/identity/state/thread/version/finite refusal; shield-only styles/replay; no game code executed
+PASS: combat/show gates; 3427 mutated bytes rejected; packed heavy/illegal style rejection; LIGHT/HEAVY nine-argument stub and original resistance comparison; no game calls

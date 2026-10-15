@@ -1,0 +1,679 @@
+net.minecraft.world.entity.Entity
+Input SHA256: D5D5503DC29E1A076F89F5E8D19C6E0C3866F3D87EF3900E9D244D28891B3339
+  public void move(net.minecraft.world.entity.MoverType, net.minecraft.world.phys.Vec3);
+    Code:
+       0: aload_0
+       1: getfield      #993                // Field noPhysics:Z
+       4: ifeq          39
+       7: aload_0
+       8: aload_0
+       9: invokevirtual #676                // Method getX:()D
+      12: aload_2
+      13: getfield      #728                // Field net/minecraft/world/phys/Vec3.x:D
+      16: dadd
+      17: aload_0
+      18: invokevirtual #678                // Method getY:()D
+      21: aload_2
+      22: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+      25: dadd
+      26: aload_0
+      27: invokevirtual #680                // Method getZ:()D
+      30: aload_2
+      31: getfield      #732                // Field net/minecraft/world/phys/Vec3.z:D
+      34: dadd
+      35: invokevirtual #482                // Method setPos:(DDD)V
+      38: return
+      39: aload_0
+      40: aload_0
+      41: invokevirtual #996                // Method isOnFire:()Z
+      44: putfield      #998                // Field wasOnFire:Z
+      47: aload_1
+      48: getstatic     #1004               // Field net/minecraft/world/entity/MoverType.PISTON:Lnet/minecraft/world/entity/MoverType;
+      51: if_acmpne     71
+      54: aload_0
+      55: aload_2
+      56: invokevirtual #1008               // Method limitPistonMovement:(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;
+      59: astore_2
+      60: aload_2
+      61: getstatic     #314                // Field net/minecraft/world/phys/Vec3.ZERO:Lnet/minecraft/world/phys/Vec3;
+      64: invokevirtual #1009               // Method net/minecraft/world/phys/Vec3.equals:(Ljava/lang/Object;)Z
+      67: ifeq          71
+      70: return
+      71: aload_0
+      72: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+      75: invokevirtual #767                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+      78: ldc_w         #1010               // String move
+      81: invokeinterface #775,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+      86: aload_0
+      87: getfield      #322                // Field stuckSpeedMultiplier:Lnet/minecraft/world/phys/Vec3;
+      90: invokevirtual #1013               // Method net/minecraft/world/phys/Vec3.lengthSqr:()D
+      93: ldc2_w        #1014               // double 1.0E-7d
+      96: dcmpl
+      97: ifle          123
+     100: aload_2
+     101: aload_0
+     102: getfield      #322                // Field stuckSpeedMultiplier:Lnet/minecraft/world/phys/Vec3;
+     105: invokevirtual #1018               // Method net/minecraft/world/phys/Vec3.multiply:(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;
+     108: astore_2
+     109: aload_0
+     110: getstatic     #314                // Field net/minecraft/world/phys/Vec3.ZERO:Lnet/minecraft/world/phys/Vec3;
+     113: putfield      #322                // Field stuckSpeedMultiplier:Lnet/minecraft/world/phys/Vec3;
+     116: aload_0
+     117: getstatic     #314                // Field net/minecraft/world/phys/Vec3.ZERO:Lnet/minecraft/world/phys/Vec3;
+     120: invokevirtual #1021               // Method setDeltaMovement:(Lnet/minecraft/world/phys/Vec3;)V
+     123: aload_0
+     124: aload_2
+     125: aload_1
+     126: invokevirtual #1025               // Method maybeBackOffFromEdge:(Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/entity/MoverType;)Lnet/minecraft/world/phys/Vec3;
+     129: astore_2
+     130: aload_0
+     131: aload_2
+     132: invokevirtual #1028               // Method collide:(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;
+     135: astore_3
+     136: aload_3
+     137: invokevirtual #1013               // Method net/minecraft/world/phys/Vec3.lengthSqr:()D
+     140: dstore        4
+     142: dload         4
+     144: ldc2_w        #1014               // double 1.0E-7d
+     147: dcmpl
+     148: ifle          248
+     151: aload_0
+     152: getfield      #854                // Field fallDistance:F
+     155: fconst_0
+     156: fcmpl
+     157: ifeq          217
+     160: dload         4
+     162: dconst_1
+     163: dcmpl
+     164: iflt          217
+     167: aload_0
+     168: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     171: new           #24                 // class net/minecraft/world/level/ClipContext
+     174: dup
+     175: aload_0
+     176: invokevirtual #669                // Method position:()Lnet/minecraft/world/phys/Vec3;
+     179: aload_0
+     180: invokevirtual #669                // Method position:()Lnet/minecraft/world/phys/Vec3;
+     183: aload_3
+     184: invokevirtual #1030               // Method net/minecraft/world/phys/Vec3.add:(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;
+     187: getstatic     #1034               // Field net/minecraft/world/level/ClipContext$Block.FALLDAMAGE_RESETTING:Lnet/minecraft/world/level/ClipContext$Block;
+     190: getstatic     #1038               // Field net/minecraft/world/level/ClipContext$Fluid.WATER:Lnet/minecraft/world/level/ClipContext$Fluid;
+     193: aload_0
+     194: invokespecial #1041               // Method net/minecraft/world/level/ClipContext."<init>":(Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/level/ClipContext$Block;Lnet/minecraft/world/level/ClipContext$Fluid;Lnet/minecraft/world/entity/Entity;)V
+     197: invokevirtual #1045               // Method net/minecraft/world/level/Level.clip:(Lnet/minecraft/world/level/ClipContext;)Lnet/minecraft/world/phys/BlockHitResult;
+     200: astore        6
+     202: aload         6
+     204: invokevirtual #1050               // Method net/minecraft/world/phys/BlockHitResult.getType:()Lnet/minecraft/world/phys/HitResult$Type;
+     207: getstatic     #1054               // Field net/minecraft/world/phys/HitResult$Type.MISS:Lnet/minecraft/world/phys/HitResult$Type;
+     210: if_acmpeq     217
+     213: aload_0
+     214: invokevirtual #1057               // Method resetFallDistance:()V
+     217: aload_0
+     218: aload_0
+     219: invokevirtual #676                // Method getX:()D
+     222: aload_3
+     223: getfield      #728                // Field net/minecraft/world/phys/Vec3.x:D
+     226: dadd
+     227: aload_0
+     228: invokevirtual #678                // Method getY:()D
+     231: aload_3
+     232: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     235: dadd
+     236: aload_0
+     237: invokevirtual #680                // Method getZ:()D
+     240: aload_3
+     241: getfield      #732                // Field net/minecraft/world/phys/Vec3.z:D
+     244: dadd
+     245: invokevirtual #482                // Method setPos:(DDD)V
+     248: aload_0
+     249: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     252: invokevirtual #767                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     255: invokeinterface #865,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     260: aload_0
+     261: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     264: invokevirtual #767                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     267: ldc_w         #1059               // String rest
+     270: invokeinterface #775,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+     275: aload_2
+     276: getfield      #728                // Field net/minecraft/world/phys/Vec3.x:D
+     279: aload_3
+     280: getfield      #728                // Field net/minecraft/world/phys/Vec3.x:D
+     283: invokestatic  #1063               // Method net/minecraft/util/Mth.equal:(DD)Z
+     286: ifne          293
+     289: iconst_1
+     290: goto          294
+     293: iconst_0
+     294: istore        6
+     296: aload_2
+     297: getfield      #732                // Field net/minecraft/world/phys/Vec3.z:D
+     300: aload_3
+     301: getfield      #732                // Field net/minecraft/world/phys/Vec3.z:D
+     304: invokestatic  #1063               // Method net/minecraft/util/Mth.equal:(DD)Z
+     307: ifne          314
+     310: iconst_1
+     311: goto          315
+     314: iconst_0
+     315: istore        7
+     317: aload_0
+     318: iload         6
+     320: ifne          328
+     323: iload         7
+     325: ifeq          332
+     328: iconst_1
+     329: goto          333
+     332: iconst_0
+     333: putfield      #1065               // Field horizontalCollision:Z
+     336: aload_0
+     337: aload_2
+     338: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     341: aload_3
+     342: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     345: dcmpl
+     346: ifeq          353
+     349: iconst_1
+     350: goto          354
+     353: iconst_0
+     354: putfield      #1067               // Field verticalCollision:Z
+     357: aload_0
+     358: aload_0
+     359: getfield      #1067               // Field verticalCollision:Z
+     362: ifeq          378
+     365: aload_2
+     366: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     369: dconst_0
+     370: dcmpg
+     371: ifge          378
+     374: iconst_1
+     375: goto          379
+     378: iconst_0
+     379: putfield      #1069               // Field verticalCollisionBelow:Z
+     382: aload_0
+     383: getfield      #1065               // Field horizontalCollision:Z
+     386: ifeq          401
+     389: aload_0
+     390: aload_0
+     391: aload_3
+     392: invokevirtual #1073               // Method isHorizontalCollisionMinor:(Lnet/minecraft/world/phys/Vec3;)Z
+     395: putfield      #1075               // Field minorHorizontalCollision:Z
+     398: goto          406
+     401: aload_0
+     402: iconst_0
+     403: putfield      #1075               // Field minorHorizontalCollision:Z
+     406: aload_0
+     407: aload_0
+     408: getfield      #1069               // Field verticalCollisionBelow:Z
+     411: aload_3
+     412: invokevirtual #1077               // Method setOnGroundWithKnownMovement:(ZLnet/minecraft/world/phys/Vec3;)V
+     415: aload_0
+     416: invokevirtual #1081               // Method getOnPosLegacy:()Lnet/minecraft/core/BlockPos;
+     419: astore        8
+     421: aload_0
+     422: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     425: aload         8
+     427: invokevirtual #1085               // Method net/minecraft/world/level/Level.getBlockState:(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;
+     430: astore        9
+     432: aload_0
+     433: aload_3
+     434: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     437: aload_0
+     438: invokevirtual #1087               // Method onGround:()Z
+     441: aload         9
+     443: aload         8
+     445: invokevirtual #1091               // Method checkFallDamage:(DZLnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V
+     448: aload_0
+     449: invokevirtual #782                // Method isRemoved:()Z
+     452: ifeq          468
+     455: aload_0
+     456: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     459: invokevirtual #767                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     462: invokeinterface #865,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     467: return
+     468: aload_0
+     469: getfield      #1065               // Field horizontalCollision:Z
+     472: ifeq          518
+     475: aload_0
+     476: invokevirtual #1094               // Method getDeltaMovement:()Lnet/minecraft/world/phys/Vec3;
+     479: astore        10
+     481: aload_0
+     482: iload         6
+     484: ifeq          491
+     487: dconst_0
+     488: goto          496
+     491: aload         10
+     493: getfield      #728                // Field net/minecraft/world/phys/Vec3.x:D
+     496: aload         10
+     498: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     501: iload         7
+     503: ifeq          510
+     506: dconst_0
+     507: goto          515
+     510: aload         10
+     512: getfield      #732                // Field net/minecraft/world/phys/Vec3.z:D
+     515: invokevirtual #1096               // Method setDeltaMovement:(DDD)V
+     518: aload         9
+     520: invokevirtual #1100               // Method net/minecraft/world/level/block/state/BlockState.getBlock:()Lnet/minecraft/world/level/block/Block;
+     523: astore        10
+     525: aload_2
+     526: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     529: aload_3
+     530: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     533: dcmpl
+     534: ifeq          547
+     537: aload         10
+     539: aload_0
+     540: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     543: aload_0
+     544: invokevirtual #1106               // Method net/minecraft/world/level/block/Block.updateEntityAfterFallOn:(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/entity/Entity;)V
+     547: aload_0
+     548: invokevirtual #1087               // Method onGround:()Z
+     551: ifeq          568
+     554: aload         10
+     556: aload_0
+     557: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     560: aload         8
+     562: aload         9
+     564: aload_0
+     565: invokevirtual #1110               // Method net/minecraft/world/level/block/Block.stepOn:(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/Entity;)V
+     568: aload_0
+     569: invokevirtual #1114               // Method getMovementEmission:()Lnet/minecraft/world/entity/Entity$MovementEmission;
+     572: astore        11
+     574: aload         11
+     576: invokevirtual #1117               // Method net/minecraft/world/entity/Entity$MovementEmission.emitsAnything:()Z
+     579: ifeq          853
+     582: aload_0
+     583: invokevirtual #578                // Method isPassenger:()Z
+     586: ifne          853
+     589: aload_3
+     590: getfield      #728                // Field net/minecraft/world/phys/Vec3.x:D
+     593: dstore        12
+     595: aload_3
+     596: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     599: dstore        14
+     601: aload_3
+     602: getfield      #732                // Field net/minecraft/world/phys/Vec3.z:D
+     605: dstore        16
+     607: aload_0
+     608: dup
+     609: getfield      #1119               // Field flyDist:F
+     612: aload_3
+     613: invokevirtual #1122               // Method net/minecraft/world/phys/Vec3.length:()D
+     616: ldc2_w        #1123               // double 0.6d
+     619: dmul
+     620: d2f
+     621: fadd
+     622: putfield      #1119               // Field flyDist:F
+     625: aload_0
+     626: invokevirtual #1127               // Method getOnPos:()Lnet/minecraft/core/BlockPos;
+     629: astore        18
+     631: aload_0
+     632: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     635: aload         18
+     637: invokevirtual #1085               // Method net/minecraft/world/level/Level.getBlockState:(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;
+     640: astore        19
+     642: aload_0
+     643: aload         19
+     645: invokevirtual #1131               // Method isStateClimbable:(Lnet/minecraft/world/level/block/state/BlockState;)Z
+     648: istore        20
+     650: iload         20
+     652: ifne          658
+     655: dconst_0
+     656: dstore        14
+     658: aload_0
+     659: dup
+     660: getfield      #786                // Field walkDist:F
+     663: aload_3
+     664: invokevirtual #1134               // Method net/minecraft/world/phys/Vec3.horizontalDistance:()D
+     667: d2f
+     668: ldc           #193                // float 0.6f
+     670: fmul
+     671: fadd
+     672: putfield      #786                // Field walkDist:F
+     675: aload_0
+     676: dup
+     677: getfield      #1136               // Field moveDist:F
+     680: dload         12
+     682: dload         12
+     684: dmul
+     685: dload         14
+     687: dload         14
+     689: dmul
+     690: dadd
+     691: dload         16
+     693: dload         16
+     695: dmul
+     696: dadd
+     697: invokestatic  #1141               // Method java/lang/Math.sqrt:(D)D
+     700: d2f
+     701: ldc           #193                // float 0.6f
+     703: fmul
+     704: fadd
+     705: putfield      #1136               // Field moveDist:F
+     708: aload_0
+     709: getfield      #1136               // Field moveDist:F
+     712: aload_0
+     713: getfield      #324                // Field nextStep:F
+     716: fcmpl
+     717: ifle          841
+     720: aload         19
+     722: invokevirtual #1144               // Method net/minecraft/world/level/block/state/BlockState.isAir:()Z
+     725: ifne          841
+     728: aload         18
+     730: aload         8
+     732: invokevirtual #959                // Method net/minecraft/core/BlockPos.equals:(Ljava/lang/Object;)Z
+     735: istore        21
+     737: aload_0
+     738: aload         8
+     740: aload         9
+     742: aload         11
+     744: invokevirtual #1147               // Method net/minecraft/world/entity/Entity$MovementEmission.emitsSounds:()Z
+     747: iload         21
+     749: aload_2
+     750: invokevirtual #1151               // Method vibrationAndSoundEffectsFromBlock:(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;ZZLnet/minecraft/world/phys/Vec3;)Z
+     753: istore        22
+     755: iload         21
+     757: ifne          780
+     760: iload         22
+     762: aload_0
+     763: aload         18
+     765: aload         19
+     767: iconst_0
+     768: aload         11
+     770: invokevirtual #1154               // Method net/minecraft/world/entity/Entity$MovementEmission.emitsEvents:()Z
+     773: aload_2
+     774: invokevirtual #1151               // Method vibrationAndSoundEffectsFromBlock:(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;ZZLnet/minecraft/world/phys/Vec3;)Z
+     777: ior
+     778: istore        22
+     780: iload         22
+     782: ifeq          796
+     785: aload_0
+     786: aload_0
+     787: invokevirtual #1156               // Method nextStep:()F
+     790: putfield      #324                // Field nextStep:F
+     793: goto          838
+     796: aload_0
+     797: invokevirtual #1159               // Method isInWater:()Z
+     800: ifeq          838
+     803: aload_0
+     804: aload_0
+     805: invokevirtual #1156               // Method nextStep:()F
+     808: putfield      #324                // Field nextStep:F
+     811: aload         11
+     813: invokevirtual #1147               // Method net/minecraft/world/entity/Entity$MovementEmission.emitsSounds:()Z
+     816: ifeq          823
+     819: aload_0
+     820: invokevirtual #1162               // Method waterSwimSound:()V
+     823: aload         11
+     825: invokevirtual #1154               // Method net/minecraft/world/entity/Entity$MovementEmission.emitsEvents:()Z
+     828: ifeq          838
+     831: aload_0
+     832: getstatic     #1165               // Field net/minecraft/world/level/gameevent/GameEvent.SWIM:Lnet/minecraft/world/level/gameevent/GameEvent;
+     835: invokevirtual #633                // Method gameEvent:(Lnet/minecraft/world/level/gameevent/GameEvent;)V
+     838: goto          853
+     841: aload         19
+     843: invokevirtual #1144               // Method net/minecraft/world/level/block/state/BlockState.isAir:()Z
+     846: ifeq          853
+     849: aload_0
+     850: invokevirtual #1168               // Method processFlappingMovement:()V
+     853: aload_0
+     854: invokevirtual #1171               // Method tryCheckInsideBlocks:()V
+     857: aload_0
+     858: invokevirtual #1174               // Method getBlockSpeedFactor:()F
+     861: fstore        12
+     863: aload_0
+     864: aload_0
+     865: invokevirtual #1094               // Method getDeltaMovement:()Lnet/minecraft/world/phys/Vec3;
+     868: fload         12
+     870: f2d
+     871: dconst_1
+     872: fload         12
+     874: f2d
+     875: invokevirtual #1177               // Method net/minecraft/world/phys/Vec3.multiply:(DDD)Lnet/minecraft/world/phys/Vec3;
+     878: invokevirtual #1021               // Method setDeltaMovement:(Lnet/minecraft/world/phys/Vec3;)V
+     881: aload_0
+     882: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     885: aload_0
+     886: invokevirtual #526                // Method getBoundingBox:()Lnet/minecraft/world/phys/AABB;
+     889: ldc2_w        #966                // double 1.0E-6d
+     892: invokevirtual #1181               // Method net/minecraft/world/phys/AABB.deflate:(D)Lnet/minecraft/world/phys/AABB;
+     895: invokevirtual #1185               // Method net/minecraft/world/level/Level.getBlockStatesIfLoaded:(Lnet/minecraft/world/phys/AABB;)Ljava/util/stream/Stream;
+     898: invokedynamic #1202,  0           // InvokeDynamic #0:test:()Ljava/util/function/Predicate;
+     903: invokeinterface #1208,  2         // InterfaceMethod java/util/stream/Stream.noneMatch:(Ljava/util/function/Predicate;)Z
+     908: ifeq          952
+     911: aload_0
+     912: getfield      #337                // Field remainingFireTicks:I
+     915: ifgt          927
+     918: aload_0
+     919: aload_0
+     920: invokevirtual #335                // Method getFireImmuneTicks:()I
+     923: ineg
+     924: invokevirtual #822                // Method setRemainingFireTicks:(I)V
+     927: aload_0
+     928: getfield      #998                // Field wasOnFire:Z
+     931: ifeq          952
+     934: aload_0
+     935: getfield      #799                // Field isInPowderSnow:Z
+     938: ifne          948
+     941: aload_0
+     942: invokevirtual #1211               // Method isInWaterRainOrBubble:()Z
+     945: ifeq          952
+     948: aload_0
+     949: invokevirtual #1214               // Method playEntityOnFireExtinguishedSound:()V
+     952: aload_0
+     953: invokevirtual #996                // Method isOnFire:()Z
+     956: ifeq          982
+     959: aload_0
+     960: getfield      #799                // Field isInPowderSnow:Z
+     963: ifne          973
+     966: aload_0
+     967: invokevirtual #1211               // Method isInWaterRainOrBubble:()Z
+     970: ifeq          982
+     973: aload_0
+     974: aload_0
+     975: invokevirtual #335                // Method getFireImmuneTicks:()I
+     978: ineg
+     979: invokevirtual #822                // Method setRemainingFireTicks:(I)V
+     982: aload_0
+     983: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     986: invokevirtual #767                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     989: invokeinterface #865,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     994: return
+
+
+  private net.minecraft.world.phys.Vec3 collide(net.minecraft.world.phys.Vec3);
+    Code:
+       0: aload_0
+       1: invokevirtual #526                // Method getBoundingBox:()Lnet/minecraft/world/phys/AABB;
+       4: astore_2
+       5: aload_0
+       6: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+       9: aload_0
+      10: aload_2
+      11: aload_1
+      12: invokevirtual #1407               // Method net/minecraft/world/phys/AABB.expandTowards:(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/AABB;
+      15: invokevirtual #1411               // Method net/minecraft/world/level/Level.getEntityCollisions:(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;
+      18: astore_3
+      19: aload_1
+      20: invokevirtual #1013               // Method net/minecraft/world/phys/Vec3.lengthSqr:()D
+      23: dconst_0
+      24: dcmpl
+      25: ifne          32
+      28: aload_1
+      29: goto          43
+      32: aload_0
+      33: aload_1
+      34: aload_2
+      35: aload_0
+      36: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+      39: aload_3
+      40: invokestatic  #1417               // Method collideBoundingBox:(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Lnet/minecraft/world/level/Level;Ljava/util/List;)Lnet/minecraft/world/phys/Vec3;
+      43: astore        4
+      45: aload_1
+      46: getfield      #728                // Field net/minecraft/world/phys/Vec3.x:D
+      49: aload         4
+      51: getfield      #728                // Field net/minecraft/world/phys/Vec3.x:D
+      54: dcmpl
+      55: ifeq          62
+      58: iconst_1
+      59: goto          63
+      62: iconst_0
+      63: istore        5
+      65: aload_1
+      66: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+      69: aload         4
+      71: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+      74: dcmpl
+      75: ifeq          82
+      78: iconst_1
+      79: goto          83
+      82: iconst_0
+      83: istore        6
+      85: aload_1
+      86: getfield      #732                // Field net/minecraft/world/phys/Vec3.z:D
+      89: aload         4
+      91: getfield      #732                // Field net/minecraft/world/phys/Vec3.z:D
+      94: dcmpl
+      95: ifeq          102
+      98: iconst_1
+      99: goto          103
+     102: iconst_0
+     103: istore        7
+     105: aload_0
+     106: invokevirtual #1087               // Method onGround:()Z
+     109: ifne          126
+     112: iload         6
+     114: ifeq          130
+     117: aload_1
+     118: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     121: dconst_0
+     122: dcmpg
+     123: ifge          130
+     126: iconst_1
+     127: goto          131
+     130: iconst_0
+     131: istore        8
+     133: aload_0
+     134: invokevirtual #1419               // Method maxUpStep:()F
+     137: fconst_0
+     138: fcmpl
+     139: ifle          352
+     142: iload         8
+     144: ifeq          352
+     147: iload         5
+     149: ifne          157
+     152: iload         7
+     154: ifeq          352
+     157: aload_0
+     158: new           #311                // class net/minecraft/world/phys/Vec3
+     161: dup
+     162: aload_1
+     163: getfield      #728                // Field net/minecraft/world/phys/Vec3.x:D
+     166: aload_0
+     167: invokevirtual #1419               // Method maxUpStep:()F
+     170: f2d
+     171: aload_1
+     172: getfield      #732                // Field net/minecraft/world/phys/Vec3.z:D
+     175: invokespecial #587                // Method net/minecraft/world/phys/Vec3."<init>":(DDD)V
+     178: aload_2
+     179: aload_0
+     180: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     183: aload_3
+     184: invokestatic  #1417               // Method collideBoundingBox:(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Lnet/minecraft/world/level/Level;Ljava/util/List;)Lnet/minecraft/world/phys/Vec3;
+     187: astore        9
+     189: aload_0
+     190: new           #311                // class net/minecraft/world/phys/Vec3
+     193: dup
+     194: dconst_0
+     195: aload_0
+     196: invokevirtual #1419               // Method maxUpStep:()F
+     199: f2d
+     200: dconst_0
+     201: invokespecial #587                // Method net/minecraft/world/phys/Vec3."<init>":(DDD)V
+     204: aload_2
+     205: aload_1
+     206: getfield      #728                // Field net/minecraft/world/phys/Vec3.x:D
+     209: dconst_0
+     210: aload_1
+     211: getfield      #732                // Field net/minecraft/world/phys/Vec3.z:D
+     214: invokevirtual #1421               // Method net/minecraft/world/phys/AABB.expandTowards:(DDD)Lnet/minecraft/world/phys/AABB;
+     217: aload_0
+     218: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     221: aload_3
+     222: invokestatic  #1417               // Method collideBoundingBox:(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Lnet/minecraft/world/level/Level;Ljava/util/List;)Lnet/minecraft/world/phys/Vec3;
+     225: astore        10
+     227: aload         10
+     229: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     232: aload_0
+     233: invokevirtual #1419               // Method maxUpStep:()F
+     236: f2d
+     237: dcmpg
+     238: ifge          297
+     241: aload_0
+     242: new           #311                // class net/minecraft/world/phys/Vec3
+     245: dup
+     246: aload_1
+     247: getfield      #728                // Field net/minecraft/world/phys/Vec3.x:D
+     250: dconst_0
+     251: aload_1
+     252: getfield      #732                // Field net/minecraft/world/phys/Vec3.z:D
+     255: invokespecial #587                // Method net/minecraft/world/phys/Vec3."<init>":(DDD)V
+     258: aload_2
+     259: aload         10
+     261: invokevirtual #1423               // Method net/minecraft/world/phys/AABB.move:(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/AABB;
+     264: aload_0
+     265: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     268: aload_3
+     269: invokestatic  #1417               // Method collideBoundingBox:(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Lnet/minecraft/world/level/Level;Ljava/util/List;)Lnet/minecraft/world/phys/Vec3;
+     272: aload         10
+     274: invokevirtual #1030               // Method net/minecraft/world/phys/Vec3.add:(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;
+     277: astore        11
+     279: aload         11
+     281: invokevirtual #1426               // Method net/minecraft/world/phys/Vec3.horizontalDistanceSqr:()D
+     284: aload         9
+     286: invokevirtual #1426               // Method net/minecraft/world/phys/Vec3.horizontalDistanceSqr:()D
+     289: dcmpl
+     290: ifle          297
+     293: aload         11
+     295: astore        9
+     297: aload         9
+     299: invokevirtual #1426               // Method net/minecraft/world/phys/Vec3.horizontalDistanceSqr:()D
+     302: aload         4
+     304: invokevirtual #1426               // Method net/minecraft/world/phys/Vec3.horizontalDistanceSqr:()D
+     307: dcmpl
+     308: ifle          352
+     311: aload         9
+     313: aload_0
+     314: new           #311                // class net/minecraft/world/phys/Vec3
+     317: dup
+     318: dconst_0
+     319: aload         9
+     321: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     324: dneg
+     325: aload_1
+     326: getfield      #730                // Field net/minecraft/world/phys/Vec3.y:D
+     329: dadd
+     330: dconst_0
+     331: invokespecial #587                // Method net/minecraft/world/phys/Vec3."<init>":(DDD)V
+     334: aload_2
+     335: aload         9
+     337: invokevirtual #1423               // Method net/minecraft/world/phys/AABB.move:(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/AABB;
+     340: aload_0
+     341: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+     344: aload_3
+     345: invokestatic  #1417               // Method collideBoundingBox:(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Lnet/minecraft/world/level/Level;Ljava/util/List;)Lnet/minecraft/world/phys/Vec3;
+     348: invokevirtual #1030               // Method net/minecraft/world/phys/Vec3.add:(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;
+     351: areturn
+     352: aload         4
+     354: areturn
+
+
+  public boolean isEffectiveAi();
+    Code:
+       0: aload_0
+       1: invokevirtual #496                // Method level:()Lnet/minecraft/world/level/Level;
+       4: getfield      #813                // Field net/minecraft/world/level/Level.isClientSide:Z
+       7: ifne          14
+      10: iconst_1
+      11: goto          15
+      14: iconst_0
+      15: ireturn
+

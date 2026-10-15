@@ -1,10 +1,22 @@
 # StellarCraft：MC 生物原版 AI、寻路与剑星敌人双向交战方案
 
-> 日期：2026-10-13；类型：基于当前仓库的代码审查与实施计划；状态：**未实施、未构建、未实机验收**。
+> 日期：2026-10-13；执行更新：2026-10-15；状态：**P0原生代理门槛仍未通过；P1仅NoAI来源保存准备项已构建/安装，完整P1与P2–P4未启用、未实机验收**。
 >
 > 范围：剑星场景里生成的 MC 生物恢复原版 Minecraft AI；MC 和剑星原生敌人按生物类型互相感知、追击和交战。**不重新实现一个“像 MC 的 AI”，而应让 MC 服务端原版 Goal/Brain/Navigation 继续负责行为决策。**
 >
-> 当前边界：仅规划/静态审查；不启动游戏、不发送输入、不进入 Boss 测试；保留工作区已有修改和既有实机验收。
+> 当前边界：用户已要求按计划执行，允许离线认证及门槛通过后的实现；游戏测试仍暂停，不启动游戏、不发送输入、不进入 Boss 测试；保留已有修改和既有验收。
+
+## 2026-10-15 执行接续（优先于下方原方案的历史状态）
+
+- 本日第五轮：P0创建参数/命中身份新增10段/14锚点；普通创建请求并非总按TableID生成，完成bool不是GUID，同一effect ID可用于多个目标。见 [BINDING_FINDINGS.md](mob-ai-p0-20261015/bindings/BINDING_FINDINGS.md)。P1独立准备项已保存首次NoAI来源，旧实体unknown；实际NBT重载、构建/remap和既有命中/地图回归通过并只安装新JAR，详见 [AI_STATE_IMPLEMENTATION.md](mob-ai-p0-20261015/ai-state/AI_STATE_IMPLEMENTATION.md)。完整AI未开启、旧手写AI未移除，测试暂停保持。
+- 本日第四轮：Effect4227/CharacterStance252/TargetFilter1866行精确EOF，四蓝图名称引用与SDK组件链已记录。新增5段/8锚点确认Immortal最低HP=1及UsePlayerAIPositioning定位参考切换；Nikke姿态禁止锁定，尚不是合法MC代理。修正Off_HUD/Off_Hud别名大小写误报，未外推全部技能门禁。见 [COMPONENT_FINDINGS.md](mob-ai-p0-20261015/components/COMPONENT_FINDINGS.md)；六表和旧模式离线回归通过，P0仍未通过，未改生产/部署或恢复游戏测试。
+- 本日第三轮：新增目标资格14片段/17锚点和真实配置表解析，Character644/Tribe19/Appearance211行精确EOF；确认隐藏Actor命中过滤、LOS失败歧义及方向性阵营关系。Dummy候选均有未解决约束，Nikke阵营线索尚不足以认证墙面/不死/玩家AI定位代理。见 [QUALIFICATION_FINDINGS.md](mob-ai-p0-20261015/qualification/QUALIFICATION_FINDINGS.md) 及候选行/表哈希/验证记录；P0仍未通过，生产及游戏测试暂停保持。
+- 本日第二轮：进一步追出真实CreateActor请求、owner初始化、原生角色登记、客户端重放、延迟Despawn/Destroy、角色索引注销与独立owner扫描清理；补上RunAITask回调注册及服务端stat/客户端重放的静态关联。36段有界反汇编、28个CALL/指针关联核对，见 [LIFECYCLE_FINDINGS.md](mob-ai-p0-20261015/lifecycle/LIFECYCLE_FINDINGS.md)。这不是MC兼容代理认证；配置/参数、双表寿命、回调线程和实际感知/命中仍缺动态证据。游戏测试暂停，未改生产/构建/部署。
+- 已从本地 Fabric 1.20.1 映射 JAR 导出15类真实字节码，核对 NoAI → isEffectiveAi → 原版 Goal/Brain/Navigation/Control 链；明确 noPhysics 绕过碰撞、当前手写 END_SERVER_TICK 不能与原版AI并行。
+- 核对现有 CollisionField 无生产写入调用、0.5m拾取高度场和25Hz单实体运动反馈不足以导航；找到 PathNavigationRegion、WalkNodeEvaluator 及其独立 noCollision、Sensing LOS 读口，记录只读导航快照与未知区域停止契约。
+- 原生已追到 DetectTarget 任务→RunAITask队列→ControlGUID登记查表→服务端操作2→内部角色候选筛选。排除当前 SBCreateCharacter 调试入口（只解析参数后返回）；锁定RPC不视为敌人仇恨入口。
+- **P0整体未通过**：合法MC战斗代理的构造/注销、回调线程与寿命、实际原生命中受害者关联尚未认证；不绕过门槛启用P1–P4。旧实体 NoAI 原始值未保存，后续迁移不能一律开启。
+- 工具、证据、验证和下一步见 [P0_FINDINGS.md](mob-ai-p0-20261015/P0_FINDINGS.md)、`mob-ai-p0-20261015/verification.json`。本轮仅新增离线审计工具与证据，未改生产逻辑、构建或部署；最新盾伤部署保持，QA未写，未启动/操作游戏。
 
 ## 1. 需求与成功标准
 
@@ -212,8 +224,12 @@
 - [x] 审阅 `ActorProxy`、`NativeActors`、MC→SB HP 以及 SB→Steve 受击通道。
 - [x] 审阅原生 MC 外观 Mesh 与主机碰撞反馈代码，区分渲染与原生可攻击目标。
 - [x] 给出 MC 原版 AI/寻路、和平/中立/敌对、双向目标与伤害、协议、实施阶段和验收方案；补充铁傀儡**主动攻击剑星敌对怪物**的独立规则及测试。
-- [ ] P0 原生 AI 与完整导航接口认证。
+- [x] P0 子项：本地1.20.1原版AI执行链、导航读口及现有地形数据缺口离线核对。
+- [x] P0 子项：原生DetectTarget队列/角色候选链及SBCreateCharacter空实现离线取证。
+- [x] P0 子项：真实CreateActor及角色/owner双表清理路径、RunAITask回调注册、服务端伤害与客户端重放静态关联。
+- [x] P1 独立准备项：首次NoAI来源保存，旧实体unknown；离线NBT/构建/remap通过并安装，AI尚未恢复。
+- [ ] P0 完整门槛：原生可交战代理合法构造/注销、线程寿命与真实命中关联认证。
 - [ ] P1–P4 生产代码实施。
 - [ ] P5 回归、构建、部署和普通区域实机验收。
 
-**本次只生成方案 Markdown，不修改 JAR/DLL/Lua/协议生产逻辑，不启动或操作游戏。**
+**2026-10-13 首版仅生成方案；2026-10-15 已按用户要求开始执行P0，当前结果及接续见顶部。当前仅P1 NoAI来源保存准备项修改并安装JAR；原版AI/完整导航/双向交战尚未启用，DLL/Lua/协议本任务未改，不启动或操作游戏。**

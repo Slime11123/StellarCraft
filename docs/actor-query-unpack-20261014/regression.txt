@@ -1,0 +1,5 @@
+PASS: 1000 live World queries with zero global scans; distinct/empty/changed World results; unavailable/failed query rejects without stale Actors or fallback
+PASS: unique damage/context retained; packed jump-heavy pairing, unknown bits and mismatched style exclusion; existing arrow/TNT directions
+PASS: crouch/stand feet, height drift x1000, jump edges, flight ascent/hover/descent/native ceiling/floor, F4 restoration and re-entry
+PASS: actual main lifecycle; no old UObject calls; old scheduled tick/F4 rejected; repeat unload; same-address/map reuse; UID/token isolation; wrong-world and missing-export rejection
+PASS: native step ascent, height limit, blocked headroom rollback, steep surface rejection

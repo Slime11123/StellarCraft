@@ -1,0 +1,57 @@
+IoStore: D:\SteamLibrary\steamapps\common\StellarBlade\SB\Content\Paks\pakchunk0-WindowsNoEditor.utoc
+Mount: ../../../
+Directories: 9700 Files: 221592
+Read-only directory/chunk metadata; resource contents have not been decoded.
+Compression methods: ['Oodle']
+../../../SB/Content/Local/Data/CharacterTable.uasset | chunk=196268 id=076cff614bb3ad2700000002 offset=3657B00000 length=5CE96
+../../../SB/Content/Local/Data/TransformCharacterTable.uasset | chunk=157472 id=7a12bb4186f0e8bf00000002 offset=2A72000000 length=CF6
+../../../SB/Content/Local/Data/TrainingRoomSettingTable.uasset | chunk=157471 id=5925074931c50f4600000002 offset=2A71F00000 length=1578
+../../../SB/Content/Local/Data/CharacterTribeTable.uasset | chunk=157359 id=e8f3d2a2479cd38700000002 offset=2A6AB00000 length=AC0
+../../../SB/Content/Local/Data/CharacterAppearanceTable.uasset | chunk=157353 id=8026b292f6429fc500000002 offset=2A6A500000 length=7974
+../../../SB/Content/GameDesign/Level/TrainingRoom/BP_TrainningRoom_Common.uasset | chunk=168444 id=0cea9dcb5a7a0a6200000002 offset=2DB9B00000 length=58F5
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_ToggleUI_In_Cue.uasset | chunk=196966 id=2dc2781719d474be00000002 offset=3695A00000 length=607
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Exit_Cue.uasset | chunk=196965 id=6e8dba47e73268d600000002 offset=3695900000 length=92C
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Normal_Tab_Cue.uasset | chunk=196963 id=663922ff4463a1fc00000002 offset=3695700000 length=5F2
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Success_Cue.uasset | chunk=196961 id=c3b130346ec7365100000002 offset=3695500000 length=5FC
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Retry_Cue.uasset | chunk=196959 id=25f28f2661569ee700000002 offset=3695300000 length=6F6
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Refresh_Whoosh_Cue.uasset | chunk=196958 id=4ff19f79ead7a4fc00000002 offset=3695200000 length=624
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Retry.uasset | chunk=196950 id=5811d1257e1d161e00000002 offset=3694A00000 length=48EC
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Restart.uasset | chunk=196949 id=54c9b82eba45f04200000002 offset=3694900000 length=5485
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Success.uasset | chunk=196943 id=aeeed5b1224bbef600000002 offset=3694300000 length=9D21
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_ToggleUI_Out_Cue.uasset | chunk=166938 id=f67be982adbc469100000002 offset=2D2F500000 length=5D4
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Spawn_FX_Cue.uasset | chunk=166937 id=c0272c3c8281133c00000002 offset=2D2F400000 length=8FE
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Spawn_FX_1.uasset | chunk=166936 id=b623cf1f809aac3400000002 offset=2D2F300000 length=8AD7
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Spawn_FX_2.uasset | chunk=166935 id=662f5fc9a354dd3800000002 offset=2D2F200000 length=8FF6
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Spawn_FX_3.uasset | chunk=166934 id=e5248a69afdc36b300000002 offset=2D2F100000 length=8B9B
+../../../SB/Content/Sound/UI/TrainingRoom/UI_TrainingRoom_Entry_Cue.uasset | chunk=119188 id=bc1d9d164e848fef00000002 offset=1FE9100000 length=8DE
+../../../SB/Content/Sound/Haptic/VibrationSet/UI/Haptic_UI_TrainingRoom_Success.uasset | chunk=196953 id=9f2b6ec6c071cf8c00000002 offset=3694D00000 length=2D2
+../../../SB/Content/Sound/Haptic/HapticResources/UI/UI_TrainingRoom_Success_vib_Cue.uasset | chunk=196952 id=9c51d884092ffbae00000002 offset=3694C00000 length=5BE
+../../../SB/Content/Sound/Haptic/HapticResources/UI/UI_TrainingRoom_Success_vib.uasset | chunk=196951 id=39af7afaf98f890900000002 offset=3694B00000 length=35FF
+../../../SB/Content/Sound/World/BGM/SystemMusic/BGM_SYSTEM_TRAININGROOM.uasset | chunk=196968 id=a79f481e216decfc00000002 offset=3695C00000 length=9089A
+../../../SB/Content/Sound/World/Ambient/AMB_TrainingRoom_Cue.uasset | chunk=196960 id=169b9929fc6501b600000002 offset=3695400000 length=7A3
+../../../SB/Content/Sound/World/Ambient/AMB_TrainingRoom.uasset | chunk=196947 id=5766157f2ed1596a00000002 offset=3694700000 length=2E40E
+../../../SB/Content/Sound/SoundAsset/Concurrency/UI_TrainingRoom.uasset | chunk=196944 id=14e2a73ab093aff000000002 offset=3694400000 length=302
+../../../SB/Content/Art/Show/Common/Result_TrainingRoom_Spawn_FX.uasset | chunk=112138 id=2a57250192d4d10700000002 offset=1CB1100000 length=A92
+../../../SB/Content/Art/UI/Definition/TrainingRoom.uasset | chunk=115358 id=29e91f6fc786159f00000002 offset=1D7F200000 length=303
+../../../SB/Content/Art/UI/Texture/InGameGuide/Guide_TrainingRoom_1.uasset | chunk=117092 id=4378065e136e8f3d00000002 offset=1F32900000 length=80340
+../../../SB/Content/Art/BG/Common/LightingPreset/TrainingRoom_ENV_F02.uasset | chunk=177465 id=d315c1b99bf3623500000002 offset=304F900000 length=127A
+../../../SB/Content/Art/BG/Common/LightingPreset/TrainingRoom_ENV_F01.uasset | chunk=177458 id=55211a3926fba4cd00000002 offset=304ED00000 length=127A
+../../../SB/Content/Art/BG/Common/LightingPreset/TrainingRoom_ENV_E04.uasset | chunk=177452 id=09a94626aa9e44e100000002 offset=304C800000 length=128C
+../../../SB/Content/Art/BG/Common/LightingPreset/TrainingRoom_ENV_C05.uasset | chunk=177320 id=b1afc2ec8a9d558b00000002 offset=3042E00000 length=128C
+../../../SB/Content/Art/BG/Common/LightingPreset/TrainingRoom_ENV_B07.uasset | chunk=177307 id=824b4a3a5ac43f9900000002 offset=3041100000 length=127A
+../../../SB/Content/Art/BG/Common/LightingPreset/TrainingRoom_ENV_E05.uasset | chunk=174259 id=1b3bfeb92e5be9bc00000002 offset=2F4B700000 length=124A
+../../../SB/Content/Art/BG/Common/LightingPreset/TrainingRoom_ENV_E03.uasset | chunk=168570 id=4cc1ed53a43118cd00000002 offset=2DC9500000 length=127A
+../../../SB/Content/Art/BG/Common/LightingPreset/TrainingRoom_ENV_Matrix_XI.uasset | chunk=168470 id=1de46ddfba4f233300000002 offset=2DC1100000 length=1397
+../../../SB/Content/Art/BG/Common/LightingPreset/TrainingRoom_ENV_ATL.uasset | chunk=168459 id=7450aecd9bf968bb00000002 offset=2DBB000000 length=128C
+../../../SB/Content/Art/BG/Common/LightingPreset/TrainingRoom_ENV_AYL.uasset | chunk=168452 id=7fc77c5b4bae226b00000002 offset=2DBA700000 length=128C
+../../../SB/Content/Art/BG/Common/HDRI/TrainingRoom_Tex.uasset | chunk=168451 id=aa6ab266d66a86e400000002 offset=2DBA600000 length=804D0
+../../../SB/Content/Art/BG/Actor/Architecture/TrainingRoom/001_A_AoRM.ubulk | chunk=206271 id=5053b470885d1bff00000003 offset=41EBF00000 length=AA000
+../../../SB/Content/Art/BG/Actor/Architecture/TrainingRoom/001_A_TD.ubulk | chunk=206270 id=6f4f7341a1d0afb400000003 offset=41EBC00000 length=2AA000
+../../../SB/Content/Art/BG/Actor/Architecture/TrainingRoom/001_A_TN.ubulk | chunk=206269 id=c2d7b3e1225c868500000003 offset=41EB600000 length=554000
+../../../SB/Content/Art/BG/Actor/Architecture/TrainingRoom/001_A_MI_TEST.uasset | chunk=168443 id=254c3e12caa7386400000002 offset=2DB9A00000 length=101E
+../../../SB/Content/Art/BG/Actor/Architecture/TrainingRoom/002_A_MI.uasset | chunk=168442 id=f8e0de5de6ad788900000002 offset=2DB9900000 length=16B9
+../../../SB/Content/Art/BG/Actor/Architecture/TrainingRoom/003_A_SM.uasset | chunk=168439 id=dd36e730646889e400000002 offset=2DB9400000 length=CEDC
+../../../SB/Content/Art/BG/Actor/Architecture/TrainingRoom/001_B_MI.uasset | chunk=168438 id=b9a88c287823af2a00000002 offset=2DB9300000 length=101E
+../../../SB/Content/Art/BG/Actor/Architecture/TrainingRoom/001_A_AoRM.uasset | chunk=168437 id=5053b470885d1bff00000002 offset=2DB9200000 length=FAB
+../../../SB/Content/Art/BG/Actor/Architecture/TrainingRoom/001_A_TD.uasset | chunk=168436 id=6f4f7341a1d0afb400000002 offset=2DB9100000 length=F49
+../../../SB/Content/Art/BG/Actor/Architecture/TrainingRoom/001_A_TN.uasset | chunk=168435 id=c2d7b3e1225c868500000002 offset=2DB9000000 length=1A7E

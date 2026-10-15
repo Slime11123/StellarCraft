@@ -1,0 +1,54 @@
+[2026-10-14 15:06:55.4918232] [Lua] [StellarCraft-Lifecycle] phase=WAITING_NEW_WORLD epoch=1 reason=startup
+[2026-10-14 15:06:56.2629722] [Lua] [StellarCraft-Lifecycle] phase=WAITING_NEW_WORLD epoch=2 reason=LoadMap pre
+[2026-10-14 15:06:56.8315660] [Lua] [StellarCraft-Lifecycle] phase=ACTIVE epoch=2 level=487271379
+[2026-10-14 15:07:05.4940486] [Lua] [StellarCraft-Profile] EVE begin=0.02/max1.00ms transform=0.02/max1.00ms publish=0.13/max1.00ms mirror=0.34/max7.00ms events=0.00/max1.00ms blocks=0.00/max0.00ms ground=0.00/max1.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:07:15.4995143] [Lua] [StellarCraft-Profile] EVE begin=0.02/max1.00ms transform=0.02/max1.00ms publish=0.16/max1.00ms mirror=0.71/max28.00ms events=0.00/max1.00ms blocks=0.00/max0.00ms ground=0.00/max0.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:07:20.7625880] [Lua] [StellarCraft-Lifecycle] phase=WAITING_NEW_WORLD epoch=3 reason=LoadMap pre
+[2026-10-14 15:07:21.3378257] [Lua] [StellarCraft-Lifecycle] phase=ACTIVE epoch=3 level=914689372
+[2026-10-14 15:07:25.5356922] [Lua] [StellarCraft-Profile] EVE begin=0.02/max1.00ms transform=0.02/max1.00ms publish=0.17/max1.00ms mirror=1.51/max44.00ms events=0.00/max1.00ms blocks=0.00/max1.00ms ground=0.00/max0.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:07:27.8170400] [Lua] [StellarCraft] F4 pressed; control=STEVE (sbFlags=0x11)
+[2026-10-14 15:07:35.5435912] [Lua] [StellarCraft-Profile] EVE begin=0.02/max1.00ms transform=0.01/max1.00ms publish=0.15/max1.00ms mirror=2.53/max47.00ms events=0.00/max0.00ms blocks=0.00/max0.00ms ground=0.00/max0.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:07:35.5438911] [Lua] [StellarCraft-Profile] MC begin=0.21/max72.00ms transform=1.51/max185.00ms publish=0.15/max1.00ms mirror=3.17/max56.00ms events=0.00/max1.00ms blocks=0.00/max1.00ms ground=0.05/max4.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:07:45.5468252] [Lua] [StellarCraft-Profile] MC begin=0.07/max5.00ms transform=3.12/max48.00ms publish=0.16/max1.00ms mirror=2.97/max53.00ms events=0.00/max1.00ms blocks=0.00/max0.00ms ground=0.20/max4.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:07:55.5859287] [Lua] [StellarCraft-Profile] MC begin=0.06/max1.00ms transform=3.05/max53.00ms publish=0.11/max1.00ms mirror=2.98/max47.00ms events=0.00/max1.00ms blocks=0.00/max0.00ms ground=0.19/max4.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:08:05.5985149] [Lua] [StellarCraft-Profile] MC begin=0.06/max1.00ms transform=3.18/max85.00ms publish=0.12/max1.00ms mirror=2.79/max43.00ms events=0.00/max1.00ms blocks=0.00/max1.00ms ground=0.22/max13.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:08:15.6071055] [Lua] [StellarCraft-Profile] MC begin=0.05/max1.00ms transform=4.56/max60.00ms publish=0.14/max1.00ms mirror=2.90/max51.00ms events=0.01/max1.00ms blocks=0.00/max0.00ms ground=0.38/max107.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:08:15.9028441] [Lua] [StellarCraft] F4 pressed; control=EVE (sbFlags=0x21)
+[2026-10-14 15:08:22.1167453] [Lua] [StellarCraft] F4 pressed; control=STEVE (sbFlags=0x11)
+[2026-10-14 15:08:25.6172404] [Lua] [StellarCraft-Profile] EVE begin=0.02/max1.00ms transform=0.02/max2.00ms publish=0.14/max1.00ms mirror=2.51/max48.00ms events=0.00/max0.00ms blocks=0.00/max1.00ms ground=0.00/max0.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:08:25.6174587] [Lua] [StellarCraft-Profile] MC begin=0.07/max3.00ms transform=5.98/max41.00ms publish=0.13/max1.00ms mirror=3.20/max42.00ms events=0.16/max39.00ms blocks=0.00/max1.00ms ground=0.28/max5.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:08:35.6793369] [Lua] [StellarCraft-Profile] MC begin=0.07/max2.00ms transform=4.61/max100.00ms publish=0.16/max3.00ms mirror=3.19/max61.00ms events=0.00/max1.00ms blocks=0.00/max1.00ms ground=0.26/max13.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:08:45.6865008] [Lua] [StellarCraft-Profile] MC begin=0.07/max2.00ms transform=2.97/max6.00ms publish=0.16/max1.00ms mirror=3.27/max56.00ms events=0.00/max1.00ms blocks=0.00/max1.00ms ground=0.22/max5.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:08:55.6993394] [Lua] [StellarCraft-Profile] MC begin=0.06/max1.00ms transform=3.17/max45.00ms publish=0.15/max1.00ms mirror=3.53/max58.00ms events=0.01/max1.00ms blocks=0.00/max0.00ms ground=0.22/max5.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:09:05.7066101] [Lua] [StellarCraft-Profile] MC begin=0.05/max1.00ms transform=6.34/max212.00ms publish=0.16/max1.00ms mirror=3.54/max59.00ms events=0.00/max1.00ms blocks=0.00/max1.00ms ground=0.34/max14.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:09:15.7207113] [Lua] [StellarCraft-Profile] MC begin=0.07/max1.00ms transform=5.64/max44.00ms publish=0.13/max1.00ms mirror=2.96/max48.00ms events=0.22/max38.00ms blocks=0.00/max0.00ms ground=0.28/max4.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:09:25.7270431] [Lua] [StellarCraft-Profile] MC begin=0.06/max3.00ms transform=4.79/max43.00ms publish=0.13/max1.00ms mirror=2.94/max53.00ms events=0.13/max49.00ms blocks=0.00/max0.00ms ground=0.26/max5.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:09:35.7720669] [Lua] [StellarCraft-Profile] MC begin=0.07/max1.00ms transform=6.97/max172.00ms publish=0.11/max1.00ms mirror=3.84/max76.00ms events=0.00/max0.00ms blocks=0.00/max0.00ms ground=0.58/max140.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:09:45.7820952] [Lua] [StellarCraft-Profile] MC begin=0.05/max1.00ms transform=5.28/max52.00ms publish=0.14/max1.00ms mirror=2.98/max52.00ms events=0.06/max38.00ms blocks=0.00/max1.00ms ground=0.26/max4.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:09:55.7840379] [Lua] [StellarCraft-Profile] MC begin=0.06/max2.00ms transform=4.08/max42.00ms publish=0.13/max1.00ms mirror=3.18/max52.00ms events=0.06/max39.00ms blocks=0.00/max0.00ms ground=0.22/max6.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:10:05.8101679] [Lua] [StellarCraft-Profile] MC begin=0.06/max1.00ms transform=2.92/max7.00ms publish=0.12/max1.00ms mirror=3.20/max54.00ms events=0.00/max1.00ms blocks=0.00/max1.00ms ground=0.24/max4.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:10:15.8116709] [Lua] [StellarCraft-Profile] MC begin=0.06/max3.00ms transform=2.91/max22.00ms publish=0.14/max1.00ms mirror=3.26/max53.00ms events=0.00/max1.00ms blocks=0.00/max0.00ms ground=0.25/max5.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:10:25.8191277] [Lua] [StellarCraft-Profile] MC begin=0.07/max2.00ms transform=4.01/max98.00ms publish=0.15/max1.00ms mirror=3.31/max55.00ms events=0.06/max39.00ms blocks=0.00/max0.00ms ground=0.28/max8.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:10:35.8298748] [Lua] [StellarCraft-Profile] MC begin=0.06/max2.00ms transform=4.60/max49.00ms publish=0.14/max1.00ms mirror=3.04/max75.00ms events=0.12/max38.00ms blocks=0.00/max1.00ms ground=0.25/max4.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:10:45.8331766] [Lua] [StellarCraft-Profile] MC begin=0.06/max3.00ms transform=7.16/max142.00ms publish=0.16/max3.00ms mirror=3.50/max66.00ms events=0.00/max1.00ms blocks=0.00/max0.00ms ground=0.53/max138.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:10:55.8411556] [Lua] [StellarCraft-Profile] MC begin=0.05/max1.00ms transform=3.88/max68.00ms publish=0.17/max1.00ms mirror=3.14/max53.00ms events=0.00/max1.00ms blocks=0.00/max0.00ms ground=0.20/max5.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:10:58.9087091] [Lua] [StellarCraft] F4 pressed; control=EVE (sbFlags=0x21)
+[2026-10-14 15:11:05.3309942] [Lua] [StellarCraft-Lifecycle] phase=WAITING_NEW_WORLD epoch=4 reason=identity changed without LoadMap
+[2026-10-14 15:11:05.7308795] [Lua] [StellarCraft-Lifecycle] phase=WAITING_NEW_WORLD epoch=5 reason=LoadMap pre
+[2026-10-14 15:11:06.2106906] [Lua] [StellarCraft-Lifecycle] phase=ACTIVE epoch=5 level=487271382
+[2026-10-14 15:11:06.2297332] [Lua] [StellarCraft-Profile] EVE begin=0.02/max1.00ms transform=0.04/max1.00ms publish=0.16/max1.00ms mirror=3.16/max56.00ms events=0.00/max1.00ms blocks=0.00/max0.00ms ground=0.00/max1.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:11:06.2299506] [Lua] [StellarCraft-Profile] MC begin=0.05/max1.00ms transform=1.92/max34.00ms publish=0.12/max1.00ms mirror=3.03/max53.00ms events=0.00/max1.00ms blocks=0.00/max0.00ms ground=0.17/max3.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:11:10.4105668] [Lua] [StellarCraft-Lifecycle] phase=WAITING_NEW_WORLD epoch=6 reason=LoadMap pre
+[2026-10-14 15:11:10.8231721] [Lua] [StellarCraft-Lifecycle] phase=ACTIVE epoch=6 level=1777178352
+[2026-10-14 15:11:16.2380575] [Lua] [StellarCraft-Profile] EVE begin=0.03/max1.00ms transform=0.03/max1.00ms publish=0.18/max14.00ms mirror=2.47/max61.00ms events=0.00/max1.00ms blocks=0.00/max0.00ms ground=0.00/max1.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:11:21.3254548] [Lua] [StellarCraft] F4 pressed; control=STEVE (sbFlags=0x11)
+[2026-10-14 15:11:22.5989780] [Lua] [StellarCraft] F4 pressed; control=EVE (sbFlags=0x21)
+[2026-10-14 15:11:26.2502932] [Lua] [StellarCraft-Profile] EVE begin=0.02/max1.00ms transform=0.02/max1.00ms publish=0.17/max1.00ms mirror=4.03/max77.00ms events=0.00/max1.00ms blocks=0.01/max1.00ms ground=0.00/max1.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:11:26.2504977] [Lua] [StellarCraft-Profile] MC begin=0.12/max3.00ms transform=5.09/max154.00ms publish=0.09/max1.00ms mirror=4.68/max80.00ms events=0.00/max0.00ms blocks=0.03/max1.00ms ground=0.25/max4.00ms visibility=0.01/max1.00ms
+[2026-10-14 15:11:34.0360831] [Lua] [StellarCraft-Lifecycle] phase=WAITING_NEW_WORLD epoch=7 reason=identity changed without LoadMap
+[2026-10-14 15:11:34.2756300] [Lua] [StellarCraft-Lifecycle] phase=WAITING_NEW_WORLD epoch=8 reason=LoadMap pre
+[2026-10-14 15:11:35.6558291] [Lua] [StellarCraft-Lifecycle] phase=ACTIVE epoch=8 level=2767035171
+[2026-10-14 15:11:36.2610772] [Lua] [StellarCraft-Profile] EVE begin=0.04/max1.00ms transform=0.02/max1.00ms publish=0.19/max13.00ms mirror=3.86/max55.00ms events=0.00/max1.00ms blocks=0.00/max1.00ms ground=0.00/max0.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:11:46.2758209] [Lua] [StellarCraft-Profile] EVE begin=0.02/max1.00ms transform=0.02/max1.00ms publish=0.22/max2.00ms mirror=4.35/max60.00ms events=0.00/max0.00ms blocks=0.00/max0.00ms ground=0.00/max0.00ms visibility=0.00/max0.00ms
+[2026-10-14 15:11:56.2828675] [Lua] [StellarCraft-Profile] EVE begin=0.03/max1.00ms transform=0.02/max1.00ms publish=0.15/max1.00ms mirror=4.06/max72.00ms events=0.00/max0.00ms blocks=0.00/max1.00ms ground=0.00/max1.00ms visibility=0.00/max1.00ms
+[2026-10-14 15:12:06.2891348] [Lua] [StellarCraft-Profile] EVE begin=0.04/max1.00ms transform=0.01/max1.00ms publish=0.17/max1.00ms mirror=4.04/max70.00ms events=0.00/max1.00ms blocks=0.00/max0.00ms ground=0.00/max0.00ms visibility=0.00/max1.00ms

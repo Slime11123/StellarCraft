@@ -7,6 +7,7 @@
 #include <cstdio>
 // Offline gate test: map selected bytes from the installed executable. Never
 // attach to the game or invoke any game code.
+#include "native-shield-settlement.h"
 static int showCalls=0;
 static bool expectedHeavy=false;
 static bool declineShow=false;
@@ -49,9 +50,9 @@ int main(int argc,char** argv) {
     auto mem=static_cast<unsigned char*>(VirtualAlloc(nullptr,0x7120000,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE));
     assert(mem);std::memcpy(mem,file.data(),4096);
     const unsigned offsets[]={0x1AD6AB0,0x1BA8720,0x1A97B20,0xE36F9B,0x1BA875F,0x1A97CB4,0x2274D66,0x201B1EF,0x201B260,0x201B2A7,0x1A350F9,0x1A30C90,0x5BF6818,
-        0x1C49290,0x22857E0,0x1C50365,0x1A64B40,0x243E1E0,0xF2FB60,0x710DDA8,0x5C11110,0x1C50120,0x2459E0A};
-    const unsigned sizes[]={32,32,16,6,36,7,10,9,10,16,25,25,8,0xDE,0x676,0x53,0xC5,0x200,6,12,8,0x2E,0x11};
-    for(int i=0;i<23;i++) {
+        0x1C49290,0x22857E0,0x1C50365,0x1A64B40,0x243E1E0,0xF2FB60,0x710DDA8,0x5C11110,0x1C50120,0x2459E0A,0x1BA8893,0x1BA882B,0x1BA8968,0x1A6512A,0x1A64D52,0x1A65A96,0x1A65A60};
+    const unsigned sizes[]={32,32,16,6,36,7,10,9,10,16,25,25,8,0xDE,0x676,0x53,0xC5,0x200,6,12,8,0x2E,0x11,27,12,187,159,48,1,4};
+    for(int i=0;i<sizeof offsets/sizeof *offsets;i++) {
         bool found=false;
         for(unsigned j=0;j<nt->FileHeader.NumberOfSections;j++) {
             auto& s=sections[j];auto delta=offsets[i]-s.VirtualAddress;
@@ -75,7 +76,7 @@ int main(int argc,char** argv) {
     assert(*reinterpret_cast<std::uintptr_t*>(mem+0x5C11110)==nt->OptionalHeader.ImageBase+0xF2FB60);
     *reinterpret_cast<std::uintptr_t*>(mem+0x5C11110)=base+0xF2FB60;
     assert(native_hit_show::certified(base));
-    for(int i=0;i<23;i++) for(unsigned j=0;j<sizes[i];j++) {
+    for(int i=0;i<sizeof offsets/sizeof *offsets;i++) for(unsigned j=0;j<sizes[i];j++) {
         mem[offsets[i]+j]^=1;assert(!native_hit_show::certified(base));mem[offsets[i]+j]^=1;
     }
     auto header=reinterpret_cast<IMAGE_NT_HEADERS64*>(mem+dos->e_lfanew);
@@ -204,6 +205,7 @@ int main(int argc,char** argv) {
     r.weapon=0x105;r.hasTrajectory=true;r.trajectory={0,1,0};reject(r,damage,target,control,{100,200,300});
     r.weapon=0x101;r.kind=6;reject(r,damage,target,control,{100,200,300});
     r.kind=1;r.weapon=0x106;reject(r,damage,target,control,{100,200,300});
+    shield_test::run(base);
     VirtualFree(mem,0,MEM_RELEASE);
-    std::puts("PASS: combat/show gates; 2989 mutated bytes rejected; packed heavy/illegal style rejection; LIGHT/HEAVY nine-argument stub and original resistance comparison; no game calls");
+    std::puts("PASS: combat/show gates; 3427 mutated bytes rejected; packed heavy/illegal style rejection; LIGHT/HEAVY nine-argument stub and original resistance comparison; no game calls");
 }

@@ -1,0 +1,18 @@
+{
+  "buildAndRemapPassed": true,
+  "nbtReloadRegressionPassed": true,
+  "existingHitJumpWorldMapRegressionPassed": true,
+  "packagedCaptureBeforeForcedNoAi": true,
+  "jarSha256": "B80FF7867A8E49B1A74BEA46B56368620731557488E28ECD3746C4958C222379",
+  "sourcesSha256": {
+    "mc-mod/src/main/java/dev/stellarcraft/world/NativeEntities.java": "D6142EAB5A454961648C2CBC06A3FCEA5A6761D926668CD04655226DB4F07F21",
+    "mc-mod/src/main/java/dev/stellarcraft/world/NativeMobAiState.java": "9C4CF4E59541EB606E358BFD1586CEEA378E06B6748E23C9D0F277D8F8E4C036",
+    "mc-mod/tests/NativeMobAiStateTest.java": "324ED5F04440E1FA29529275765FA99C05DF2D459910C2A970649AB010618249",
+    "mc-mod/build-dx12-jar.ps1": "8B327B69B852462257296BDCD63B32C585FF9D4565AEDC49E670256ABEEE02A4"
+  },
+  "installed": true,
+  "inGameVerified": false,
+  "vanillaMobAiEnabled": false,
+  "gameTestPaused": true,
+  "qaBytes": 0
+}

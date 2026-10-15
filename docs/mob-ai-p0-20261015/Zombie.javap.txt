@@ -1,0 +1,134 @@
+net.minecraft.world.entity.monster.Zombie
+Input SHA256: D5D5503DC29E1A076F89F5E8D19C6E0C3866F3D87EF3900E9D244D28891B3339
+  protected void registerGoals();
+    Code:
+       0: aload_0
+       1: getfield      #103                // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+       4: iconst_4
+       5: new           #7                  // class net/minecraft/world/entity/monster/Zombie$ZombieAttackTurtleEggGoal
+       8: dup
+       9: aload_0
+      10: aload_0
+      11: dconst_1
+      12: iconst_3
+      13: invokespecial #106                // Method net/minecraft/world/entity/monster/Zombie$ZombieAttackTurtleEggGoal."<init>":(Lnet/minecraft/world/entity/monster/Zombie;Lnet/minecraft/world/entity/PathfinderMob;DI)V
+      16: invokevirtual #112                // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      19: aload_0
+      20: getfield      #103                // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      23: bipush        8
+      25: new           #114                // class net/minecraft/world/entity/ai/goal/LookAtPlayerGoal
+      28: dup
+      29: aload_0
+      30: ldc           #116                // class net/minecraft/world/entity/player/Player
+      32: ldc           #117                // float 8.0f
+      34: invokespecial #120                // Method net/minecraft/world/entity/ai/goal/LookAtPlayerGoal."<init>":(Lnet/minecraft/world/entity/Mob;Ljava/lang/Class;F)V
+      37: invokevirtual #112                // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      40: aload_0
+      41: getfield      #103                // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      44: bipush        8
+      46: new           #122                // class net/minecraft/world/entity/ai/goal/RandomLookAroundGoal
+      49: dup
+      50: aload_0
+      51: invokespecial #125                // Method net/minecraft/world/entity/ai/goal/RandomLookAroundGoal."<init>":(Lnet/minecraft/world/entity/Mob;)V
+      54: invokevirtual #112                // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      57: aload_0
+      58: invokevirtual #128                // Method addBehaviourGoals:()V
+      61: return
+
+
+  protected void addBehaviourGoals();
+    Code:
+       0: aload_0
+       1: getfield      #103                // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+       4: iconst_2
+       5: new           #130                // class net/minecraft/world/entity/ai/goal/ZombieAttackGoal
+       8: dup
+       9: aload_0
+      10: dconst_1
+      11: iconst_0
+      12: invokespecial #133                // Method net/minecraft/world/entity/ai/goal/ZombieAttackGoal."<init>":(Lnet/minecraft/world/entity/monster/Zombie;DZ)V
+      15: invokevirtual #112                // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      18: aload_0
+      19: getfield      #103                // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      22: bipush        6
+      24: new           #135                // class net/minecraft/world/entity/ai/goal/MoveThroughVillageGoal
+      27: dup
+      28: aload_0
+      29: dconst_1
+      30: iconst_1
+      31: iconst_4
+      32: aload_0
+      33: invokedynamic #151,  0            // InvokeDynamic #0:getAsBoolean:(Lnet/minecraft/world/entity/monster/Zombie;)Ljava/util/function/BooleanSupplier;
+      38: invokespecial #154                // Method net/minecraft/world/entity/ai/goal/MoveThroughVillageGoal."<init>":(Lnet/minecraft/world/entity/PathfinderMob;DZILjava/util/function/BooleanSupplier;)V
+      41: invokevirtual #112                // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      44: aload_0
+      45: getfield      #103                // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      48: bipush        7
+      50: new           #156                // class net/minecraft/world/entity/ai/goal/WaterAvoidingRandomStrollGoal
+      53: dup
+      54: aload_0
+      55: dconst_1
+      56: invokespecial #159                // Method net/minecraft/world/entity/ai/goal/WaterAvoidingRandomStrollGoal."<init>":(Lnet/minecraft/world/entity/PathfinderMob;D)V
+      59: invokevirtual #112                // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      62: aload_0
+      63: getfield      #162                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      66: iconst_1
+      67: new           #164                // class net/minecraft/world/entity/ai/goal/target/HurtByTargetGoal
+      70: dup
+      71: aload_0
+      72: iconst_0
+      73: anewarray     #166                // class java/lang/Class
+      76: invokespecial #169                // Method net/minecraft/world/entity/ai/goal/target/HurtByTargetGoal."<init>":(Lnet/minecraft/world/entity/PathfinderMob;[Ljava/lang/Class;)V
+      79: iconst_1
+      80: anewarray     #166                // class java/lang/Class
+      83: dup
+      84: iconst_0
+      85: ldc           #171                // class net/minecraft/world/entity/monster/ZombifiedPiglin
+      87: aastore
+      88: invokevirtual #175                // Method net/minecraft/world/entity/ai/goal/target/HurtByTargetGoal.setAlertOthers:([Ljava/lang/Class;)Lnet/minecraft/world/entity/ai/goal/target/HurtByTargetGoal;
+      91: invokevirtual #112                // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      94: aload_0
+      95: getfield      #162                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      98: iconst_2
+      99: new           #177                // class net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal
+     102: dup
+     103: aload_0
+     104: ldc           #116                // class net/minecraft/world/entity/player/Player
+     106: iconst_1
+     107: invokespecial #180                // Method net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal."<init>":(Lnet/minecraft/world/entity/Mob;Ljava/lang/Class;Z)V
+     110: invokevirtual #112                // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+     113: aload_0
+     114: getfield      #162                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     117: iconst_3
+     118: new           #177                // class net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal
+     121: dup
+     122: aload_0
+     123: ldc           #182                // class net/minecraft/world/entity/npc/AbstractVillager
+     125: iconst_0
+     126: invokespecial #180                // Method net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal."<init>":(Lnet/minecraft/world/entity/Mob;Ljava/lang/Class;Z)V
+     129: invokevirtual #112                // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+     132: aload_0
+     133: getfield      #162                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     136: iconst_3
+     137: new           #177                // class net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal
+     140: dup
+     141: aload_0
+     142: ldc           #184                // class net/minecraft/world/entity/animal/IronGolem
+     144: iconst_1
+     145: invokespecial #180                // Method net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal."<init>":(Lnet/minecraft/world/entity/Mob;Ljava/lang/Class;Z)V
+     148: invokevirtual #112                // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+     151: aload_0
+     152: getfield      #162                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     155: iconst_5
+     156: new           #177                // class net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal
+     159: dup
+     160: aload_0
+     161: ldc           #186                // class net/minecraft/world/entity/animal/Turtle
+     163: bipush        10
+     165: iconst_1
+     166: iconst_0
+     167: getstatic     #189                // Field net/minecraft/world/entity/animal/Turtle.BABY_ON_LAND_SELECTOR:Ljava/util/function/Predicate;
+     170: invokespecial #192                // Method net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal."<init>":(Lnet/minecraft/world/entity/Mob;Ljava/lang/Class;IZZLjava/util/function/Predicate;)V
+     173: invokevirtual #112                // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+     176: return
+

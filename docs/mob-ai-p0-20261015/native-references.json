@@ -1,0 +1,110 @@
+[
+  {
+    "token": "ClientBroadcast_SkillHitResult",
+    "stringRva": "0x5ea18c8",
+    "leaRva": "0x8b3bf7",
+    "unwindRange": [
+      "0x8b3bf0",
+      "0x8b3c9c"
+    ]
+  },
+  {
+    "token": "ServerRequest_ActorLockOnTarget",
+    "stringRva": "0x5ea4410",
+    "leaRva": "0x8b5b97",
+    "unwindRange": [
+      "0x8b5b90",
+      "0x8b5c3c"
+    ]
+  },
+  {
+    "token": "SBBTTask_SbDetectTarget",
+    "stringRva": "0x5d640e2",
+    "leaRva": "0x2670ea9",
+    "unwindRange": [
+      "0x2670e18",
+      "0x26710e4"
+    ]
+  },
+  {
+    "token": "SBBTTask_SbMoveToTarget",
+    "stringRva": "0x5d68b0a",
+    "leaRva": "0x26753d9",
+    "unwindRange": [
+      "0x2675348",
+      "0x2675614"
+    ]
+  },
+  {
+    "token": "SBCreateCharacter",
+    "stringRva": "0x5da8bd0",
+    "pointerRva": "0x5daf498",
+    "followingRawValue": "0x1426a9b90",
+    "followingValueRva": "0x26a9b90"
+  },
+  {
+    "token": "SBCreateCharacter",
+    "stringRva": "0x5da8bd0",
+    "pointerRva": "0x5dbcd00",
+    "followingRawValue": "0x1426a3b60",
+    "followingValueRva": "0x26a3b60"
+  },
+  {
+    "token": "ServerRequest_ActorLockOnTarget",
+    "stringRva": "0x5ea60b8",
+    "pointerRva": "0x5e91928",
+    "followingRawValue": "0x1427645d0",
+    "followingValueRva": "0x27645d0"
+  },
+  {
+    "token": "ServerRequest_ActorLockOnTarget",
+    "stringRva": "0x5ea60b8",
+    "pointerRva": "0x5e9c5a0",
+    "followingRawValue": "0x14275e010",
+    "followingValueRva": "0x275e010"
+  },
+  {
+    "token": "AISightSenseNearDistance",
+    "stringRva": "0x5dc99d0",
+    "pointerRva": "0x5e11bd0",
+    "followingRawValue": "0x0"
+  },
+  {
+    "token": "ClientBroadcast_SkillHitResult",
+    "stringRva": "0x5ea5b38",
+    "pointerRva": "0x5e91648",
+    "followingRawValue": "0x142763d30",
+    "followingValueRva": "0x2763d30"
+  },
+  {
+    "token": "ClientBroadcast_SkillHitResult",
+    "stringRva": "0x5ea5b38",
+    "pointerRva": "0x5e9c2c0",
+    "followingRawValue": "0x142756ac0",
+    "followingValueRva": "0x2756ac0"
+  },
+  {
+    "token": "bValidEngineHandle",
+    "stringRva": "0x5dd6390",
+    "pointerRva": "0x5df1d40",
+    "followingRawValue": "0x0"
+  },
+  {
+    "token": "SBCreateCharacter",
+    "stringRva": "0x5da8bd0",
+    "pointerRva": "0x6d9da50",
+    "followingRawValue": "0x0"
+  },
+  {
+    "token": "ServerRequest_ActorLockOnTarget",
+    "stringRva": "0x5ea60b8",
+    "pointerRva": "0x6db8200",
+    "followingRawValue": "0x0"
+  },
+  {
+    "token": "ClientBroadcast_SkillHitResult",
+    "stringRva": "0x5ea5b38",
+    "pointerRva": "0x6db73a0",
+    "followingRawValue": "0x0"
+  }
+]

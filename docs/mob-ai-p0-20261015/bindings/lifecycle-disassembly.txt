@@ -1,0 +1,430 @@
+File-only P0 trace. All addresses are RVAs; labels do not certify ABI.
+Bounded linear disassembly can contain unreachable bytes after branches.
+Do not invoke these functions or create characters from these excerpts.
+
+Create RPC implementation copies all user parameters and internal defaults: 023B8550..023B8632
+023B8550 mov qword ptr [rsp + 8], rbx
+023B8555 mov qword ptr [rsp + 0x10], rsi
+023B855A mov qword ptr [rsp + 0x20], rdi
+023B855F push rbp
+023B8560 push r14
+023B8562 push r15
+023B8564 mov rbp, rsp
+023B8567 sub rsp, 0x40
+023B856B xor r15d, r15d
+023B856E mov rdi, r9
+023B8571 mov qword ptr [rbp + 0x30], r15
+023B8575 mov rsi, r8
+023B8578 mov r14d, edx
+023B857B call 0x1a97b90
+023B8580 lea r8, [rbp - 0x20]
+023B8584 mov qword ptr [rbp - 0x20], r15
+023B8588 lea rdx, [rbp - 0x10]
+023B858C mov dword ptr [rbp - 0x18], r15d
+023B8590 mov qword ptr [rbp - 0x10], r15
+023B8594 mov dword ptr [rbp - 8], r15d
+023B8598 call 0x1b43a40
+023B859D mov rbx, rax
+023B85A0 test rax, rax
+023B85A3 je 0x23b8632
+023B85A9 mov ecx, dword ptr [rbp + 0x50]
+023B85AC movsd xmm0, qword ptr [rsi]
+023B85B0 movsd qword ptr [rax + 0x14], xmm0
+023B85B5 movsd xmm0, qword ptr [rdi]
+023B85B9 mov dword ptr [rax + 0x30], ecx
+023B85BC mov ecx, dword ptr [rsi + 8]
+023B85BF movsd qword ptr [rax + 0x20], xmm0
+023B85C4 mov dword ptr [rax + 0x1c], ecx
+023B85C7 lea rcx, [rbx + 0x50]
+023B85CB mov dword ptr [rax + 0x10], r14d
+023B85CF mov eax, dword ptr [rdi + 8]
+023B85D2 movzx edi, byte ptr [rbp + 0x40]
+023B85D6 mov dword ptr [rbx + 0x28], eax
+023B85D9 movzx eax, byte ptr [rbp + 0x48]
+023B85DD mov byte ptr [rbx + 0x2d], al
+023B85E0 mov eax, dword ptr [rbp + 0x58]
+023B85E3 mov dword ptr [rbx + 0x3c], eax
+023B85E6 movzx eax, byte ptr [rbp + 0x60]
+023B85EA mov byte ptr [rbx + 0x40], al
+023B85ED mov rax, qword ptr [rbp + 0x68]
+023B85F1 mov qword ptr [rbx + 0x34], rax
+023B85F5 movzx eax, byte ptr [rbp + 0x70]
+023B85F9 mov byte ptr [rbx + 0x61], al
+023B85FC mov eax, r15d
+023B85FF mov qword ptr [rbx + 0x64], rax
+023B8603 mov byte ptr [rbx + 0x2c], dil
+023B8607 mov word ptr [rbx + 0x41], 0x100
+023B860D mov byte ptr [rbx + 0x60], r15b
+023B8611 mov dword ptr [rcx + 8], r15d
+023B8615 cmp dword ptr [rcx + 0xc], r15d
+023B8619 je 0x23b8622
+023B861B xor edx, edx
+023B861D call 0xe6b000
+023B8622 movzx r8d, dil
+023B8626 mov byte ptr [rbx + 0x48], 1
+023B862A mov rdx, rbx
+023B862D call 0x1af3930
+
+Create request chooses event spawn or full owner factory: 01B097F5..01B099F2
+01B097F5 cmp eax, 1
+01B097F8 je 0x1b09919
+01B097FE movzx eax, byte ptr [rbx + 0x2c]
+01B09802 mov byte ptr [rsp + 0xe8], al
+01B09809 cmp al, 1
+01B0980B je 0x1b0985e
+01B0980D cmp byte ptr [rbx + 0x2d], 1
+01B09811 je 0x1b0985e
+01B09813 mov rax, qword ptr [rsp + 0xe0]
+01B0981B movzx ebp, byte ptr [rbx + 0x61]
+01B0981F movzx r14d, byte ptr [rbx + 0x40]
+01B09824 mov r15d, dword ptr [rbx + 0x3c]
+01B09828 add rbx, 0x48
+01B0982C lea rdi, [rax + 0x20]
+01B09830 lea rsi, [rax + 0x14]
+01B09834 call 0x1adc3d0
+01B09839 mov byte ptr [rsp + 0x38], bpl
+01B0983E mov rcx, rax
+01B09841 mov qword ptr [rsp + 0x30], rbx
+01B09846 mov r9, rsi
+01B09849 mov r8d, r14d
+01B0984C mov qword ptr [rsp + 0x20], rdi
+01B09851 mov edx, r15d
+01B09854 call 0x1c1c9a0
+01B09859 jmp 0x1b099f2
+01B0985E mov eax, dword ptr [rbx + 0x28]
+01B09861 movsd xmm0, qword ptr [rbx + 0x20]
+01B09866 movzx edi, byte ptr [rbx + 0x61]
+01B0986A movzx esi, byte ptr [rbx + 0x60]
+01B0986E movzx ebp, byte ptr [rbx + 0x42]
+01B09872 movzx r14d, byte ptr [rbx + 0x41]
+01B09877 movzx r15d, byte ptr [rbx + 0x40]
+01B0987C mov r12d, dword ptr [rbx + 0x3c]
+01B09880 mov r13d, dword ptr [rbx + 0x30]
+01B09884 mov dword ptr [rsp + 0x88], eax
+01B0988B mov eax, dword ptr [rbx + 0x1c]
+01B0988E mov dword ptr [rsp + 0x98], eax
+01B09895 mov eax, dword ptr [rbx + 0x10]
+01B09898 movsd qword ptr [rsp + 0x80], xmm0
+01B098A1 movsd xmm0, qword ptr [rbx + 0x14]
+01B098A6 add rbx, 0x48
+01B098AA movsd qword ptr [rsp + 0x90], xmm0
+01B098B3 mov dword ptr [rsp + 0xf0], eax
+01B098BA call 0x1a97b20
+01B098BF mov rdx, qword ptr [rsp + 0xe0]
+01B098C7 lea r9, [rsp + 0x80]
+01B098CF mov rcx, rax
+01B098D2 lea r8, [rsp + 0x90]
+01B098DA mov rax, qword ptr [rdx + 0x64]
+01B098DE mov qword ptr [rsp + 0x70], rax
+01B098E3 mov rax, qword ptr [rdx + 0x34]
+01B098E7 mov edx, dword ptr [rsp + 0xf0]
+01B098EE mov byte ptr [rsp + 0x68], dil
+01B098F3 mov byte ptr [rsp + 0x60], sil
+01B098F8 mov qword ptr [rsp + 0x58], rbx
+01B098FD mov byte ptr [rsp + 0x50], bpl
+01B09902 mov byte ptr [rsp + 0x48], r14b
+01B09907 mov qword ptr [rsp + 0x40], rax
+01B0990C movzx eax, byte ptr [rsp + 0xe8]
+01B09914 jmp 0x1b099da
+01B09919 mov eax, dword ptr [rbx + 0x28]
+01B0991C movsd xmm0, qword ptr [rbx + 0x20]
+01B09921 movzx edi, byte ptr [rbx + 0x61]
+01B09925 movzx esi, byte ptr [rbx + 0x60]
+01B09929 movzx ebp, byte ptr [rbx + 0x42]
+01B0992D movzx r14d, byte ptr [rbx + 0x41]
+01B09932 movzx r15d, byte ptr [rbx + 0x40]
+01B09937 mov r12d, dword ptr [rbx + 0x3c]
+01B0993B mov r13d, dword ptr [rbx + 0x30]
+01B0993F mov dword ptr [rsp + 0x98], eax
+01B09946 mov eax, dword ptr [rbx + 0x1c]
+01B09949 mov dword ptr [rsp + 0x88], eax
+01B09950 movzx eax, byte ptr [rbx + 0x2c]
+01B09954 mov byte ptr [rsp + 0xe8], al
+01B0995B mov eax, dword ptr [rbx + 0x10]
+01B0995E movsd qword ptr [rsp + 0x90], xmm0
+01B09967 movsd xmm0, qword ptr [rbx + 0x14]
+01B0996C add rbx, 0x48
+01B09970 movsd qword ptr [rsp + 0x80], xmm0
+01B09979 mov dword ptr [rsp + 0xf0], eax
+01B09980 call 0x1a97b20
+01B09985 mov rdx, qword ptr [rsp + 0xe0]
+01B0998D lea r9, [rsp + 0x90]
+01B09995 mov rcx, rax
+01B09998 lea r8, [rsp + 0x80]
+01B099A0 mov rax, qword ptr [rdx + 0x64]
+01B099A4 mov qword ptr [rsp + 0x70], rax
+01B099A9 mov rax, qword ptr [rdx + 0x34]
+01B099AD mov edx, dword ptr [rsp + 0xf0]
+01B099B4 mov byte ptr [rsp + 0x68], dil
+01B099B9 mov byte ptr [rsp + 0x60], sil
+01B099BE mov qword ptr [rsp + 0x58], rbx
+01B099C3 mov byte ptr [rsp + 0x50], bpl
+01B099C8 mov byte ptr [rsp + 0x48], r14b
+01B099CD mov qword ptr [rsp + 0x40], rax
+01B099D2 movzx eax, byte ptr [rsp + 0xe8]
+01B099DA mov byte ptr [rsp + 0x38], r15b
+01B099DF mov dword ptr [rsp + 0x30], r12d
+01B099E4 mov dword ptr [rsp + 0x28], r13d
+01B099E9 mov byte ptr [rsp + 0x20], al
+01B099ED call 0x1ad1290
+
+Full owner factory forwards extended initialization arguments: 01AD13B1..01AD143D
+01AD13B1 mov rax, qword ptr [rbp - 0x60]
+01AD13B5 lea r9, [rbp - 0x60]
+01AD13B9 lea r8, [rbp - 0x70]
+01AD13BD mov edx, r14d
+01AD13C0 movsd xmm0, qword ptr [rax]
+01AD13C4 mov eax, dword ptr [rax + 8]
+01AD13C7 mov dword ptr [rbp - 0x58], eax
+01AD13CA mov eax, dword ptr [r12 + 8]
+01AD13CF mov dword ptr [rbp - 0x68], eax
+01AD13D2 mov rax, qword ptr [rbp + 0x340]
+01AD13D9 mov qword ptr [rsp + 0x60], rax
+01AD13DE mov rax, qword ptr [rbp - 0x50]
+01AD13E2 mov byte ptr [rsp + 0x58], r13b
+01AD13E7 mov qword ptr [rsp + 0x50], rax
+01AD13EC movzx eax, byte ptr [rbp + 0x318]
+01AD13F3 mov byte ptr [rsp + 0x48], al
+01AD13F7 mov rax, qword ptr [rbp + 0x310]
+01AD13FE mov qword ptr [rsp + 0x40], rax
+01AD1403 movzx eax, byte ptr [rbp + 0x308]
+01AD140A mov byte ptr [rsp + 0x38], al
+01AD140E mov eax, dword ptr [rbp + 0x300]
+01AD1414 mov dword ptr [rsp + 0x30], eax
+01AD1418 mov dword ptr [rsp + 0x28], esi
+01AD141C movzx esi, byte ptr [rbp + 0x2f0]
+01AD1423 movsd qword ptr [rbp - 0x60], xmm0
+01AD1428 movsd xmm0, qword ptr [r12]
+01AD142E mov byte ptr [rsp + 0x20], sil
+01AD1433 movsd qword ptr [rbp - 0x70], xmm0
+01AD1438 call 0x1ba6d20
+
+Create request publishes boolean completion only: 01B09A15..01B09A54
+01B09A15 cmp dword ptr [rbx + 0xc], 0
+01B09A19 mov r12, qword ptr [rsp + 0xf8]
+01B09A21 jbe 0x1b09a54
+01B09A23 call 0x1a97b20
+01B09A28 mov ebx, dword ptr [rbx + 0xc]
+01B09A2B mov esi, dword ptr [rax + 0x14]
+01B09A2E call 0x1a97b90
+01B09A33 mov rdi, rax
+01B09A36 call 0x1b649d0
+01B09A3B test rbp, rbp
+01B09A3E mov r8, rax
+01B09A41 mov edx, esi
+01B09A43 setne cl
+01B09A46 mov byte ptr [rax + 0x14], cl
+01B09A49 mov rcx, rdi
+01B09A4C mov dword ptr [rax + 0x10], ebx
+01B09A4F call 0x1af3c70
+
+Effect iterates multiple target stat records with same object ID: 01BCA980..01BCAA70
+01BCA980 movups xmm6, xmmword ptr [r12]
+01BCA985 movsd xmm0, qword ptr [r12 + 0x10]
+01BCA98C movq r13, xmm6
+01BCA991 movsd qword ptr [rbp + 0xb0], xmm0
+01BCA999 mov rcx, r13
+01BCA99C movups xmmword ptr [rbp + 0xa0], xmm6
+01BCA9A3 mov rax, qword ptr [r13]
+01BCA9A7 call qword ptr [rax + 0x28]
+01BCA9AA test al, al
+01BCA9AC je 0x1bcaa61
+01BCA9B2 mov rax, qword ptr [r15]
+01BCA9B5 mov rcx, r15
+01BCA9B8 movss xmm7, dword ptr [rbp + 0xb4]
+01BCA9C0 mov ebx, dword ptr [r15 + 0x70]
+01BCA9C4 xorps xmm7, xmm8
+01BCA9C8 mov edi, dword ptr [r15 + 0x68]
+01BCA9CC mov rsi, qword ptr [r15 + 0x60]
+01BCA9D0 mov r14d, dword ptr [r15 + 0x88]
+01BCA9D7 call qword ptr [rax + 0x38]
+01BCA9DA mov r8, qword ptr [rbp + 0xac]
+01BCA9E1 movaps xmm3, xmm7
+01BCA9E4 mov byte ptr [rsp + 0x50], 0
+01BCA9E9 mov rcx, r13
+01BCA9EC mov byte ptr [rsp + 0x48], 0
+01BCA9F1 mov dword ptr [rsp + 0x40], ebx
+01BCA9F5 mov dword ptr [rsp + 0x38], eax
+01BCA9F9 psrldq xmm6, 8
+01BCA9FE mov dword ptr [rsp + 0x30], edi
+01BCAA02 movd edx, xmm6
+01BCAA06 mov qword ptr [rsp + 0x28], rsi
+01BCAA0B mov dword ptr [rsp + 0x20], r14d
+01BCAA10 call 0x1ba8720
+01BCAA15 movsxd rbx, dword ptr [rbp - 0x68]
+01BCAA19 lea eax, [rbx + 1]
+01BCAA1C mov dword ptr [rbp - 0x68], eax
+01BCAA1F cmp eax, dword ptr [rbp - 0x64]
+01BCAA22 jle 0x1bcaa2d
+01BCAA24 lea rcx, [rbp - 0x70]
+01BCAA28 call 0xe4a6d0
+01BCAA2D mov rcx, qword ptr [rbp - 0x70]
+01BCAA31 movss dword ptr [rcx + rbx*4], xmm7
+01BCAA36 mov rcx, r13
+01BCAA39 mov rax, qword ptr [r13]
+01BCAA3D call qword ptr [rax + 0x38]
+01BCAA40 movsxd rbx, dword ptr [rbp - 0x78]
+01BCAA44 mov edi, eax
+01BCAA46 lea ecx, [rbx + 1]
+01BCAA49 mov dword ptr [rbp - 0x78], ecx
+01BCAA4C cmp ecx, dword ptr [rbp - 0x74]
+01BCAA4F jle 0x1bcaa5a
+01BCAA51 lea rcx, [rbp - 0x80]
+01BCAA55 call 0xe4a6d0
+01BCAA5A mov rsi, qword ptr [rbp - 0x80]
+01BCAA5E mov dword ptr [rsi + rbx*4], edi
+01BCAA61 add r12, 0x18
+01BCAA65 cmp r12, qword ptr [rsp + 0x70]
+01BCAA6A jne 0x1bca980
+
+Effect stat execution arguments fragment: 01BCD318..01BCD38B
+01BCD318 mov rcx, qword ptr [rbp + 0x340]
+01BCD31F movzx r13d, byte ptr [rbx + 0x164]
+01BCD327 movzx ebx, byte ptr [r12 + 0xf0]
+01BCD330 mov edi, dword ptr [r12 + 0x70]
+01BCD335 mov esi, dword ptr [r12 + 0x68]
+01BCD33A mov r15, qword ptr [r12 + 0x60]
+01BCD33F mov rax, qword ptr [rcx]
+01BCD342 mov r12d, dword ptr [r12 + 0x88]
+01BCD34A call qword ptr [rax + 0x38]
+01BCD34D mov byte ptr [rsp + 0x50], bl
+01BCD351 mov edx, r13d
+01BCD354 mov r13, qword ptr [rbp - 0x10]
+01BCD358 movaps xmm3, xmm11
+01BCD35C mov byte ptr [rsp + 0x48], 0
+01BCD361 mov rcx, r13
+01BCD364 mov dword ptr [rsp + 0x40], edi
+01BCD368 mov dword ptr [rsp + 0x38], eax
+01BCD36C mov dword ptr [rsp + 0x30], esi
+01BCD370 mov rsi, qword ptr [rsp + 0x68]
+01BCD375 mov qword ptr [rsp + 0x28], r15
+01BCD37A mov dword ptr [rsp + 0x20], r12d
+01BCD37F mov r8, qword ptr [rsi + 0x168]
+01BCD386 call 0x1ba8720
+
+Authoritative effect object to raw source key and stat debit: 01BA8720..01BA8840
+01BA8720 mov dword ptr [rsp + 0x10], edx
+01BA8724 mov r11, rsp
+01BA8727 push rbp
+01BA8728 push rbx
+01BA8729 push rsi
+01BA872A push rdi
+01BA872B push r15
+01BA872D lea rbp, [rsp - 0x80]
+01BA8732 sub rsp, 0x180
+01BA8739 mov rax, qword ptr [rcx + 0x60]
+01BA873D mov rbx, r8
+01BA8740 movaps xmmword ptr [r11 - 0x48], xmm6
+01BA8745 movaps xmm6, xmm3
+01BA8748 movsxd rdi, edx
+01BA874B mov r15, rcx
+01BA874E test rax, rax
+01BA8751 je 0x1ba96a3
+01BA8757 mov qword ptr [r11 - 0x38], r14
+01BA875B lea r14, [rcx + 0x60]
+01BA875F cmp edi, 1
+01BA8762 jne 0x1ba8787
+01BA8764 cmp byte ptr [rcx + 0x414], 0
+01BA876B jne 0x1ba969b
+01BA8771 mov eax, dword ptr [rax + 0x2600]
+01BA8777 sub eax, 3
+01BA877A cmp eax, 2
+01BA877D jbe 0x1ba969b
+01BA8783 lea r14, [rcx + 0x60]
+01BA8787 mov qword ptr [rsp + 0x1c0], r12
+01BA878F xor r12d, r12d
+01BA8792 mov qword ptr [rsp + 0x178], r13
+01BA879A mov r13d, r12d
+01BA879D movaps xmmword ptr [rsp + 0x150], xmm7
+01BA87A5 mov dword ptr [rsp + 0x68], r12d
+01BA87AA cmp dword ptr [rbp + 0xe8], r12d
+01BA87B1 jbe 0x1ba87dc
+01BA87B3 call 0x1a97b20
+01BA87B8 mov edx, dword ptr [rbp + 0xe8]
+01BA87BE mov rcx, rax
+01BA87C1 call 0x1ad6a10
+01BA87C6 mov r13, rax
+01BA87C9 test rax, rax
+01BA87CC je 0x1ba87dc
+01BA87CE mov eax, dword ptr [rax + 0x104]
+01BA87D4 lea r14, [r15 + 0x60]
+01BA87D8 mov dword ptr [rsp + 0x68], eax
+01BA87DC movaps xmm1, xmm6
+01BA87DF mov ecx, edi
+01BA87E1 call 0x1c77620
+01BA87E6 mov rcx, qword ptr [r15 + 0x60]
+01BA87EA movaps xmm3, xmm0
+01BA87ED mov r8, rbx
+01BA87F0 mov edx, edi
+01BA87F2 movaps xmm7, xmm0
+01BA87F5 cvttss2si eax, dword ptr [rcx + 0x11c]
+01BA87FD mov dword ptr [rbp + 0x40], eax
+01BA8800 mov eax, dword ptr [rsp + 0x68]
+01BA8804 mov dword ptr [rsp + 0x30], eax
+01BA8808 movzx eax, byte ptr [rbp + 0x100]
+01BA880F mov byte ptr [rsp + 0x28], al
+01BA8813 movzx eax, byte ptr [rbp + 0xf8]
+01BA881A mov byte ptr [rsp + 0x20], al
+01BA881E call 0x1a64ce0
+01BA8823 test al, al
+01BA8825 je 0x1ba9683
+01BA882B mov rax, qword ptr [r14]
+01BA882E movss xmm6, dword ptr [rax + rdi*4 + 0x118]
+01BA8837 call 0x1a97b20
+01BA883C mov rcx, r15
+
+Client stat replay has separate caller: 01B1F7FC..01B1F85C
+01B1F7FC mov eax, dword ptr [rsi + 0x20]
+01B1F7FF mov r8, rdi
+01B1F802 movss xmm3, dword ptr [rsi + 0x18]
+01B1F807 mov rcx, r15
+01B1F80A mov edx, dword ptr [rsi + 0x14]
+01B1F80D mov dword ptr [rsp + 0x30], eax
+01B1F811 movzx eax, byte ptr [rsi + 0x1d]
+01B1F815 mov byte ptr [rsp + 0x28], al
+01B1F819 movzx eax, byte ptr [rsi + 0x1c]
+01B1F81D mov byte ptr [rsp + 0x20], al
+01B1F821 mov qword ptr [rsp + 0x70], rdi
+01B1F826 call 0x1a64ce0
+01B1F82B movsxd rax, dword ptr [rsi + 0x14]
+01B1F82F movss xmm8, dword ptr [r15 + rax*4 + 0x118]
+01B1F839 ucomiss xmm8, dword ptr [rsi + 0x24]
+01B1F83E je 0x1b1f96a
+01B1F844 lea r8, [rip + 0x40d6095]
+01B1F84B mov edx, edi
+01B1F84D mov rcx, r8
+01B1F850 movzx eax, r14w
+01B1F854 nop dword ptr [rax]
+
+Owner stat debit can recurse to linked owner: 01BA8A28..01BA8AA1
+01BA8A28 xorps xmm6, xmm6
+01BA8A2B cmp byte ptr [r15 + 0x409], r12b
+01BA8A32 je 0x1ba8aa1
+01BA8A34 comiss xmm7, xmm6
+01BA8A37 jae 0x1ba8acd
+01BA8A3D mov rcx, qword ptr [r15 + 0x400]
+01BA8A44 test rcx, rcx
+01BA8A47 je 0x1ba8aa1
+01BA8A49 movzx eax, byte ptr [rbp + 0x100]
+01BA8A50 movaps xmm3, xmm7
+01BA8A53 mov rsi, qword ptr [rbp + 0xd8]
+01BA8A5A mov r8, rbx
+01BA8A5D mov byte ptr [rsp + 0x50], al
+01BA8A61 mov edx, 1
+01BA8A66 mov eax, dword ptr [rbp + 0xf0]
+01BA8A6C mov byte ptr [rsp + 0x48], r12b
+01BA8A71 mov dword ptr [rsp + 0x40], eax
+01BA8A75 mov eax, dword ptr [rsp + 0x68]
+01BA8A79 mov dword ptr [rsp + 0x38], eax
+01BA8A7D mov eax, dword ptr [rbp + 0xe0]
+01BA8A83 mov dword ptr [rsp + 0x30], eax
+01BA8A87 mov eax, dword ptr [rbp + 0xd0]
+01BA8A8D mov qword ptr [rsp + 0x28], rsi
+01BA8A92 mov dword ptr [rsp + 0x20], eax
+01BA8A96 call 0x1ba8720
+01BA8A9B lea rbx, [r15 + 0x60]
+01BA8A9F jmp 0x1ba8ab0
+
+Effect ID getter used in target loop: 00E4D660..00E4D664
+00E4D660 mov eax, dword ptr [rcx + 0x20]
+00E4D663 ret 

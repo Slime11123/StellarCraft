@@ -1,0 +1,44 @@
+{
+  "utocSha256": "C16153B63CCCABA834CB74402DC56F037D11571494D7A675E95E9E29D01B3E61",
+  "sdkSha256": "87B1A4BC07426787C831426267DC92D7378C053A1DC4C6A7A69738DBEE03C532",
+  "toolSha256": "F526038FCA7E1E6659486E1A1C652F0AE5F18F06DA209ED18CA877365CD9502E",
+  "decoderSource": "https://github.com/powzix/ooz",
+  "decoderCommit": "05038060aa68f9187ae9923b2388ca8db40e58d1",
+  "decoderExeSha256": "7ECB1B01DE3CE82D56F4C76E4B0D046D2202C16E29FC735E18EB53613CC4B9F7",
+  "tables": [
+    {
+      "table": "CharacterTribeTable",
+      "chunk": 157359,
+      "rows": 19,
+      "exactEof": true,
+      "decodedBytes": 2752,
+      "compressedBytes": 1375,
+      "physicalOffset": "0x232d73270",
+      "decodedSha256": "1EC9458ACF06395B3D741989B7EDC9D66A48385274D00A7F2C0605576365ABBE"
+    },
+    {
+      "table": "CharacterTable",
+      "chunk": 196268,
+      "rows": 644,
+      "exactEof": true,
+      "decodedBytes": 380566,
+      "compressedBytes": 42165,
+      "physicalOffset": "0x3d0f29000",
+      "decodedSha256": "D07D925ACABDF7FFFE5C3BEBDCD66FD34AD5AAB6C863E435CF48F7E18FACAA8A"
+    },
+    {
+      "table": "CharacterAppearanceTable",
+      "chunk": 157353,
+      "rows": 211,
+      "exactEof": true,
+      "decodedBytes": 31092,
+      "compressedBytes": 7895,
+      "physicalOffset": "0x232d49800",
+      "decodedSha256": "F1C2B9DD1913454B07EB3DDE517B6F938147EA1F37CBD1D2725E33AA4317D2F8"
+    }
+  ],
+  "note": "Only explicitly serialized nonzero fields. Absent fields are not certified defaults. SDK-order schema, bounded reads, identity checks and exact EOF provide offline consistency, not runtime certification.",
+  "nativeProxyCertified": false,
+  "runtimeTested": false,
+  "productionModified": false
+}

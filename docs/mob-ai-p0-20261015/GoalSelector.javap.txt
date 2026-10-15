@@ -1,0 +1,164 @@
+net.minecraft.world.entity.ai.goal.GoalSelector
+Input SHA256: D5D5503DC29E1A076F89F5E8D19C6E0C3866F3D87EF3900E9D244D28891B3339
+  public void tick();
+    Code:
+       0: aload_0
+       1: getfield      #77                 // Field profiler:Ljava/util/function/Supplier;
+       4: invokeinterface #219,  1          // InterfaceMethod java/util/function/Supplier.get:()Ljava/lang/Object;
+       9: checkcast     #221                // class net/minecraft/util/profiling/ProfilerFiller
+      12: astore_1
+      13: aload_1
+      14: ldc           #223                // String goalCleanup
+      16: invokeinterface #227,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+      21: aload_0
+      22: getfield      #65                 // Field availableGoals:Ljava/util/Set;
+      25: invokeinterface #228,  1          // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
+      30: astore_2
+      31: aload_2
+      32: invokeinterface #191,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      37: ifeq          82
+      40: aload_2
+      41: invokeinterface #195,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      46: checkcast     #85                 // class net/minecraft/world/entity/ai/goal/WrappedGoal
+      49: astore_3
+      50: aload_3
+      51: invokevirtual #148                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.isRunning:()Z
+      54: ifeq          79
+      57: aload_3
+      58: aload_0
+      59: getfield      #73                 // Field disabledFlags:Ljava/util/EnumSet;
+      62: invokestatic  #230                // Method goalContainsAnyFlags:(Lnet/minecraft/world/entity/ai/goal/WrappedGoal;Ljava/util/EnumSet;)Z
+      65: ifne          75
+      68: aload_3
+      69: invokevirtual #233                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.canContinueToUse:()Z
+      72: ifne          79
+      75: aload_3
+      76: invokevirtual #157                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.stop:()V
+      79: goto          31
+      82: aload_0
+      83: getfield      #57                 // Field lockedFlags:Ljava/util/Map;
+      86: invokeinterface #237,  1          // InterfaceMethod java/util/Map.entrySet:()Ljava/util/Set;
+      91: invokeinterface #228,  1          // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
+      96: astore_2
+      97: aload_2
+      98: invokeinterface #191,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     103: ifeq          140
+     106: aload_2
+     107: invokeinterface #195,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     112: checkcast     #16                 // class java/util/Map$Entry
+     115: astore_3
+     116: aload_3
+     117: invokeinterface #240,  1          // InterfaceMethod java/util/Map$Entry.getValue:()Ljava/lang/Object;
+     122: checkcast     #85                 // class net/minecraft/world/entity/ai/goal/WrappedGoal
+     125: invokevirtual #148                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.isRunning:()Z
+     128: ifne          137
+     131: aload_2
+     132: invokeinterface #243,  1          // InterfaceMethod java/util/Iterator.remove:()V
+     137: goto          97
+     140: aload_1
+     141: invokeinterface #246,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     146: aload_1
+     147: ldc           #248                // String goalUpdate
+     149: invokeinterface #227,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+     154: aload_0
+     155: getfield      #65                 // Field availableGoals:Ljava/util/Set;
+     158: invokeinterface #228,  1          // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
+     163: astore_2
+     164: aload_2
+     165: invokeinterface #191,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     170: ifeq          300
+     173: aload_2
+     174: invokeinterface #195,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     179: checkcast     #85                 // class net/minecraft/world/entity/ai/goal/WrappedGoal
+     182: astore_3
+     183: aload_3
+     184: invokevirtual #148                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.isRunning:()Z
+     187: ifne          164
+     190: aload_3
+     191: aload_0
+     192: getfield      #73                 // Field disabledFlags:Ljava/util/EnumSet;
+     195: invokestatic  #230                // Method goalContainsAnyFlags:(Lnet/minecraft/world/entity/ai/goal/WrappedGoal;Ljava/util/EnumSet;)Z
+     198: ifne          164
+     201: aload_3
+     202: aload_0
+     203: getfield      #57                 // Field lockedFlags:Ljava/util/Map;
+     206: invokestatic  #250                // Method goalCanBeReplacedForAllFlags:(Lnet/minecraft/world/entity/ai/goal/WrappedGoal;Ljava/util/Map;)Z
+     209: ifeq          164
+     212: aload_3
+     213: invokevirtual #253                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.canUse:()Z
+     216: ifne          222
+     219: goto          164
+     222: aload_3
+     223: invokevirtual #182                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.getFlags:()Ljava/util/EnumSet;
+     226: invokevirtual #186                // Method java/util/EnumSet.iterator:()Ljava/util/Iterator;
+     229: astore        4
+     231: aload         4
+     233: invokeinterface #191,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     238: ifeq          293
+     241: aload         4
+     243: invokeinterface #195,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     248: checkcast     #11                 // class net/minecraft/world/entity/ai/goal/Goal$Flag
+     251: astore        5
+     253: aload_0
+     254: getfield      #57                 // Field lockedFlags:Ljava/util/Map;
+     257: aload         5
+     259: getstatic     #206                // Field NO_GOAL:Lnet/minecraft/world/entity/ai/goal/WrappedGoal;
+     262: invokeinterface #210,  3          // InterfaceMethod java/util/Map.getOrDefault:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     267: checkcast     #85                 // class net/minecraft/world/entity/ai/goal/WrappedGoal
+     270: astore        6
+     272: aload         6
+     274: invokevirtual #157                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.stop:()V
+     277: aload_0
+     278: getfield      #57                 // Field lockedFlags:Ljava/util/Map;
+     281: aload         5
+     283: aload_3
+     284: invokeinterface #256,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     289: pop
+     290: goto          231
+     293: aload_3
+     294: invokevirtual #259                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.start:()V
+     297: goto          164
+     300: aload_1
+     301: invokeinterface #246,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     306: aload_0
+     307: iconst_1
+     308: invokevirtual #263                // Method tickRunningGoals:(Z)V
+     311: return
+
+
+  public void tickRunningGoals(boolean);
+    Code:
+       0: aload_0
+       1: getfield      #77                 // Field profiler:Ljava/util/function/Supplier;
+       4: invokeinterface #219,  1          // InterfaceMethod java/util/function/Supplier.get:()Ljava/lang/Object;
+       9: checkcast     #221                // class net/minecraft/util/profiling/ProfilerFiller
+      12: astore_2
+      13: aload_2
+      14: ldc_w         #274                // String goalTick
+      17: invokeinterface #227,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+      22: aload_0
+      23: getfield      #65                 // Field availableGoals:Ljava/util/Set;
+      26: invokeinterface #228,  1          // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
+      31: astore_3
+      32: aload_3
+      33: invokeinterface #191,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      38: ifeq          80
+      41: aload_3
+      42: invokeinterface #195,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      47: checkcast     #85                 // class net/minecraft/world/entity/ai/goal/WrappedGoal
+      50: astore        4
+      52: aload         4
+      54: invokevirtual #148                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.isRunning:()Z
+      57: ifeq          77
+      60: iload_1
+      61: ifne          72
+      64: aload         4
+      66: invokevirtual #277                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.requiresUpdateEveryTick:()Z
+      69: ifeq          77
+      72: aload         4
+      74: invokevirtual #279                // Method net/minecraft/world/entity/ai/goal/WrappedGoal.tick:()V
+      77: goto          32
+      80: aload_2
+      81: invokeinterface #246,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+      86: return
+

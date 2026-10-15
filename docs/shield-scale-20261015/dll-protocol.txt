@@ -1,0 +1,1 @@
+PASS: actual v6 DLL/Lua map publication/change/invalidation and preserved control bits; event decoder, raw timestamp bits, wrap and single consumption

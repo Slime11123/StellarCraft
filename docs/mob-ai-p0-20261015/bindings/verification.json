@@ -1,0 +1,51 @@
+{
+  "lifecycleAnchors": 28,
+  "qualificationAnchors": 17,
+  "componentsAnchors": 8,
+  "bindingsAnchors": 14,
+  "wrongExeRejected": true,
+  "conflictingModesRejected": true,
+  "toolSyntax": true,
+  "deploymentHashes": [
+    {
+      "path": "D:\\Release 2.7.4\\.minecraft\\versions\\1.20.1-Fabric 0.19.5\\mods\\stellarcraft-0.1.0.jar",
+      "sha256": "B80FF7867A8E49B1A74BEA46B56368620731557488E28ECD3746C4958C222379",
+      "matchesManifest": true
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\stellarcraft_shm.dll",
+      "sha256": "626E3F44A667969362B88D1E9D360D3A2C645A2F73440DDE90E2F1EA13704199",
+      "matchesManifest": true
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\block_visuals.lua",
+      "sha256": "5E89B096F3B82AE66B2CD35A4C9077A47CCA38AF6928805C2F4C18816DA2EA6D",
+      "matchesManifest": true
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\native_particles.lua",
+      "sha256": "835D4002B457223378EB172F8343C6642681152519E3CD1842C8D17CC606D63F",
+      "matchesManifest": true
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\native_world.lua",
+      "sha256": "B79A75749D8E0F68BD96653CB0C9BACA0D164246EC9ABFA5EBE057F340B25C37",
+      "matchesManifest": true
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\world_lifecycle.lua",
+      "sha256": "4C135D91FF12F6B9F9236B93C93DDE040ACD8952C689BF960D0817C6132B3D4F",
+      "matchesManifest": true
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\main.lua",
+      "sha256": "3EAF419F1FB60DECE99ACBA844BA190D79A78D2F8691AD24FEC7DA202786FA71",
+      "matchesManifest": true
+    }
+  ],
+  "qaBytes": 0,
+  "runtimeTested": false,
+  "nativeMobProxyCertified": false,
+  "vanillaMobAiEnabled": false,
+  "gameTestPaused": true
+}

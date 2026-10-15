@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # stellarcraft/
 SRC = os.path.join(_ROOT, 'sb-mod', 'lua', 'main.lua')
@@ -82,14 +83,41 @@ for _, t in ipairs({ 'Minion', 'Warrior', 'Elite', 'Alpha', 'Elder' }) do
 end
 
 print()
-print(fails == 0 and 'ALL TIER LOOKUPS OK' or ('FAILURES: ' .. fails))
+assert(fails == 0, 'tier lookup failures: ' .. fails)
+print('ALL TIER LOOKUPS OK')
 '''
 
-out = '/tmp/sctest.lua'
-with open(out, 'w', encoding='utf-8') as f:
-    f.write(harness)
+# Exercise the real Lua result reporting separately from the native settlement
+# suite: shield-only loss must be nonzero and identified as shield damage.
+damage_start = src.index('-- Returns: applied, nativeDamage')
+damage_end = src.index('-- Drain the MC->SB event ring', damage_start)
+harness += r'''
+local response
+local function enemy_stats() return response end
+local UEHelpers={GetPlayer=function()return{BroadcastSpawnInfo={ActorGuid=228}}end}
+local gBuildWorldId,World=55,{epoch=1}
+''' + src[damage_start:damage_end] + r'''
+for _,case in ipairs({
+    {route='shield',before=80,after=55,want=25},
+    {route='shield',before=10,after=0,want=10},
+    {route='hp',before=1000,after=975,want=25},
+    {route='refused',before=1000,after=1000,want=0},
+}) do
+    response={ready=true,applied=case.want>0,damageRoute=case.route,guid=901,type=501,
+        before=1000,after=1000,maximum=1000,shieldBefore=80,shieldAfter=80,shieldMaximum=80}
+    if case.route=='shield' then response.shieldBefore=case.before;response.shieldAfter=case.after
+    else response.before=case.before;response.after=case.after end
+    local applied,loss,tier,maxHp,route=damage_actor(fake('CH_NPC_Raven_Blueprint_C'),1,0,nil,22)
+    assert(loss==case.want and route==case.route and applied==(case.want>0))
+end
+print('PASS: actual damage_actor reports shield loss, break, HP and refused routes')
+'''
 
-r = subprocess.run([LUA, out], capture_output=True, text=True, encoding='utf-8')
+with tempfile.TemporaryDirectory(prefix='stellarcraft-damage-') as temporary:
+    out = os.path.join(temporary, 'damage.lua')
+    with open(out, 'w', encoding='utf-8') as f:
+        f.write(harness)
+    r = subprocess.run([LUA, out], capture_output=True, text=True, encoding='utf-8')
 sys.stdout.write(r.stdout)
 sys.stderr.write(r.stderr or '')
 sys.exit(r.returncode)

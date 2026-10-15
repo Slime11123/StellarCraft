@@ -1,0 +1,22 @@
+SB.hpp:13471
+    void ServerRequest_CreateActor(uint32 inCharacterTableID, FVector InPosition, FRotator InRotation, bool inIsPlayer, bool inCheatCmd, int32 inPlayerId, uint32 inEventSpawnId, uint8 inSpawnIndex, FName inSpawnPointName, bool bInPossess);
+
+SB.hpp:13569
+    void ClientBroadcast_CreateActor(uint32 inTurn, int32 InActorGUID, int32 inCharacterTableID, FVector InPosition, FRotator InRotation, bool inIsPlayer, int32 inPlayerId, bool bInPossess);
+
+SB.hpp:13567
+    void ClientBroadcast_DespawnActor(uint32 inTurn, int32 InActorGUID);
+
+SB.hpp:16639
+    void SBCharacterDespawnFromTag(FString InTag);
+
+enum ESBActorLifeState {
+    ESBActorLifeState_None = 0,
+    ESBActorLifeState_Spawn = 1,
+    ESBActorLifeState_Coma = 2,
+    ESBActorLifeState_Dead = 3,
+    ESBActorLifeState_Despawn = 4,
+    ESBActorLifeState_Destroy = 5,
+    ESBActorLifeState_Spawning = 6,
+    ESBActorLifeState_MAX = 7,
+};

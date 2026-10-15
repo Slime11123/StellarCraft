@@ -1,0 +1,2 @@
+native-combat-gate.cpp
+Assertion failed: sample.applied&&sample.shieldAfter>0&&sample.after==44000, file C:\Users\StickySlime\Documents\Codex\Projects\StellarCraft\sb-mod\tests\native-shield-settlement.h, line 68

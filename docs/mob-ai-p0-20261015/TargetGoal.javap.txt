@@ -1,0 +1,155 @@
+net.minecraft.world.entity.ai.goal.target.TargetGoal
+Input SHA256: D5D5503DC29E1A076F89F5E8D19C6E0C3866F3D87EF3900E9D244D28891B3339
+  public boolean canContinueToUse();
+    Code:
+       0: aload_0
+       1: getfield      #40                 // Field mob:Lnet/minecraft/world/entity/Mob;
+       4: invokevirtual #52                 // Method net/minecraft/world/entity/Mob.getTarget:()Lnet/minecraft/world/entity/LivingEntity;
+       7: astore_1
+       8: aload_1
+       9: ifnonnull     17
+      12: aload_0
+      13: getfield      #54                 // Field targetMob:Lnet/minecraft/world/entity/LivingEntity;
+      16: astore_1
+      17: aload_1
+      18: ifnonnull     23
+      21: iconst_0
+      22: ireturn
+      23: aload_0
+      24: getfield      #40                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      27: aload_1
+      28: invokevirtual #60                 // Method net/minecraft/world/entity/Mob.canAttack:(Lnet/minecraft/world/entity/LivingEntity;)Z
+      31: ifne          36
+      34: iconst_0
+      35: ireturn
+      36: aload_0
+      37: getfield      #40                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      40: invokevirtual #64                 // Method net/minecraft/world/entity/Mob.getTeam:()Lnet/minecraft/world/scores/Team;
+      43: astore_2
+      44: aload_1
+      45: invokevirtual #65                 // Method net/minecraft/world/entity/LivingEntity.getTeam:()Lnet/minecraft/world/scores/Team;
+      48: astore_3
+      49: aload_2
+      50: ifnull        60
+      53: aload_3
+      54: aload_2
+      55: if_acmpne     60
+      58: iconst_0
+      59: ireturn
+      60: aload_0
+      61: invokevirtual #69                 // Method getFollowDistance:()D
+      64: dstore        4
+      66: aload_0
+      67: getfield      #40                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      70: aload_1
+      71: invokevirtual #73                 // Method net/minecraft/world/entity/Mob.distanceToSqr:(Lnet/minecraft/world/entity/Entity;)D
+      74: dload         4
+      76: dload         4
+      78: dmul
+      79: dcmpl
+      80: ifle          85
+      83: iconst_0
+      84: ireturn
+      85: aload_0
+      86: getfield      #42                 // Field mustSee:Z
+      89: ifeq          137
+      92: aload_0
+      93: getfield      #40                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      96: invokevirtual #77                 // Method net/minecraft/world/entity/Mob.getSensing:()Lnet/minecraft/world/entity/ai/sensing/Sensing;
+      99: aload_1
+     100: invokevirtual #83                 // Method net/minecraft/world/entity/ai/sensing/Sensing.hasLineOfSight:(Lnet/minecraft/world/entity/Entity;)Z
+     103: ifeq          114
+     106: aload_0
+     107: iconst_0
+     108: putfield      #85                 // Field unseenTicks:I
+     111: goto          137
+     114: aload_0
+     115: dup
+     116: getfield      #85                 // Field unseenTicks:I
+     119: iconst_1
+     120: iadd
+     121: dup_x1
+     122: putfield      #85                 // Field unseenTicks:I
+     125: aload_0
+     126: getfield      #38                 // Field unseenMemoryTicks:I
+     129: invokestatic  #89                 // Method reducedTickDelay:(I)I
+     132: if_icmple     137
+     135: iconst_0
+     136: ireturn
+     137: aload_0
+     138: getfield      #40                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     141: aload_1
+     142: invokevirtual #93                 // Method net/minecraft/world/entity/Mob.setTarget:(Lnet/minecraft/world/entity/LivingEntity;)V
+     145: iconst_1
+     146: ireturn
+
+
+  public void stop();
+    Code:
+       0: aload_0
+       1: getfield      #40                 // Field mob:Lnet/minecraft/world/entity/Mob;
+       4: aconst_null
+       5: invokevirtual #93                 // Method net/minecraft/world/entity/Mob.setTarget:(Lnet/minecraft/world/entity/LivingEntity;)V
+       8: aload_0
+       9: aconst_null
+      10: putfield      #54                 // Field targetMob:Lnet/minecraft/world/entity/LivingEntity;
+      13: return
+
+
+  protected boolean canAttack(net.minecraft.world.entity.LivingEntity, net.minecraft.world.entity.ai.targeting.TargetingConditions);
+    Code:
+       0: aload_1
+       1: ifnonnull     6
+       4: iconst_0
+       5: ireturn
+       6: aload_2
+       7: aload_0
+       8: getfield      #40                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      11: aload_1
+      12: invokevirtual #123                // Method net/minecraft/world/entity/ai/targeting/TargetingConditions.test:(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/LivingEntity;)Z
+      15: ifne          20
+      18: iconst_0
+      19: ireturn
+      20: aload_0
+      21: getfield      #40                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      24: aload_1
+      25: invokevirtual #127                // Method net/minecraft/world/entity/LivingEntity.blockPosition:()Lnet/minecraft/core/BlockPos;
+      28: invokevirtual #131                // Method net/minecraft/world/entity/Mob.isWithinRestriction:(Lnet/minecraft/core/BlockPos;)Z
+      31: ifne          36
+      34: iconst_0
+      35: ireturn
+      36: aload_0
+      37: getfield      #44                 // Field mustReach:Z
+      40: ifeq          96
+      43: aload_0
+      44: dup
+      45: getfield      #114                // Field reachCacheTime:I
+      48: iconst_1
+      49: isub
+      50: dup_x1
+      51: putfield      #114                // Field reachCacheTime:I
+      54: ifgt          62
+      57: aload_0
+      58: iconst_0
+      59: putfield      #112                // Field reachCache:I
+      62: aload_0
+      63: getfield      #112                // Field reachCache:I
+      66: ifne          86
+      69: aload_0
+      70: aload_0
+      71: aload_1
+      72: invokevirtual #134                // Method canReach:(Lnet/minecraft/world/entity/LivingEntity;)Z
+      75: ifeq          82
+      78: iconst_1
+      79: goto          83
+      82: iconst_2
+      83: putfield      #112                // Field reachCache:I
+      86: aload_0
+      87: getfield      #112                // Field reachCache:I
+      90: iconst_2
+      91: if_icmpne     96
+      94: iconst_0
+      95: ireturn
+      96: iconst_1
+      97: ireturn
+

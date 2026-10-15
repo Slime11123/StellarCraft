@@ -1,0 +1,3 @@
+native-player-gate.cpp
+PASS: effect origin/position, victim/GUID/type/vtable, dead/free/stale source, malformed hash and cyclic/out-of-range chain rejection
+PASS: combat/player/effect source gates; 995 mutated bytes, metadata and inaccessible address rejected; no game calls

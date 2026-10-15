@@ -1,0 +1,14 @@
+IoStore: D:\SteamLibrary\steamapps\common\StellarBlade\SB\Content\Paks\pakchunk0-WindowsNoEditor.utoc
+Mount: ../../../
+Directories: 9700 Files: 221592
+Read-only directory/chunk metadata; resource contents have not been decoded.
+Compression methods: ['Oodle']
+../../../SB/Content/Local/Data/TargetFilterTable.uasset | chunk=157469 id=3c87dd0cb8f9034900000002 offset=2A71D00000 length=2861E
+../../../SB/Content/Local/Data/EventActorEffectTable.uasset | chunk=157380 id=34fff56f7effced600000002 offset=2A6C100000 length=149FA
+../../../SB/Content/Local/Data/EffectTable.uasset | chunk=157372 id=931cc173e537e0eb00000002 offset=2A6B900000 length=A6C82
+../../../SB/Content/Local/Data/EffectCombinationTable.uasset | chunk=157371 id=86c6487747ac429e00000002 offset=2A6B800000 length=4394
+../../../SB/Content/Local/Data/CharacterStanceTable.uasset | chunk=157358 id=5bbc0969943e6b2400000002 offset=2A6AA00000 length=1DF1A
+../../../SB/Content/Art/Character/NPC/CH_NPC_Dummy/Blueprints/CH_NPC_Dummy_Nikke_Wall_Blueprint_Right.uasset | chunk=93406 id=28d5759b165d721300000002 offset=1783100000 length=1146
+../../../SB/Content/Art/Character/NPC/CH_NPC_Dummy/Blueprints/CH_NPC_Dummy_Nikke_Wall_Blueprint_Center.uasset | chunk=93405 id=bd4dc5da7207ab1200000002 offset=1783000000 length=1143
+../../../SB/Content/Art/Character/NPC/CH_NPC_Dummy/Blueprints/CH_NPC_Dummy_Nikke_Wall_Blueprint_Left.uasset | chunk=93404 id=1e1cbd2f992c3af300000002 offset=1782F00000 length=406C
+../../../SB/Content/Art/Character/NPC/CH_NPC_Dummy/Blueprints/CH_NPC_Dummy_Blueprint.uasset | chunk=93374 id=b1100bafb3def22000000002 offset=1780C00000 length=1E51

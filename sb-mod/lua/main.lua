@@ -514,8 +514,7 @@ end
 -- Enumerate every live ASBCharacter-ish actor and publish the enemies within range.
 --
 -- Enumeration is deliberately layered, because UE4SS versions differ in which helpers are
--- available: we prefer walking the persistent level's actor array (cheap, no allocation)
--- and fall back to FindAllOf("Character") when the level walk is unavailable.
+-- available: query the live World through GameplayStatics, including streamed levels.
 --
 -- Filtering is by class-name prefix (CH_M_NA = Monster-Naytiba, per docs/SDK_MAPPING.md),
 -- so a generated SDK is NOT required — only the generic reflection API.
@@ -523,26 +522,25 @@ local MIRROR_RADIUS_BLOCKS = 64.0
 
 -- Returns a plain array of candidate actors, or nil when no strategy worked.
 local function collect_character_actors(world)
-    -- Strategy 1: walk UWorld -> PersistentLevel -> Actors.
-    if world then
-        local okLevel, level = pcall(function() return world.PersistentLevel end)
-        if okLevel and level then
-            local okActors, actors = pcall(function() return level.Actors end)
-            if okActors and type(actors) == "table" then
-                local list = {}
-                -- TArray from UE4SS supports .Length / indexing; iterate leniently.
-                local n = tonumber(actors.Length or actors.Num or #actors) or 0
-                for i = 1, n do
-                    local okA, a = pcall(function() return actors[i] end)
-                    if okA and a then list[#list + 1] = a end
-                end
-                return list
-            end
+    if not world then return nil end
+    -- FindAllOf scans the global UObject registry on the game thread. Even an
+    -- empty map paid that cost every 200 ms. The engine's World actor query
+    -- returns fresh wrappers without retaining Actors across frames/epochs.
+    local okAll,all=pcall(function()
+        local gameplay=StaticFindObject("/Script/Engine.Default__GameplayStatics")
+        local character=StaticFindObject("/Script/Engine.Character")
+        if not gameplay or not gameplay:IsValid() or not character or not character:IsValid() then return nil end
+        local actors={}
+        gameplay:GetAllActorsOfClass(world,character,actors)
+        -- d3d1004 fills ObjectProperty array elements as RemoteUnrealParam.
+        -- Unwrap immediately while consuming this call; never store those params.
+        local result={}
+        for _,param in ipairs(actors) do
+            local actor=param:get()
+            if actor and actor:IsValid() then result[#result+1]=actor end
         end
-    end
-
-    -- Strategy 2: global FindAllOf (slower but always present).
-    local okAll, all = pcall(function() return FindAllOf("Character") end)
+        return result
+    end)
     if okAll and type(all) == "table" then return all end
 
     return nil
@@ -593,6 +591,7 @@ local function consume_native_hits()
             end
             local source=gCombatSources[hit.sourceGuid or 0]
             local x,y,z,guid,flags=0,0,0,0,0
+            local damage=hit.damage
             if source and source~=false and os.clock()-source.time<.5 then
                 -- The hit callback captured the effect's actual origin owner.
                 -- Revalidate against this world's exact native/UE enemy mapping.
@@ -601,9 +600,13 @@ local function consume_native_hits()
                 if stats and stats.ready and stats.guid==source.guid and stats.type==hit.sourceType then
                     x,y,z=-hit.sourceX/100+gFrameOff.X,hit.sourceZ/100+gFrameOff.Y,-hit.sourceY/100+gFrameOff.Z
                     guid,flags=source.guid,1
+                    -- Only a freshly verified boss source receives the incoming bonus.
+                    if source.tier=="Elite" or source.tier=="Alpha" or source.tier=="Elder" then
+                        damage=math.min(20,damage*1.25)
+                    end
                 end
             end
-            publishHit(hit.id,hit.time,hit.player,hit.source,hit.damage,guid,x,y,z,flags,hit.world)
+            publishHit(hit.id,hit.time,hit.player,hit.source,damage,guid,x,y,z,flags,hit.world)
         end
     end
 end
@@ -616,7 +619,10 @@ local function mirror_actors(center, world)
     -- Fresh registry wrappers only. IsValid on a cached freed pointer is itself unsafe.
     local worldAddress=world and world:GetAddress() or 0
     local all = collect_character_actors(world)
-    if not all then return end
+    if not all then
+        set_actor_count(0,gBuildWorldId or 0);gActorsByName={};gCombatSources={}
+        error("world character query unavailable")
+    end
 
     -- Report enemy positions in Minecraft's frame too (see gFrameOff). `center` already
     -- arrives translated by the caller; the per-actor coordinates need the same translation,
@@ -688,7 +694,7 @@ local function mirror_actors(center, world)
                             gActorsByName[uid]={address=actor:GetAddress(),guid=stats.guid,type=stats.type,epoch=World.epoch}
                             if stats.guid and stats.guid>0 then
                                 if gCombatSources[stats.guid]~=nil then gCombatSources[stats.guid]=false
-                                else gCombatSources[stats.guid]={address=actor:GetAddress(),guid=stats.guid,type=stats.type,time=now,epoch=World.epoch} end
+                                else gCombatSources[stats.guid]={address=actor:GetAddress(),guid=stats.guid,type=stats.type,tier=tier,time=now,epoch=World.epoch} end
                             end
                             count=count+1
                         end
@@ -731,8 +737,8 @@ local function hit_context(ev,mc,origin,direction)
     if direction then hit.DX=-direction.a;hit.DY=-direction.c;hit.DZ=direction.b end
     return hit
 end
--- Returns: applied, nativeDamage, tier, maxHp
-local function damage_actor(actor, mcDamage, knockback,hit)
+-- Returns: applied, nativeDamage, tier, maxHp, damageRoute
+local function damage_actor(actor, mcDamage, knockback,hit,serial)
     if not actor or not actor:IsValid() then return false, 0, nil, 0 end
 
     local okName, clsName = pcall(function()
@@ -745,13 +751,16 @@ local function damage_actor(actor, mcDamage, knockback,hit)
     pcall(function() cause=UEHelpers.GetPlayer().BroadcastSpawnInfo.ActorGuid end)
     local stats=enemy_stats(actor,mcDamage,budget,cause,hit)
     if stats then
-        print(string.format("[StellarCraft-Combat] guid=%d type=%d HP %.1f -> %.1f / %.1f: %s\n",stats.guid or 0,stats.type or 0,stats.before,stats.after,stats.maximum,tostring(stats.reason)))
+        print(string.format("[StellarCraft-Combat] guid=%d type=%d world=%d epoch=%d serial=%d route=%s HP %.1f -> %.1f / %.1f Shield %.1f -> %.1f / %.1f: %s\n",
+            stats.guid or 0,stats.type or 0,gBuildWorldId,World.epoch,serial or 0,tostring(stats.damageRoute),
+            stats.before,stats.after,stats.maximum,stats.shieldBefore or 0,stats.shieldAfter or 0,stats.shieldMaximum or 0,tostring(stats.reason)))
         if hit and stats.hitContextReason then
             print(string.format("[StellarCraft-HitContext] event=%d uid=%d world=%d ready=%s showRequested=%s: %s; %s; baseWeapon=%d jumpHeavy=%s selectedHeavy=%s\n",
                 hit.serial,hit.uid,hit.world,tostring(stats.hitContextReady),tostring(stats.hitShowRequested),
                 stats.hitContextReason,tostring(stats.hitShowReason),hit.weapon&0xFF,tostring(stats.jumpHeavy),tostring(stats.hitShowHeavy)))
         end
-        return stats.applied,math.max(0,stats.before-stats.after),tier,stats.maximum
+        local loss=stats.damageRoute=="shield" and (stats.shieldBefore-stats.shieldAfter) or (stats.before-stats.after)
+        return stats.applied,stats.applied and math.max(0,loss) or 0,tier,stats.maximum,stats.damageRoute
     end
     return false,0,tier,maxHp
 end
@@ -824,14 +833,14 @@ local function apply_events()
                     damage=exposure>0 and (exposure*exposure+exposure)*28+1 or 0
                 elseif (ev.weapon or 0)&0xFF~=5 and not NativeWorld.melee_visible(UEHelpers.GetPlayer(),actor) then damage=0 end
                 local hit=damage>0 and hit_context(ev,mc,origin,direction) or nil
-                local applied, nativeDmg, tier, maxHp = damage_actor(actor, damage, ev.d,hit)
+                local applied, nativeDmg, tier, maxHp, route = damage_actor(actor, damage, ev.d,hit,serial)
                 -- Log sparingly: explosions are bursty and spam the console otherwise.
                 local now = os.clock()
                 if now - gLastEventLog > 0.5 then
                     gLastEventLog = now
                     print(string.format(
-                        "[StellarCraft] event type=%d uid=%d mc=%.2f -> native=%.0f tier=%s maxHp=%.0f applied=%s\n",
-                        t, ev.uid, ev.a, nativeDmg or 0, tostring(tier), maxHp or 0,
+                        "[StellarCraft] event type=%d uid=%d mc=%.2f -> native=%.0f route=%s tier=%s maxHp=%.0f applied=%s\n",
+                        t, ev.uid, ev.a, nativeDmg or 0, tostring(route), tostring(tier), maxHp or 0,
                         tostring(applied)))
                 end
             end
@@ -2230,7 +2239,7 @@ local function tick()
     if os.clock()-gProfileSince>10 then
         for mode,stages in pairs(gProfile) do
             local parts={}
-            for _,name in ipairs({"begin","transform","publish","mirror","events","blocks","ground","visibility"}) do
+            for _,name in ipairs({"begin","transform","publish","mirror","events","blocks","nativeWorld","ground","visibility"}) do
                 local entry=stages[name]
                 if entry then parts[#parts+1]=string.format("%s=%.2f/max%.2fms",name,entry.total/entry.count,entry.max) end
             end

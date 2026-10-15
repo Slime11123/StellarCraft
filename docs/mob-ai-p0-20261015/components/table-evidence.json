@@ -1,0 +1,110 @@
+{
+  "utocSha256": "C16153B63CCCABA834CB74402DC56F037D11571494D7A675E95E9E29D01B3E61",
+  "sdkSha256": "87B1A4BC07426787C831426267DC92D7378C053A1DC4C6A7A69738DBEE03C532",
+  "toolSha256": "4F567015E091D5714A64D08D4308D06E8BA42F82BDBD246A5DA7012ABD9E1873",
+  "decoderSource": "https://github.com/powzix/ooz",
+  "decoderCommit": "05038060aa68f9187ae9923b2388ca8db40e58d1",
+  "decoderExeSha256": "7ECB1B01DE3CE82D56F4C76E4B0D046D2202C16E29FC735E18EB53613CC4B9F7",
+  "tables": [
+    {
+      "table": "CharacterTribeTable",
+      "chunk": 157359,
+      "rows": 19,
+      "exactEof": true,
+      "decodedBytes": 2752,
+      "compressedBytes": 1375,
+      "physicalOffset": "0x232d73270",
+      "decodedSha256": "1EC9458ACF06395B3D741989B7EDC9D66A48385274D00A7F2C0605576365ABBE"
+    },
+    {
+      "table": "CharacterTable",
+      "chunk": 196268,
+      "rows": 644,
+      "exactEof": true,
+      "decodedBytes": 380566,
+      "compressedBytes": 42165,
+      "physicalOffset": "0x3d0f29000",
+      "decodedSha256": "D07D925ACABDF7FFFE5C3BEBDCD66FD34AD5AAB6C863E435CF48F7E18FACAA8A"
+    },
+    {
+      "table": "CharacterAppearanceTable",
+      "chunk": 157353,
+      "rows": 211,
+      "exactEof": true,
+      "decodedBytes": 31092,
+      "compressedBytes": 7895,
+      "physicalOffset": "0x232d49800",
+      "decodedSha256": "F1C2B9DD1913454B07EB3DDE517B6F938147EA1F37CBD1D2725E33AA4317D2F8"
+    },
+    {
+      "table": "EffectTable",
+      "chunk": 157372,
+      "rows": 4227,
+      "exactEof": true,
+      "decodedBytes": 683138,
+      "compressedBytes": 126875,
+      "physicalOffset": "0x232dd8800",
+      "decodedSha256": "E5763389BFFF86EF1C2BBB860D47E7692D0AF8C932F35DB6BC28837552591282"
+    },
+    {
+      "table": "CharacterStanceTable",
+      "chunk": 157358,
+      "rows": 252,
+      "exactEof": true,
+      "decodedBytes": 122650,
+      "compressedBytes": 33380,
+      "physicalOffset": "0x232d6b000",
+      "decodedSha256": "78937C93B305143D98D26FCB1ED9D5771594EA0214334F8200A9B56C620768C2"
+    },
+    {
+      "table": "TargetFilterTable",
+      "chunk": 157469,
+      "rows": 1866,
+      "exactEof": true,
+      "decodedBytes": 165406,
+      "compressedBytes": 40610,
+      "physicalOffset": "0x232f41000",
+      "decodedSha256": "C1EAAA63AB384F9F96A5E38F230D79D62D99485C50E84D85D068925CDAB63BB8"
+    },
+    {
+      "blueprintName": "WallLeft",
+      "chunk": 93404,
+      "decodedBytes": 16492,
+      "compressedBytes": 6698,
+      "physicalOffset": "0xfa317000",
+      "decodedSha256": "E60C03EDDB2C1454554D149C860E0AC5001DD819D9A99C269C0D71586D6028BB",
+      "nameMapOnly": true
+    },
+    {
+      "blueprintName": "WallCenter",
+      "chunk": 93405,
+      "decodedBytes": 4419,
+      "compressedBytes": 2406,
+      "physicalOffset": "0xfa319000",
+      "decodedSha256": "6E5C67E45920485FC752AFC4E99F8D8D2E2949562DEAB5DF4688A9EEB14A651B",
+      "nameMapOnly": true
+    },
+    {
+      "blueprintName": "WallRight",
+      "chunk": 93406,
+      "decodedBytes": 4422,
+      "compressedBytes": 2416,
+      "physicalOffset": "0xfa31a000",
+      "decodedSha256": "4C177E06FD2023EF85951BA624BE16C8CDD3DA54EC22E1C36509FBF6532FD0B6",
+      "nameMapOnly": true
+    },
+    {
+      "blueprintName": "DummyBlueprint",
+      "chunk": 93374,
+      "decodedBytes": 7761,
+      "compressedBytes": 4030,
+      "physicalOffset": "0xfa007800",
+      "decodedSha256": "2B0AF3801C6D9E91C4BB890ECEE35FAF345C16163B4F36A2F0BFB06E5D46D114",
+      "nameMapOnly": true
+    }
+  ],
+  "note": "Only explicitly serialized nonzero fields. Absent fields are not certified defaults. SDK-order schema, bounded reads, identity checks and exact EOF provide offline consistency, not runtime certification.",
+  "nativeProxyCertified": false,
+  "runtimeTested": false,
+  "productionModified": false
+}

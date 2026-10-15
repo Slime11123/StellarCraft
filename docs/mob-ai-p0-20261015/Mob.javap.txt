@@ -1,0 +1,297 @@
+net.minecraft.world.entity.Mob
+Input SHA256: D5D5503DC29E1A076F89F5E8D19C6E0C3866F3D87EF3900E9D244D28891B3339
+  public void aiStep();
+    Code:
+       0: aload_0
+       1: invokespecial #776                // Method net/minecraft/world/entity/LivingEntity.aiStep:()V
+       4: aload_0
+       5: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+       8: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+      11: ldc_w         #778                // String looting
+      14: invokeinterface #412,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+      19: aload_0
+      20: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+      23: getfield      #219                // Field net/minecraft/world/level/Level.isClientSide:Z
+      26: ifne          182
+      29: aload_0
+      30: invokevirtual #551                // Method canPickUpLoot:()Z
+      33: ifeq          182
+      36: aload_0
+      37: invokevirtual #415                // Method isAlive:()Z
+      40: ifeq          182
+      43: aload_0
+      44: getfield      #781                // Field dead:Z
+      47: ifne          182
+      50: aload_0
+      51: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+      54: invokevirtual #785                // Method net/minecraft/world/level/Level.getGameRules:()Lnet/minecraft/world/level/GameRules;
+      57: getstatic     #789                // Field net/minecraft/world/level/GameRules.RULE_MOBGRIEFING:Lnet/minecraft/world/level/GameRules$Key;
+      60: invokevirtual #792                // Method net/minecraft/world/level/GameRules.getBoolean:(Lnet/minecraft/world/level/GameRules$Key;)Z
+      63: ifeq          182
+      66: aload_0
+      67: invokevirtual #796                // Method getPickupReach:()Lnet/minecraft/core/Vec3i;
+      70: astore_1
+      71: aload_0
+      72: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+      75: ldc_w         #798                // class net/minecraft/world/entity/item/ItemEntity
+      78: aload_0
+      79: invokevirtual #802                // Method getBoundingBox:()Lnet/minecraft/world/phys/AABB;
+      82: aload_1
+      83: invokevirtual #805                // Method net/minecraft/core/Vec3i.getX:()I
+      86: i2d
+      87: aload_1
+      88: invokevirtual #806                // Method net/minecraft/core/Vec3i.getY:()I
+      91: i2d
+      92: aload_1
+      93: invokevirtual #807                // Method net/minecraft/core/Vec3i.getZ:()I
+      96: i2d
+      97: invokevirtual #813                // Method net/minecraft/world/phys/AABB.inflate:(DDD)Lnet/minecraft/world/phys/AABB;
+     100: invokevirtual #817                // Method net/minecraft/world/level/Level.getEntitiesOfClass:(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;
+     103: astore_2
+     104: aload_2
+     105: invokeinterface #820,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     110: astore_3
+     111: aload_3
+     112: invokeinterface #574,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     117: ifeq          182
+     120: aload_3
+     121: invokeinterface #578,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     126: checkcast     #798                // class net/minecraft/world/entity/item/ItemEntity
+     129: astore        4
+     131: aload         4
+     133: invokevirtual #823                // Method net/minecraft/world/entity/item/ItemEntity.isRemoved:()Z
+     136: ifne          111
+     139: aload         4
+     141: invokevirtual #827                // Method net/minecraft/world/entity/item/ItemEntity.getItem:()Lnet/minecraft/world/item/ItemStack;
+     144: invokevirtual #455                // Method net/minecraft/world/item/ItemStack.isEmpty:()Z
+     147: ifne          111
+     150: aload         4
+     152: invokevirtual #830                // Method net/minecraft/world/entity/item/ItemEntity.hasPickUpDelay:()Z
+     155: ifeq          161
+     158: goto          111
+     161: aload_0
+     162: aload         4
+     164: invokevirtual #827                // Method net/minecraft/world/entity/item/ItemEntity.getItem:()Lnet/minecraft/world/item/ItemStack;
+     167: invokevirtual #834                // Method wantsToPickUp:(Lnet/minecraft/world/item/ItemStack;)Z
+     170: ifeq          179
+     173: aload_0
+     174: aload         4
+     176: invokevirtual #838                // Method pickUpItem:(Lnet/minecraft/world/entity/item/ItemEntity;)V
+     179: goto          111
+     182: aload_0
+     183: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     186: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     189: invokeinterface #435,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     194: return
+
+
+  protected final void serverAiStep();
+    Code:
+       0: aload_0
+       1: dup
+       2: getfield      #1059               // Field noActionTime:I
+       5: iconst_1
+       6: iadd
+       7: putfield      #1059               // Field noActionTime:I
+      10: aload_0
+      11: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+      14: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+      17: ldc_w         #1091               // String sensing
+      20: invokeinterface #412,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+      25: aload_0
+      26: getfield      #210                // Field sensing:Lnet/minecraft/world/entity/ai/sensing/Sensing;
+      29: invokevirtual #1092               // Method net/minecraft/world/entity/ai/sensing/Sensing.tick:()V
+      32: aload_0
+      33: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+      36: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+      39: invokeinterface #435,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+      44: aload_0
+      45: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+      48: invokevirtual #1096               // Method net/minecraft/world/level/Level.getServer:()Lnet/minecraft/server/MinecraftServer;
+      51: invokevirtual #1101               // Method net/minecraft/server/MinecraftServer.getTickCount:()I
+      54: aload_0
+      55: invokevirtual #1104               // Method getId:()I
+      58: iadd
+      59: istore_1
+      60: iload_1
+      61: iconst_2
+      62: irem
+      63: ifeq          74
+      66: aload_0
+      67: getfield      #511                // Field tickCount:I
+      70: iconst_1
+      71: if_icmpgt     145
+      74: aload_0
+      75: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+      78: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+      81: ldc_w         #1105               // String targetSelector
+      84: invokeinterface #412,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+      89: aload_0
+      90: getfield      #176                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      93: invokevirtual #1106               // Method net/minecraft/world/entity/ai/goal/GoalSelector.tick:()V
+      96: aload_0
+      97: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     100: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     103: invokeinterface #435,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     108: aload_0
+     109: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     112: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     115: ldc_w         #1107               // String goalSelector
+     118: invokeinterface #412,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+     123: aload_0
+     124: getfield      #174                // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     127: invokevirtual #1106               // Method net/minecraft/world/entity/ai/goal/GoalSelector.tick:()V
+     130: aload_0
+     131: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     134: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     137: invokeinterface #435,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     142: goto          215
+     145: aload_0
+     146: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     149: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     152: ldc_w         #1105               // String targetSelector
+     155: invokeinterface #412,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+     160: aload_0
+     161: getfield      #176                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     164: iconst_0
+     165: invokevirtual #1110               // Method net/minecraft/world/entity/ai/goal/GoalSelector.tickRunningGoals:(Z)V
+     168: aload_0
+     169: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     172: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     175: invokeinterface #435,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     180: aload_0
+     181: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     184: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     187: ldc_w         #1107               // String goalSelector
+     190: invokeinterface #412,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+     195: aload_0
+     196: getfield      #174                // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     199: iconst_0
+     200: invokevirtual #1110               // Method net/minecraft/world/entity/ai/goal/GoalSelector.tickRunningGoals:(Z)V
+     203: aload_0
+     204: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     207: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     210: invokeinterface #435,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     215: aload_0
+     216: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     219: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     222: ldc_w         #1111               // String navigation
+     225: invokeinterface #412,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+     230: aload_0
+     231: getfield      #205                // Field navigation:Lnet/minecraft/world/entity/ai/navigation/PathNavigation;
+     234: invokevirtual #1114               // Method net/minecraft/world/entity/ai/navigation/PathNavigation.tick:()V
+     237: aload_0
+     238: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     241: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     244: invokeinterface #435,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     249: aload_0
+     250: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     253: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     256: ldc_w         #1116               // String mob tick
+     259: invokeinterface #412,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+     264: aload_0
+     265: invokevirtual #1119               // Method customServerAiStep:()V
+     268: aload_0
+     269: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     272: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     275: invokeinterface #435,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     280: aload_0
+     281: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     284: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     287: ldc_w         #1121               // String controls
+     290: invokeinterface #412,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+     295: aload_0
+     296: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     299: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     302: ldc_w         #1123               // String move
+     305: invokeinterface #412,  2          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.push:(Ljava/lang/String;)V
+     310: aload_0
+     311: getfield      #188                // Field moveControl:Lnet/minecraft/world/entity/ai/control/MoveControl;
+     314: invokevirtual #1124               // Method net/minecraft/world/entity/ai/control/MoveControl.tick:()V
+     317: aload_0
+     318: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     321: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     324: ldc_w         #1126               // String look
+     327: invokeinterface #1129,  2         // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.popPush:(Ljava/lang/String;)V
+     332: aload_0
+     333: getfield      #183                // Field lookControl:Lnet/minecraft/world/entity/ai/control/LookControl;
+     336: invokevirtual #1130               // Method net/minecraft/world/entity/ai/control/LookControl.tick:()V
+     339: aload_0
+     340: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     343: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     346: ldc_w         #1132               // String jump
+     349: invokeinterface #1129,  2         // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.popPush:(Ljava/lang/String;)V
+     354: aload_0
+     355: getfield      #193                // Field jumpControl:Lnet/minecraft/world/entity/ai/control/JumpControl;
+     358: invokevirtual #1133               // Method net/minecraft/world/entity/ai/control/JumpControl.tick:()V
+     361: aload_0
+     362: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     365: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     368: invokeinterface #435,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     373: aload_0
+     374: invokevirtual #400                // Method level:()Lnet/minecraft/world/level/Level;
+     377: invokevirtual #404                // Method net/minecraft/world/level/Level.getProfiler:()Lnet/minecraft/util/profiling/ProfilerFiller;
+     380: invokeinterface #435,  1          // InterfaceMethod net/minecraft/util/profiling/ProfilerFiller.pop:()V
+     385: aload_0
+     386: invokevirtual #1136               // Method sendDebugPackets:()V
+     389: return
+
+
+  public boolean isEffectiveAi();
+    Code:
+       0: aload_0
+       1: invokespecial #1711               // Method net/minecraft/world/entity/LivingEntity.isEffectiveAi:()Z
+       4: ifeq          18
+       7: aload_0
+       8: invokevirtual #320                // Method isNoAi:()Z
+      11: ifne          18
+      14: iconst_1
+      15: goto          19
+      18: iconst_0
+      19: ireturn
+
+
+  public void setNoAi(boolean);
+    Code:
+       0: aload_0
+       1: getfield      #362                // Field entityData:Lnet/minecraft/network/syncher/SynchedEntityData;
+       4: getstatic     #364                // Field DATA_MOB_FLAGS_ID:Lnet/minecraft/network/syncher/EntityDataAccessor;
+       7: invokevirtual #1714               // Method net/minecraft/network/syncher/SynchedEntityData.get:(Lnet/minecraft/network/syncher/EntityDataAccessor;)Ljava/lang/Object;
+      10: checkcast     #366                // class java/lang/Byte
+      13: invokevirtual #1718               // Method java/lang/Byte.byteValue:()B
+      16: istore_2
+      17: aload_0
+      18: getfield      #362                // Field entityData:Lnet/minecraft/network/syncher/SynchedEntityData;
+      21: getstatic     #364                // Field DATA_MOB_FLAGS_ID:Lnet/minecraft/network/syncher/EntityDataAccessor;
+      24: iload_1
+      25: ifeq          35
+      28: iload_2
+      29: iconst_1
+      30: ior
+      31: i2b
+      32: goto          40
+      35: iload_2
+      36: bipush        -2
+      38: iand
+      39: i2b
+      40: invokestatic  #369                // Method java/lang/Byte.valueOf:(B)Ljava/lang/Byte;
+      43: invokevirtual #1722               // Method net/minecraft/network/syncher/SynchedEntityData.set:(Lnet/minecraft/network/syncher/EntityDataAccessor;Ljava/lang/Object;)V
+      46: return
+
+
+  public boolean isNoAi();
+    Code:
+       0: aload_0
+       1: getfield      #362                // Field entityData:Lnet/minecraft/network/syncher/SynchedEntityData;
+       4: getstatic     #364                // Field DATA_MOB_FLAGS_ID:Lnet/minecraft/network/syncher/EntityDataAccessor;
+       7: invokevirtual #1714               // Method net/minecraft/network/syncher/SynchedEntityData.get:(Lnet/minecraft/network/syncher/EntityDataAccessor;)Ljava/lang/Object;
+      10: checkcast     #366                // class java/lang/Byte
+      13: invokevirtual #1718               // Method java/lang/Byte.byteValue:()B
+      16: iconst_1
+      17: iand
+      18: ifeq          25
+      21: iconst_1
+      22: goto          26
+      25: iconst_0
+      26: ireturn
+

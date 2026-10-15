@@ -2,6 +2,10 @@ local dll=assert(arg[1])
 assert(package.loadlib(dll,"sc_create_mapping_lua"))()
 local read=assert(package.loadlib(dll,"sc_read_events_lua"))
 local publish=assert(package.loadlib(dll,"sc_write_player_lua"))
+local damage=assert(package.loadlib(dll,"sc_enemy_damage_lua"))(0,0,1,40,228,0)
+assert(not damage.ready and not damage.applied and damage.damageRoute=="refused")
+assert(damage.before==0 and damage.after==0 and damage.maximum==0)
+assert(damage.shieldBefore==0 and damage.shieldAfter==0 and damage.shieldMaximum==0)
 print("READY");io.stdout:flush()
 for line in io.lines() do
     if line=="map-a" then

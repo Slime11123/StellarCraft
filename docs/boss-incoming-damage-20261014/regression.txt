@@ -1,0 +1,30 @@
+native-combat-routing.lua
+[StellarCraft-Combat] guid=901 type=501 HP 130000.0 -> 125450.0 / 130000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 HP 130000.0 -> 130000.0 / 130000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 HP 130000.0 -> 123662.5 / 130000.0: nil
+
+[StellarCraft-Actors] candidates=1 nearby=1 published=1 rejection=nil
+
+[StellarCraft-Combat] guid=901 type=501 HP 130000.0 -> 125450.0 / 130000.0: nil
+
+[StellarCraft] event type=1 uid=7 mc=7.00 -> native=4550 tier=Alpha maxHp=130000 applied=true
+
+[StellarCraft-Combat] guid=901 type=501 HP 130000.0 -> 125450.0 / 130000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 HP 130000.0 -> 125450.0 / 130000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 HP 130000.0 -> 125450.0 / 130000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 HP 130000.0 -> 125450.0 / 130000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 HP 130000.0 -> 125450.0 / 130000.0: nil
+
+PASS: unique damage/context retained; packed jump-heavy pairing, unknown bits and mismatched style exclusion; existing arrow/TNT directions
+world-character-query-regression.lua
+PASS: 1000 live World queries with zero global scans; distinct/empty/changed World results; unavailable/failed query rejects without stale Actors or fallback
+world-lifecycle-regression.lua
+PASS: actual main lifecycle; no old UObject calls; old scheduled tick/F4 rejected; repeat unload; same-address/map reuse; UID/token isolation; wrong-world and missing-export rejection
+native-movement-regression.lua
+PASS: crouch/stand feet, height drift x1000, jump edges, flight ascent/hover/descent/native ceiling/floor, F4 restoration and re-entry

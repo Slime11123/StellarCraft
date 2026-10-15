@@ -1,0 +1,205 @@
+net.minecraft.world.entity.animal.IronGolem
+Input SHA256: D5D5503DC29E1A076F89F5E8D19C6E0C3866F3D87EF3900E9D244D28891B3339
+  protected void registerGoals();
+    Code:
+       0: aload_0
+       1: getfield      #56                 // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+       4: iconst_1
+       5: new           #58                 // class net/minecraft/world/entity/ai/goal/MeleeAttackGoal
+       8: dup
+       9: aload_0
+      10: dconst_1
+      11: iconst_1
+      12: invokespecial #61                 // Method net/minecraft/world/entity/ai/goal/MeleeAttackGoal."<init>":(Lnet/minecraft/world/entity/PathfinderMob;DZ)V
+      15: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      18: aload_0
+      19: getfield      #56                 // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      22: iconst_2
+      23: new           #69                 // class net/minecraft/world/entity/ai/goal/MoveTowardsTargetGoal
+      26: dup
+      27: aload_0
+      28: ldc2_w        #70                 // double 0.9d
+      31: ldc           #72                 // float 32.0f
+      33: invokespecial #75                 // Method net/minecraft/world/entity/ai/goal/MoveTowardsTargetGoal."<init>":(Lnet/minecraft/world/entity/PathfinderMob;DF)V
+      36: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      39: aload_0
+      40: getfield      #56                 // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      43: iconst_2
+      44: new           #77                 // class net/minecraft/world/entity/ai/goal/MoveBackToVillageGoal
+      47: dup
+      48: aload_0
+      49: ldc2_w        #78                 // double 0.6d
+      52: iconst_0
+      53: invokespecial #80                 // Method net/minecraft/world/entity/ai/goal/MoveBackToVillageGoal."<init>":(Lnet/minecraft/world/entity/PathfinderMob;DZ)V
+      56: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      59: aload_0
+      60: getfield      #56                 // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      63: iconst_4
+      64: new           #82                 // class net/minecraft/world/entity/ai/goal/GolemRandomStrollInVillageGoal
+      67: dup
+      68: aload_0
+      69: ldc2_w        #78                 // double 0.6d
+      72: invokespecial #85                 // Method net/minecraft/world/entity/ai/goal/GolemRandomStrollInVillageGoal."<init>":(Lnet/minecraft/world/entity/PathfinderMob;D)V
+      75: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      78: aload_0
+      79: getfield      #56                 // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      82: iconst_5
+      83: new           #87                 // class net/minecraft/world/entity/ai/goal/OfferFlowerGoal
+      86: dup
+      87: aload_0
+      88: invokespecial #90                 // Method net/minecraft/world/entity/ai/goal/OfferFlowerGoal."<init>":(Lnet/minecraft/world/entity/animal/IronGolem;)V
+      91: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+      94: aload_0
+      95: getfield      #56                 // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+      98: bipush        7
+     100: new           #92                 // class net/minecraft/world/entity/ai/goal/LookAtPlayerGoal
+     103: dup
+     104: aload_0
+     105: ldc           #94                 // class net/minecraft/world/entity/player/Player
+     107: ldc           #95                 // float 6.0f
+     109: invokespecial #98                 // Method net/minecraft/world/entity/ai/goal/LookAtPlayerGoal."<init>":(Lnet/minecraft/world/entity/Mob;Ljava/lang/Class;F)V
+     112: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+     115: aload_0
+     116: getfield      #56                 // Field goalSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     119: bipush        8
+     121: new           #100                // class net/minecraft/world/entity/ai/goal/RandomLookAroundGoal
+     124: dup
+     125: aload_0
+     126: invokespecial #103                // Method net/minecraft/world/entity/ai/goal/RandomLookAroundGoal."<init>":(Lnet/minecraft/world/entity/Mob;)V
+     129: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+     132: aload_0
+     133: getfield      #106                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     136: iconst_1
+     137: new           #108                // class net/minecraft/world/entity/ai/goal/target/DefendVillageTargetGoal
+     140: dup
+     141: aload_0
+     142: invokespecial #109                // Method net/minecraft/world/entity/ai/goal/target/DefendVillageTargetGoal."<init>":(Lnet/minecraft/world/entity/animal/IronGolem;)V
+     145: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+     148: aload_0
+     149: getfield      #106                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     152: iconst_2
+     153: new           #111                // class net/minecraft/world/entity/ai/goal/target/HurtByTargetGoal
+     156: dup
+     157: aload_0
+     158: iconst_0
+     159: anewarray     #113                // class java/lang/Class
+     162: invokespecial #116                // Method net/minecraft/world/entity/ai/goal/target/HurtByTargetGoal."<init>":(Lnet/minecraft/world/entity/PathfinderMob;[Ljava/lang/Class;)V
+     165: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+     168: aload_0
+     169: getfield      #106                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     172: iconst_3
+     173: new           #118                // class net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal
+     176: dup
+     177: aload_0
+     178: ldc           #94                 // class net/minecraft/world/entity/player/Player
+     180: bipush        10
+     182: iconst_1
+     183: iconst_0
+     184: aload_0
+     185: invokedynamic #137,  0            // InvokeDynamic #0:test:(Lnet/minecraft/world/entity/animal/IronGolem;)Ljava/util/function/Predicate;
+     190: invokespecial #140                // Method net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal."<init>":(Lnet/minecraft/world/entity/Mob;Ljava/lang/Class;IZZLjava/util/function/Predicate;)V
+     193: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+     196: aload_0
+     197: getfield      #106                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     200: iconst_3
+     201: new           #118                // class net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal
+     204: dup
+     205: aload_0
+     206: ldc           #142                // class net/minecraft/world/entity/Mob
+     208: iconst_5
+     209: iconst_0
+     210: iconst_0
+     211: invokedynamic #149,  0            // InvokeDynamic #1:test:()Ljava/util/function/Predicate;
+     216: invokespecial #140                // Method net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal."<init>":(Lnet/minecraft/world/entity/Mob;Ljava/lang/Class;IZZLjava/util/function/Predicate;)V
+     219: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+     222: aload_0
+     223: getfield      #106                // Field targetSelector:Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+     226: iconst_4
+     227: new           #151                // class net/minecraft/world/entity/ai/goal/target/ResetUniversalAngerTargetGoal
+     230: dup
+     231: aload_0
+     232: iconst_0
+     233: invokespecial #154                // Method net/minecraft/world/entity/ai/goal/target/ResetUniversalAngerTargetGoal."<init>":(Lnet/minecraft/world/entity/Mob;Z)V
+     236: invokevirtual #67                 // Method net/minecraft/world/entity/ai/goal/GoalSelector.addGoal:(ILnet/minecraft/world/entity/ai/goal/Goal;)V
+     239: return
+
+
+  public boolean doHurtTarget(net.minecraft.world.entity.Entity);
+    Code:
+       0: aload_0
+       1: bipush        10
+       3: putfield      #238                // Field attackAnimationTick:I
+       6: aload_0
+       7: invokevirtual #243                // Method level:()Lnet/minecraft/world/level/Level;
+      10: aload_0
+      11: iconst_4
+      12: invokevirtual #358                // Method net/minecraft/world/level/Level.broadcastEntityEvent:(Lnet/minecraft/world/entity/Entity;B)V
+      15: aload_0
+      16: invokevirtual #360                // Method getAttackDamage:()F
+      19: fstore_2
+      20: fload_2
+      21: f2i
+      22: ifle          44
+      25: fload_2
+      26: fconst_2
+      27: fdiv
+      28: aload_0
+      29: getfield      #273                // Field random:Lnet/minecraft/util/RandomSource;
+      32: fload_2
+      33: f2i
+      34: invokeinterface #224,  2          // InterfaceMethod net/minecraft/util/RandomSource.nextInt:(I)I
+      39: i2f
+      40: fadd
+      41: goto          45
+      44: fload_2
+      45: fstore_3
+      46: aload_1
+      47: aload_0
+      48: invokevirtual #366                // Method damageSources:()Lnet/minecraft/world/damagesource/DamageSources;
+      51: aload_0
+      52: invokevirtual #372                // Method net/minecraft/world/damagesource/DamageSources.mobAttack:(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/damagesource/DamageSource;
+      55: fload_3
+      56: invokevirtual #376                // Method net/minecraft/world/entity/Entity.hurt:(Lnet/minecraft/world/damagesource/DamageSource;F)Z
+      59: istore        4
+      61: iload         4
+      63: ifeq          128
+      66: aload_1
+      67: instanceof    #226                // class net/minecraft/world/entity/LivingEntity
+      70: ifeq          90
+      73: aload_1
+      74: checkcast     #226                // class net/minecraft/world/entity/LivingEntity
+      77: astore        7
+      79: aload         7
+      81: getstatic     #200                // Field net/minecraft/world/entity/ai/attributes/Attributes.KNOCKBACK_RESISTANCE:Lnet/minecraft/world/entity/ai/attributes/Attribute;
+      84: invokevirtual #377                // Method net/minecraft/world/entity/LivingEntity.getAttributeValue:(Lnet/minecraft/world/entity/ai/attributes/Attribute;)D
+      87: goto          91
+      90: dconst_0
+      91: dstore        5
+      93: dconst_0
+      94: dconst_1
+      95: dload         5
+      97: dsub
+      98: invokestatic  #383                // Method java/lang/Math.max:(DD)D
+     101: dstore        7
+     103: aload_1
+     104: aload_1
+     105: invokevirtual #384                // Method net/minecraft/world/entity/Entity.getDeltaMovement:()Lnet/minecraft/world/phys/Vec3;
+     108: dconst_0
+     109: ldc2_w        #385                // double 0.4000000059604645d
+     112: dload         7
+     114: dmul
+     115: dconst_0
+     116: invokevirtual #389                // Method net/minecraft/world/phys/Vec3.add:(DDD)Lnet/minecraft/world/phys/Vec3;
+     119: invokevirtual #393                // Method net/minecraft/world/entity/Entity.setDeltaMovement:(Lnet/minecraft/world/phys/Vec3;)V
+     122: aload_0
+     123: aload_0
+     124: aload_1
+     125: invokevirtual #397                // Method doEnchantDamageEffects:(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/Entity;)V
+     128: aload_0
+     129: getstatic     #403                // Field net/minecraft/sounds/SoundEvents.IRON_GOLEM_ATTACK:Lnet/minecraft/sounds/SoundEvent;
+     132: fconst_1
+     133: fconst_1
+     134: invokevirtual #407                // Method playSound:(Lnet/minecraft/sounds/SoundEvent;FF)V
+     137: iload         4
+     139: ireturn
+

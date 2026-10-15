@@ -1,0 +1,147 @@
+{
+  "exeSha256": "573AAFF1C9455F85EA6036EF6F6CCB0774DE4164722A296276FBBFC7FA87545C",
+  "sdkSha256": "87B1A4BC07426787C831426267DC92D7378C053A1DC4C6A7A69738DBEE03C532",
+  "enumSha256": "B8E7D4FEF76AAA27D4CFFBD276FD3DE7A92E61786087A2C12BEE3D70BC0FBCC1",
+  "toolSha256": "A472D027C15A14A1230795F82D6C067C89C58434F6D0921533FF89ACD122FB91",
+  "mode": "bindings",
+  "staticAnchorsPassed": 14,
+  "anchors": [
+    {
+      "label": "RPC allocates request",
+      "rva": "0x23b8598",
+      "bytes": "e8a3b478ff"
+    },
+    {
+      "label": "RPC hands request to transport",
+      "rva": "0x23b862d",
+      "bytes": "e8feb273ff"
+    },
+    {
+      "label": "Normal request dispatches event spawn",
+      "rva": "0x1b09854",
+      "bytes": "e847311100"
+    },
+    {
+      "label": "Full request dispatches owner factory",
+      "rva": "0x1b099ed",
+      "bytes": "e89e78fcff"
+    },
+    {
+      "label": "Owner initialization extended arguments",
+      "rva": "0x1ad1438",
+      "bytes": "e8e3580d00"
+    },
+    {
+      "label": "Create completion packet pool",
+      "rva": "0x1b09a36",
+      "bytes": "e895af0500"
+    },
+    {
+      "label": "Create completion broadcast",
+      "rva": "0x1b09a4f",
+      "bytes": "e81ca2feff"
+    },
+    {
+      "label": "Effect target loop stat debit",
+      "rva": "0x1bcaa10",
+      "bytes": "e80bddfdff"
+    },
+    {
+      "label": "Effect stat execution debit",
+      "rva": "0x1bcd386",
+      "bytes": "e895b3fdff"
+    },
+    {
+      "label": "Linked owner recursive debit",
+      "rva": "0x1ba8a96",
+      "bytes": "e885fcffff"
+    },
+    {
+      "label": "Authoritative source effect lookup",
+      "rva": "0x1ba87c1",
+      "bytes": "e84ae2f2ff"
+    },
+    {
+      "label": "Authoritative stat call",
+      "rva": "0x1ba881e",
+      "bytes": "e8bdc4ebff"
+    },
+    {
+      "label": "Client replay stat call",
+      "rva": "0x1b1f826",
+      "bytes": "e8b554f4ff"
+    },
+    {
+      "label": "Effect object ID getter virtual slot",
+      "rva": "0x5c0bd50",
+      "bytes": "60d6e44001000000"
+    }
+  ],
+  "regions": [
+    {
+      "label": "Create RPC implementation copies all user parameters and internal defaults",
+      "rva": "0x23b8550",
+      "size": 226,
+      "sha256": "DF955D6F43160B876E4DF2F22C2728EDD157DA66139C1D810DAE34D4CAAAED48"
+    },
+    {
+      "label": "Create request chooses event spawn or full owner factory",
+      "rva": "0x1b097f5",
+      "size": 509,
+      "sha256": "085C049C2B46C53A7DCE47A93BD0972B8ED6E3ED88C7952BD8464E4793CEAEDC"
+    },
+    {
+      "label": "Full owner factory forwards extended initialization arguments",
+      "rva": "0x1ad13b1",
+      "size": 140,
+      "sha256": "6B3A988CDDAAAE59682DD95DE8EA64BA1408E7AA75E9FC3BB5F338525E943EE6"
+    },
+    {
+      "label": "Create request publishes boolean completion only",
+      "rva": "0x1b09a15",
+      "size": 63,
+      "sha256": "07076D384031BDE255CDEACEDD4D7205FD861073A80C68BAB040B51758661C6D"
+    },
+    {
+      "label": "Effect iterates multiple target stat records with same object ID",
+      "rva": "0x1bca980",
+      "size": 240,
+      "sha256": "857F6FDC848C915B41708D6C94D67EB94395799594E179CB5D620B071358109E"
+    },
+    {
+      "label": "Effect stat execution arguments fragment",
+      "rva": "0x1bcd318",
+      "size": 115,
+      "sha256": "DCB738F51D7DA49928B8D6EBFF3D7C3561419C6A905DFE8AC54C24CC20EE9E7F"
+    },
+    {
+      "label": "Authoritative effect object to raw source key and stat debit",
+      "rva": "0x1ba8720",
+      "size": 288,
+      "sha256": "4CA5A26DA1410BFD9A1EAFCE5D30A830C6FC87025303934E87AA27C32B2425C1"
+    },
+    {
+      "label": "Client stat replay has separate caller",
+      "rva": "0x1b1f7fc",
+      "size": 96,
+      "sha256": "72BDF9E19D8DBE1A523CC66362A56650EDEB0C224F8994EAF56C73A7245D1CC4"
+    },
+    {
+      "label": "Owner stat debit can recurse to linked owner",
+      "rva": "0x1ba8a28",
+      "size": 121,
+      "sha256": "F90400D7F234FE94D86FBE52BCCB982FC1BF428DA90222191AC318467807ED64"
+    },
+    {
+      "label": "Effect ID getter used in target loop",
+      "rva": "0xe4d660",
+      "size": 4,
+      "sha256": "07AD3A50B1C271E07FB57FB47D2F0E77F3342D41BFA410990CB1320A45035FB2"
+    }
+  ],
+  "nativeMobLifecycleCertified": false,
+  "nativeMobHitCertified": false,
+  "runtimeTested": false,
+  "productionModified": false,
+  "note": "Static call/pointer evidence only. No runtime lifetime, thread or proxy qualification certification."
+}

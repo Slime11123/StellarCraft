@@ -1,0 +1,49 @@
+{
+  "toolSyntaxPassed": true,
+  "wrongExeRejectedBeforeOutput": true,
+  "staticCallPointerAnchors": 28,
+  "boundedDisassemblyRegions": 36,
+  "deployedFiles": [
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\stellarcraft_shm.dll",
+      "sha256": "626E3F44A667969362B88D1E9D360D3A2C645A2F73440DDE90E2F1EA13704199",
+      "actualSha256": "626E3F44A667969362B88D1E9D360D3A2C645A2F73440DDE90E2F1EA13704199"
+    },
+    {
+      "path": "D:\\Release 2.7.4\\.minecraft\\versions\\1.20.1-Fabric 0.19.5\\mods\\stellarcraft-0.1.0.jar",
+      "sha256": "A767AFBA7371B27BE3B775538A6AC7422F4247268B308AD1F45459B417A884FF",
+      "actualSha256": "A767AFBA7371B27BE3B775538A6AC7422F4247268B308AD1F45459B417A884FF"
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\block_visuals.lua",
+      "sha256": "5E89B096F3B82AE66B2CD35A4C9077A47CCA38AF6928805C2F4C18816DA2EA6D",
+      "actualSha256": "5E89B096F3B82AE66B2CD35A4C9077A47CCA38AF6928805C2F4C18816DA2EA6D"
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\native_particles.lua",
+      "sha256": "835D4002B457223378EB172F8343C6642681152519E3CD1842C8D17CC606D63F",
+      "actualSha256": "835D4002B457223378EB172F8343C6642681152519E3CD1842C8D17CC606D63F"
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\native_world.lua",
+      "sha256": "B79A75749D8E0F68BD96653CB0C9BACA0D164246EC9ABFA5EBE057F340B25C37",
+      "actualSha256": "B79A75749D8E0F68BD96653CB0C9BACA0D164246EC9ABFA5EBE057F340B25C37"
+    },
+    {
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\world_lifecycle.lua",
+      "sha256": "4C135D91FF12F6B9F9236B93C93DDE040ACD8952C689BF960D0817C6132B3D4F",
+      "actualSha256": "4C135D91FF12F6B9F9236B93C93DDE040ACD8952C689BF960D0817C6132B3D4F"
+    },
+    {
+      "sha256": "3EAF419F1FB60DECE99ACBA844BA190D79A78D2F8691AD24FEC7DA202786FA71",
+      "path": "D:\\SteamLibrary\\steamapps\\common\\StellarBlade\\SB\\Binaries\\Win64\\ue4ss\\Mods\\StellarCraft\\Scripts\\main.lua",
+      "actualSha256": "3EAF419F1FB60DECE99ACBA844BA190D79A78D2F8691AD24FEC7DA202786FA71"
+    }
+  ],
+  "qaBytes": 0,
+  "newJarDllBuilt": false,
+  "productionModified": false,
+  "runtimeTested": false,
+  "nativeMobLifecycleCertified": false,
+  "nativeMobHitCertified": false
+}

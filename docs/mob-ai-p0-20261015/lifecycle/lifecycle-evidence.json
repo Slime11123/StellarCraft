@@ -1,0 +1,373 @@
+{
+  "exeSha256": "573AAFF1C9455F85EA6036EF6F6CCB0774DE4164722A296276FBBFC7FA87545C",
+  "sdkSha256": "87B1A4BC07426787C831426267DC92D7378C053A1DC4C6A7A69738DBEE03C532",
+  "enumSha256": "B8E7D4FEF76AAA27D4CFFBD276FD3DE7A92E61786087A2C12BEE3D70BC0FBCC1",
+  "toolSha256": "FD159DB85B07E9ECE4F7A58048A8A8E75B840296C71132A75509C155E45D937D",
+  "mode": "lifecycle",
+  "staticAnchorsPassed": 28,
+  "anchors": [
+    {
+      "label": "request executes server owner creation",
+      "rva": "0x1b099ed",
+      "bytes": "e89e78fcff"
+    },
+    {
+      "label": "server owner initialization",
+      "rva": "0x1ad1438",
+      "bytes": "e8e3580d00"
+    },
+    {
+      "label": "character factory",
+      "rva": "0x1ba73bf",
+      "bytes": "e83c1d1000"
+    },
+    {
+      "label": "factory registers actor",
+      "rva": "0x1ca98f5",
+      "bytes": "e84629e0ff"
+    },
+    {
+      "label": "registration inserts indices",
+      "rva": "0x1aac332",
+      "bytes": "e8c9010000"
+    },
+    {
+      "label": "client create uses same registration",
+      "rva": "0x1b197c8",
+      "bytes": "e8732af9ff"
+    },
+    {
+      "label": "despawn replay queues removal",
+      "rva": "0x1b19d95",
+      "bytes": "e8e66cf5ff"
+    },
+    {
+      "label": "queued despawn state transition",
+      "rva": "0x1aaf654",
+      "bytes": "e8a759fdff"
+    },
+    {
+      "label": "queued destroy state transition",
+      "rva": "0x1aaf793",
+      "bytes": "e86858fdff"
+    },
+    {
+      "label": "manager removes actor",
+      "rva": "0x1aac1fa",
+      "bytes": "e8c1060000"
+    },
+    {
+      "label": "manager drains despawn queue",
+      "rva": "0x1aac212",
+      "bytes": "e8b9330000"
+    },
+    {
+      "label": "world clear removes actor",
+      "rva": "0x1aab8b0",
+      "bytes": "e80b100000"
+    },
+    {
+      "label": "removal erases ControlGUID",
+      "rva": "0x1aac99a",
+      "bytes": "e851150300"
+    },
+    {
+      "label": "removal releases actor interface",
+      "rva": "0x1aacacc",
+      "bytes": "e8cf621d00"
+    },
+    {
+      "label": "server authoritative stat debit",
+      "rva": "0x1ba881e",
+      "bytes": "e8bdc4ebff"
+    },
+    {
+      "label": "client replay stat debit",
+      "rva": "0x1b1f826",
+      "bytes": "e8b554f4ff"
+    },
+    {
+      "label": "owner removal broadcasts before release",
+      "rva": "0x1ad5e91",
+      "bytes": "e8dadd0100"
+    },
+    {
+      "label": "owner removal releases owner",
+      "rva": "0x1ad5ea2",
+      "bytes": "e8f9ce1a00"
+    },
+    {
+      "label": "CreateActor native exec registration",
+      "rva": "0x5e9c6a8",
+      "bytes": "300e764201000000"
+    },
+    {
+      "label": "CreateActor request executor",
+      "rva": "0x5c06330",
+      "bytes": "5097b04101000000"
+    },
+    {
+      "label": "Client create packet executor",
+      "rva": "0x5bf9e38",
+      "bytes": "e096b14101000000"
+    },
+    {
+      "label": "Client despawn packet executor",
+      "rva": "0x5bf9dc0",
+      "bytes": "c09cb14101000000"
+    },
+    {
+      "label": "Network controller create implementation",
+      "rva": "0x5cc7d50",
+      "bytes": "50853b4201000000"
+    },
+    {
+      "label": "Network controller despawn implementation",
+      "rva": "0x5cc7d30",
+      "bytes": "40883b4201000000"
+    },
+    {
+      "label": "RunAITask callback type ID getter",
+      "rva": "0x5bf6d70",
+      "bytes": "f0f6ab4101000000"
+    },
+    {
+      "label": "RunAITask callback handler",
+      "rva": "0x5bf6d78",
+      "bytes": "00f7ab4101000000"
+    },
+    {
+      "label": "Server owner cleanup virtual slot",
+      "rva": "0x5c0bef0",
+      "bytes": "70f6b94101000000"
+    },
+    {
+      "label": "Server owner retention virtual slot",
+      "rva": "0x5c0bf98",
+      "bytes": "006dba4101000000"
+    }
+  ],
+  "regions": [
+    {
+      "label": "Network controller class registration",
+      "rva": "0x21fbf30",
+      "size": 162,
+      "sha256": "E65F6F44A27CA83B448097DCC70AE644ADAB887B04B9146BED191C7B4E81A39F"
+    },
+    {
+      "label": "Network controller constructor thunk",
+      "rva": "0x2765f90",
+      "size": 5,
+      "sha256": "8557514E187FA6C6FA78E4C28E4F777A55FE7996B8C8DF8A7D1FBA2BD62D8DC5"
+    },
+    {
+      "label": "Network controller constructor body",
+      "rva": "0xe29a8b0",
+      "size": 136,
+      "sha256": "157748CB9969CD6463F0D2F5791FEFBADA3BA12117AF2DF6D9C4A6568696E8DC"
+    },
+    {
+      "label": "CreateActor RPC exec",
+      "rva": "0x2760e30",
+      "size": 1592,
+      "sha256": "7E95C6FECEEF46E4ADDEE94D047584E68004C6F79ADA906CF6D194DFFBEB4DF9"
+    },
+    {
+      "label": "CreateActor implementation",
+      "rva": "0x23b8550",
+      "size": 448,
+      "sha256": "52987635FE7B10C3C16EC897F7556DC9E22DE9987CD4E3CF7BE854A7251738E6"
+    },
+    {
+      "label": "CreateActor request pool",
+      "rva": "0x1b43a40",
+      "size": 936,
+      "sha256": "114C1ED7D2067ABB1BCDC0F604FB7B6964346C63C88618B206EC95C472ADC4B4"
+    },
+    {
+      "label": "Request transport or local queue",
+      "rva": "0x1af3930",
+      "size": 818,
+      "sha256": "9AE5A2974B4644A8A17ABA4EDCFAA87CD924EB301EE3EB456BCB8AB654F6F770"
+    },
+    {
+      "label": "CreateActor request execution",
+      "rva": "0x1b09750",
+      "size": 784,
+      "sha256": "8C9263E9C542FEB616A7BF8A55CC75854E27B18A757F234BA8FB8C4D7EF9EC80"
+    },
+    {
+      "label": "Server owner creation",
+      "rva": "0x1ad1290",
+      "size": 1656,
+      "sha256": "CC9E547991F9D830AF8C8B0D48BA6E531B1741ACEDF663EA33EA10A62CBB9E73"
+    },
+    {
+      "label": "Server owner initialization",
+      "rva": "0x1ba6d20",
+      "size": 4504,
+      "sha256": "7C40526AD12BCED51DC2BB4E69ABEFAC3E5C7D53152CA4D7B7C656C6F0E98569"
+    },
+    {
+      "label": "Character creation and registration",
+      "rva": "0x1ca9100",
+      "size": 3614,
+      "sha256": "1FE5973856C509DC98073039880CAF6E7AC34D16D45426DD079C0200F7D2F0A5"
+    },
+    {
+      "label": "Client actor creation replay",
+      "rva": "0x1b196e0",
+      "size": 536,
+      "sha256": "0BAB38B87353295A344AACF54822B8244458A398B21CD41807FB312AB4379119"
+    },
+    {
+      "label": "Actor registration",
+      "rva": "0x1aac240",
+      "size": 701,
+      "sha256": "BF074F7DD60E982E9D592EC3DDAF8109B2FC9CD31C8E6ECF54B072635E3AA4C7"
+    },
+    {
+      "label": "Actor indices insertion",
+      "rva": "0x1aac500",
+      "size": 658,
+      "sha256": "0416C82A8B7AFB88D3921D36229727EBD2642305D903A3845CE50D1CF8F18913"
+    },
+    {
+      "label": "Client despawn RPC exec",
+      "rva": "0x27606a0",
+      "size": 360,
+      "sha256": "01E9AA2CF436990ADCFCCCC4D956A89FE40C8957D850710164828CFAC636A4EE"
+    },
+    {
+      "label": "Client despawn implementation",
+      "rva": "0x23b8840",
+      "size": 100,
+      "sha256": "A22BC3DF376E78B019782DEA64405AEA35CFB20112EA761415B72ECD6EE85262"
+    },
+    {
+      "label": "Client despawn pool thunk",
+      "rva": "0x1b62c50",
+      "size": 5,
+      "sha256": "7F2312A3EFB6E0FF60ED4E8A7A456243106A3451E3E1246BF777C90536548DDE"
+    },
+    {
+      "label": "Client despawn pool body",
+      "rva": "0xb8e15f0",
+      "size": 621,
+      "sha256": "295C52814EA8F373A61AEAEF740EBC05522E4D91BDC9ED83BAEA0C35EC54BDEB"
+    },
+    {
+      "label": "Client despawn replay",
+      "rva": "0x1b19cc0",
+      "size": 497,
+      "sha256": "F17B58BEB99CF03A3C3DAF2F408C6262C45A9C9E234754553D0CF8B5A2D46F37"
+    },
+    {
+      "label": "Enqueue character despawn",
+      "rva": "0x1a70a80",
+      "size": 188,
+      "sha256": "40C53E6787FFF7F5C2DD0CFE21FBD068695EF66CBBA2A4A3B7AC100AC2B2C055"
+    },
+    {
+      "label": "Consume despawn queue",
+      "rva": "0x1aaf5d0",
+      "size": 570,
+      "sha256": "A86D98D705B658912404AB17A729E89BDAE5E4DB3BBF0CCEAA48F2E149E4B916"
+    },
+    {
+      "label": "Actor manager update",
+      "rva": "0x1aabea0",
+      "size": 1437,
+      "sha256": "D20DBBE6D5FD9D9E4C159E271CA4E2D037A19423989D87AEF0CCE0373DAF54DB"
+    },
+    {
+      "label": "Actor indices removal",
+      "rva": "0x1aac8c0",
+      "size": 707,
+      "sha256": "AAA70E450E23EC1A07F437D5599E61383D4CBA6F3AB969786FBC97F7A134F33F"
+    },
+    {
+      "label": "Actor manager world clear",
+      "rva": "0x1aab870",
+      "size": 213,
+      "sha256": "28A750684B28F974B12ECFFADCCE50D1CC1E6E173C1696A9DF6333801FE55A2F"
+    },
+    {
+      "label": "Server owner manager sweep and prune",
+      "rva": "0x1ad57a0",
+      "size": 3826,
+      "sha256": "9F9071B5F98D88EECD92CF1A349B9ED6E7A0D52A68542019A7EC89FBCE0FB330"
+    },
+    {
+      "label": "Server owner retention predicate",
+      "rva": "0x1ba6d00",
+      "size": 27,
+      "sha256": "5285EE58FED638ECD35AB554FA366BAA2B8D84D44052F571222BC3211677C4BA"
+    },
+    {
+      "label": "Server owner cleanup prefix",
+      "rva": "0x1b9f670",
+      "size": 352,
+      "sha256": "90CB449C2CDAF3114A354CCA22B89522F93214B7448BFDF5ACA0A09F03BAA695"
+    },
+    {
+      "label": "Actor interface predicate called by owner retention",
+      "rva": "0x1a6de30",
+      "size": 80,
+      "sha256": "A6A878383CD9FE2AEE04BDE19989A785715B40F9DD4DCBBCBFD514EE1D5FEF0A"
+    },
+    {
+      "label": "RunAITask callback construction",
+      "rva": "0x6e8130",
+      "size": 81,
+      "sha256": "171F65FE2D200BA087B84F5562F36A0B3168F70179C20A358AE13A2E978EA2CA"
+    },
+    {
+      "label": "Callback list registration",
+      "rva": "0x2267960",
+      "size": 153,
+      "sha256": "A835ED29E4A6F6140ACAB1474C14CF2818B4044C4F47812962185A2475BFDE62"
+    },
+    {
+      "label": "Callback registry indexing",
+      "rva": "0x2267a00",
+      "size": 974,
+      "sha256": "32972DD9113DE833C426B075FF726B04E78FC54EB45258FDB4736B5CB041E65A"
+    },
+    {
+      "label": "Debug despawn exec parses and frees string only",
+      "rva": "0x2697c70",
+      "size": 281,
+      "sha256": "CE8F95576373C06F96C2658749A2F0456ED7C5500CB64AACB471843CD9353BD9"
+    },
+    {
+      "label": "Authoritative stat effect target/source and debit",
+      "rva": "0x1ba8720",
+      "size": 288,
+      "sha256": "4CA5A26DA1410BFD9A1EAFCE5D30A830C6FC87025303934E87AA27C32B2425C1"
+    },
+    {
+      "label": "Client stat replay uses same debit with distinct caller",
+      "rva": "0x1b1f7fc",
+      "size": 96,
+      "sha256": "72BDF9E19D8DBE1A523CC66362A56650EDEB0C224F8994EAF56C73A7245D1CC4"
+    },
+    {
+      "label": "Effect target owner store",
+      "rva": "0x1bc609a",
+      "size": 4,
+      "sha256": "981C7FC23E6040014BE61FA2959D29FAE62886A105DA99E4999C653474353495"
+    },
+    {
+      "label": "Effect source owner store",
+      "rva": "0x1bc64cf",
+      "size": 4,
+      "sha256": "573DE6493B55BBFF0857BE0FE64DE34BADA12B802E03CE0E206B3FCCA273F193"
+    }
+  ],
+  "nativeMobLifecycleCertified": false,
+  "nativeMobHitCertified": false,
+  "runtimeTested": false,
+  "productionModified": false,
+  "note": "Static call/pointer evidence only. No runtime lifetime, thread or proxy qualification certification."
+}

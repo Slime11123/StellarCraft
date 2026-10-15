@@ -1,0 +1,169 @@
+File-only P0 trace. All addresses are RVAs; labels do not certify ABI.
+Bounded linear disassembly can contain unreachable bytes after branches.
+Do not invoke these functions or create characters from these excerpts.
+
+Actor-state presence query: 01A64B40..01A64C05
+01A64B40 mov qword ptr [rsp + 8], rbx
+01A64B45 mov eax, dword ptr [rcx + 0x568]
+01A64B4B mov r11, rcx
+01A64B4E movsxd r10, edx
+01A64B51 cmp eax, dword ptr [rcx + 0x594]
+01A64B57 je 0x1a64ba5
+01A64B59 movsxd rax, dword ptr [rcx + 0x5a8]
+01A64B60 lea r9, [rcx + 0x598]
+01A64B67 mov r8, qword ptr [r9 + 8]
+01A64B6B dec rax
+01A64B6E and rax, r10
+01A64B71 test r8, r8
+01A64B74 cmovne r9, r8
+01A64B78 mov eax, dword ptr [r9 + rax*4]
+01A64B7C cmp eax, -1
+01A64B7F je 0x1a64ba5
+01A64B81 mov rdx, qword ptr [rcx + 0x560]
+01A64B88 nop dword ptr [rax + rax]
+01A64B90 movsxd rcx, eax
+01A64B93 add rcx, rcx
+01A64B96 cmp dword ptr [rdx + rcx*8], r10d
+01A64B9A je 0x1a64bad
+01A64B9C mov eax, dword ptr [rdx + rcx*8 + 8]
+01A64BA0 cmp eax, -1
+01A64BA3 jne 0x1a64b90
+01A64BA5 xor al, al
+01A64BA7 mov rbx, qword ptr [rsp + 8]
+01A64BAC ret 
+01A64BAD cmp eax, -1
+01A64BB0 je 0x1a64ba5
+01A64BB2 movsxd rcx, dword ptr [r11 + 0x5a8]
+01A64BB9 lea rdx, [r11 + 0x598]
+01A64BC0 mov rax, qword ptr [rdx + 8]
+01A64BC4 dec rcx
+01A64BC7 and rcx, r10
+01A64BCA test rax, rax
+01A64BCD cmovne rdx, rax
+01A64BD1 mov eax, dword ptr [rdx + rcx*4]
+01A64BD4 mov rdx, qword ptr [r11 + 0x560]
+01A64BDB nop dword ptr [rax + rax]
+01A64BE0 cdqe 
+01A64BE2 shl rax, 4
+01A64BE6 add rax, rdx
+01A64BE9 cmp dword ptr [rax], r10d
+01A64BEC je 0x1a64bf8
+01A64BEE mov eax, dword ptr [rax + 8]
+01A64BF1 cmp eax, -1
+01A64BF4 jne 0x1a64be0
+01A64BF6 xor eax, eax
+01A64BF8 cmp dword ptr [rax + 4], 0
+01A64BFC mov rbx, qword ptr [rsp + 8]
+01A64C01 seta al
+01A64C04 ret 
+
+Actor-state integer count query: 01A64C10..01A64CD5
+01A64C10 mov qword ptr [rsp + 8], rbx
+01A64C15 mov eax, dword ptr [rcx + 0x568]
+01A64C1B mov r11, rcx
+01A64C1E movsxd r10, edx
+01A64C21 cmp eax, dword ptr [rcx + 0x594]
+01A64C27 je 0x1a64c75
+01A64C29 movsxd rax, dword ptr [rcx + 0x5a8]
+01A64C30 lea r9, [rcx + 0x598]
+01A64C37 mov r8, qword ptr [r9 + 8]
+01A64C3B dec rax
+01A64C3E and rax, r10
+01A64C41 test r8, r8
+01A64C44 cmovne r9, r8
+01A64C48 mov eax, dword ptr [r9 + rax*4]
+01A64C4C cmp eax, -1
+01A64C4F je 0x1a64c75
+01A64C51 mov rdx, qword ptr [rcx + 0x560]
+01A64C58 nop dword ptr [rax + rax]
+01A64C60 movsxd rcx, eax
+01A64C63 add rcx, rcx
+01A64C66 cmp dword ptr [rdx + rcx*8], r10d
+01A64C6A je 0x1a64c7d
+01A64C6C mov eax, dword ptr [rdx + rcx*8 + 8]
+01A64C70 cmp eax, -1
+01A64C73 jne 0x1a64c60
+01A64C75 xor eax, eax
+01A64C77 mov rbx, qword ptr [rsp + 8]
+01A64C7C ret 
+01A64C7D cmp eax, -1
+01A64C80 je 0x1a64c75
+01A64C82 movsxd rcx, dword ptr [r11 + 0x5a8]
+01A64C89 lea rdx, [r11 + 0x598]
+01A64C90 mov rax, qword ptr [rdx + 8]
+01A64C94 dec rcx
+01A64C97 and rcx, r10
+01A64C9A test rax, rax
+01A64C9D cmovne rdx, rax
+01A64CA1 mov eax, dword ptr [rdx + rcx*4]
+01A64CA4 mov rdx, qword ptr [r11 + 0x560]
+01A64CAB nop dword ptr [rax + rax]
+01A64CB0 cdqe 
+01A64CB2 shl rax, 4
+01A64CB6 add rax, rdx
+01A64CB9 cmp dword ptr [rax], r10d
+01A64CBC je 0x1a64cc8
+01A64CBE mov eax, dword ptr [rax + 8]
+01A64CC1 cmp eax, -1
+01A64CC4 jne 0x1a64cb0
+01A64CC6 xor eax, eax
+01A64CC8 mov eax, dword ptr [rax + 4]
+01A64CCB mov rbx, qword ptr [rsp + 8]
+01A64CD0 ret 
+01A64CD1 int3 
+01A64CD2 int3 
+01A64CD3 int3 
+01A64CD4 int3 
+
+HP debit respects Immortal lower bound: 01A64E79..01A64ED6
+01A64E79 movss xmm8, dword ptr [rsi + 0x11c]
+01A64E82 mov edx, 0x1b
+01A64E87 mov rcx, rsi
+01A64E8A call 0x1a64b40
+01A64E8F test al, al
+01A64E91 je 0x1a64e9d
+01A64E93 movss xmm0, dword ptr [rip + 0x4ce428d]
+01A64E9B jmp 0x1a64ea0
+01A64E9D xorps xmm0, xmm0
+01A64EA0 movss xmm1, dword ptr [rsi + 0x2c4]
+01A64EA8 maxss xmm1, xmm0
+01A64EAC movaps xmm0, xmm8
+01A64EB0 addss xmm0, xmm7
+01A64EB4 comiss xmm0, xmm1
+01A64EB7 jbe 0x1a64ec4
+01A64EB9 movaps xmm1, xmm0
+01A64EBC minss xmm1, dword ptr [rsi + 0x120]
+01A64EC4 mov ecx, 1
+01A64EC9 call 0x1c77620
+01A64ECE movss dword ptr [rsi + 0x11c], xmm0
+
+Additional damage path rejects Immortal state: 01BB13AC..01BB13C1
+01BB13AC mov edx, 0x1b
+01BB13B1 mov rcx, rbx
+01BB13B4 call 0x1a64b40
+01BB13B9 test al, al
+01BB13BB jne 0x1bb1929
+
+AI positioning state selects manager actor index: 01BE60AD..01BE60FE
+01BE60AD movzx eax, byte ptr [r15 + 0x49a]
+01BE60B5 mov rdi, r14
+01BE60B8 cmp al, byte ptr [r14 + 0x49a]
+01BE60BF je 0x1be60c7
+01BE60C1 test al, al
+01BE60C3 cmovne rdi, r15
+01BE60C7 mov edx, 0x68
+01BE60CC mov rcx, rdi
+01BE60CF call 0x1a64c10
+01BE60D4 test eax, eax
+01BE60D6 jle 0x1be60fe
+01BE60D8 call 0x1a97c40
+01BE60DD mov rax, qword ptr [rax + 0xc8]
+01BE60E4 movsxd rcx, dword ptr [rax + 0x3c]
+01BE60E8 test ecx, ecx
+01BE60EA js 0x1be60fb
+01BE60EC cmp ecx, dword ptr [rax + 0x30]
+01BE60EF jge 0x1be60fb
+01BE60F1 mov rax, qword ptr [rax + 0x28]
+01BE60F5 mov rdi, qword ptr [rax + rcx*8]
+01BE60F9 jmp 0x1be60fe
+01BE60FB mov rdi, rsi

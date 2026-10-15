@@ -1,5 +1,9 @@
 # StellarCraft：EVE 模式切图／切回 EVE 崩溃专项审查及修复计划
 
+最新修正：当前 World 查询的 ObjectProperty 数组须先解包 RemoteUnrealParam；此前遗漏导致敌人登记为零、无法伤害。已修正并仅替换 main.lua，见 [伤害回归记录](actor-query-unpack-20261014/DIAGNOSIS.md)。伤害实机恢复仍待确认，当前哈希以该目录 manifest 为准。
+
+当前用户反馈（2026-10-14）：用户确认当前复测不再崩溃，保留该验收结果，不主动重开旧崩溃。现任务为 EVE 模式移动卡顿；已更换当前 World 角色查询以移除周期全局扫描，见 [EVE 卡顿记录](eve-stutter-20261014/DIAGNOSIS.md)，新观感仍待验证。当前 main.lua 哈希以该目录 manifest 为准。
+
 当前 Lua 后续修正：低帧率日志暴露每帧重复移动接管和全局控制器扫描回归，已修正并仅更换 main.lua；见 [性能回归记录](perf-wrapper-20261014/DIAGNOSIS.md)。切图清空保持，新 FPS 仍待实测。
 
 ## 用户变更：切图清空旧 MC 内容（2026-10-14，当前）

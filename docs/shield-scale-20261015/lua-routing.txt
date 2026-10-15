@@ -1,0 +1,23 @@
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=0 serial=1 route=shield HP 130000.0 -> 130000.0 / 130000.0 Shield 10000.0 -> 9650.0 / 10000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=0 serial=2 route=hp HP 130000.0 -> 130000.0 / 130000.0 Shield 10000.0 -> 10000.0 / 10000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=0 serial=5 route=shield HP 130000.0 -> 130000.0 / 130000.0 Shield 10000.0 -> 9512.5 / 10000.0: nil
+
+[StellarCraft-Actors] candidates=1 nearby=1 published=1 rejection=nil
+
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=0 serial=6 route=shield HP 130000.0 -> 130000.0 / 130000.0 Shield 10000.0 -> 9650.0 / 10000.0: nil
+
+[StellarCraft] event type=1 uid=7 mc=7.00 -> native=350 route=shield tier=Alpha maxHp=130000 applied=true
+
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=0 serial=7 route=shield HP 130000.0 -> 130000.0 / 130000.0 Shield 10000.0 -> 9650.0 / 10000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=0 serial=8 route=shield HP 130000.0 -> 130000.0 / 130000.0 Shield 10000.0 -> 9650.0 / 10000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=0 serial=9 route=shield HP 130000.0 -> 130000.0 / 130000.0 Shield 10000.0 -> 9650.0 / 10000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=0 serial=10 route=shield HP 130000.0 -> 130000.0 / 130000.0 Shield 10000.0 -> 9650.0 / 10000.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=0 serial=11 route=shield HP 130000.0 -> 130000.0 / 130000.0 Shield 10000.0 -> 9650.0 / 10000.0: nil
+
+PASS: unique damage/context retained; packed jump-heavy pairing, unknown bits and mismatched style exclusion; shield-only duplicate/arrow/heavy/TNT and existing directions

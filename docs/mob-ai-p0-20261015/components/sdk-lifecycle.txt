@@ -1,0 +1,177 @@
+SB.hpp:13471
+    void ServerRequest_CreateActor(uint32 inCharacterTableID, FVector InPosition, FRotator InRotation, bool inIsPlayer, bool inCheatCmd, int32 inPlayerId, uint32 inEventSpawnId, uint8 inSpawnIndex, FName inSpawnPointName, bool bInPossess);
+
+SB.hpp:13569
+    void ClientBroadcast_CreateActor(uint32 inTurn, int32 InActorGUID, int32 inCharacterTableID, FVector InPosition, FRotator InRotation, bool inIsPlayer, int32 inPlayerId, bool bInPossess);
+
+SB.hpp:13567
+    void ClientBroadcast_DespawnActor(uint32 inTurn, int32 InActorGUID);
+
+SB.hpp:16639
+    void SBCharacterDespawnFromTag(FString InTag);
+
+enum ESBActorLifeState {
+    ESBActorLifeState_None = 0,
+    ESBActorLifeState_Spawn = 1,
+    ESBActorLifeState_Coma = 2,
+    ESBActorLifeState_Dead = 3,
+    ESBActorLifeState_Despawn = 4,
+    ESBActorLifeState_Destroy = 5,
+    ESBActorLifeState_Spawning = 6,
+    ESBActorLifeState_MAX = 7,
+};
+
+enum ESBActorState {
+    ActorState_None = 0,
+    ActorState_BlockMove = 1,
+    ActorState_BlockSkill = 2,
+    ActorState_NoDamageNoHit = 3,
+    ActorState_NoDamage = 4,
+    ActorState_Cloaking = 5,
+    ActorState_Down = 6,
+    ActorState_Groggy = 7,
+    ActorState_Airborne = 8,
+    ActorState_KnockBack = 9,
+    ActorState_BlockFalling = 10,
+    ActorState_BlockShieldRegen = 11,
+    ActorState_BlockRotation = 12,
+    ActorState_ImmuneBlockMove = 13,
+    ActorState_ImmuneBlockSkill = 14,
+    ActorState_ImmuneDown = 15,
+    ActorState_ImmuneGroggy = 16,
+    ActorState_ImmuneSkillCancel = 17,
+    ActorState_ImmuneAirborne = 18,
+    ActorState_ImmuneKnockBack = 19,
+    ActorState_BlockingBehavior = 20,
+    ActorState_BlockSkillUnImmune = 21,
+    ActorState_Tumble = 22,
+    ActorState_Stealth = 23,
+    ActorState_BlockStaminaRegen = 24,
+    ActorState_BlockSprint = 25,
+    ActorState_Breakfall = 26,
+    ActorState_Immortal = 27,
+    ActorState_BlockJump = 28,
+    ActorState_BlockHPRegen = 29,
+    ActorState_BattleMode = 30,
+    ActorState_BlockParry = 31,
+    ActorState_DelayDeath = 32,
+    ActorState_BlockRuleMove = 33,
+    ActorState_BlockRuleMoveRotation = 34,
+    ActorState_BlockHuddleUpAction = 35,
+    ActorState_DisableTimeScale = 36,
+    ActorState_DisableLockOn = 37,
+    ActorState_HideHUD = 38,
+    ActorState_BlockAI = 39,
+    ActorState_BlockOverlapMove = 40,
+    ActorState_DisableLookAtTargetBySkill = 41,
+    ActorState_NoScan = 42,
+    ActorState_NoScanHUD = 43,
+    ActorState_KeepDetectTarget = 44,
+    ActorState_DisableRuleMoveBlockArea = 45,
+    ActorState_NarrowVision = 46,
+    ActorState_BlockBodySuitChange = 47,
+    ActorState_NotTargeted = 48,
+    ActorState_Rage = 49,
+    ActorState_DisableHitStop = 50,
+    ActorState_DoubleJump = 51,
+    ActorState_DisableLockonTarget = 52,
+    ActorState_DisableMountingEquipment = 53,
+    ActorState_DisableLockOnMissile = 54,
+    ActorState_BlockRevival = 55,
+    ActorState_DisableTPSBulletChange = 56,
+    ActorState_BlockBetaGaugeEnergySkill = 57,
+    ActorState_BlockHPEnergySkill = 58,
+    ActorState_BlockStaminaEnergySkill = 59,
+    ActorState_BlockBurstGaugeEnergySkill = 60,
+    ActorState_InfiniteBetaGaugeEnergy = 61,
+    ActorState_HideLockOnUI = 62,
+    ActorState_DisableControllerInput = 63,
+    ActorState_ActiveWeakPointDamage = 64,
+    ActorState_PeacefulMode = 65,
+    ActorState_DisableAutoLockOnWhenUnlockon = 66,
+    ActorState_BlockItemUseHeal = 67,
+    ActorState_BlockItemUseUtil = 68,
+    ActorState_BlockItemInteraction = 69,
+    ActorState_DisablePlayDeadShow = 70,
+    ActorState_DisablePlayDespawnShow = 71,
+    ActorState_TachyMode = 72,
+    ActorState_EnableFishingTakeBack = 73,
+    ActorState_BlockInteraction = 74,
+    ActorState_EnableDetectCamp = 75,
+    ActorState_EnableDetectNikkeLostGoods = 76,
+    ActorState_NotUsedBattleAnimSwitchDelay = 77,
+    ActorState_DisableDetectCamp = 78,
+    ActorState_DisableDeadSkill = 79,
+    ActorState_DisableLookAtIK = 80,
+    ActorState_EnableDetectCan = 81,
+    ActorState_UseOnlyComboSkill = 82,
+    ActorState_NotTPSAutoTargeted = 83,
+    ActorState_NotTPSMagnet = 84,
+    ActorState_BlockEventMove = 85,
+    ActorState_BlockItemGainShow = 86,
+    ActorState_EnableFishingMode = 87,
+    ActorState_DisableScreenEffect = 88,
+    ActorState_BlockDetectCan = 89,
+    ActorState_DisableLowHealthAlertScreenEffect = 90,
+    ActorState_PossibleInteraction = 91,
+    ActorState_Fusion1Mode = 92,
+    ActorState_Fusion2Mode = 93,
+    ActorState_EnableExtraSprint = 94,
+    ActorState_DisableShield = 95,
+    ActorState_DisableMonsterWarp = 96,
+    ActorState_DisableActionAssist = 97,
+    ActorState_BlockMoveInputBlock = 98,
+    ActorState_DisableeLockOnControl = 99,
+    ActorState_BlockItemUseBullet = 100,
+    ActorState_AutoLockonTargetAfterTPS = 101,
+    ActorState_SelfiePhotoMode = 102,
+    ActorState_ProjectileNoHit = 103,
+    ActorState_UsePlayerAIPositioning = 104,
+    ActorState_BlockInteractionWithNotiUI = 105,
+    ActorState_Max = 106,
+};
+
+enum ESBEffectLifeType {
+    EffectLifeType_SkillDependent = 0,
+    EffectLifeType_StepDependent = 1,
+    EffectLifeType_IndependentTime = 2,
+    EffectLifeType_Infinite = 3,
+    EffectLifeType_StanceDependent = 4,
+    EffectLifeType_CharacterGetupTime = 5,
+    EffectLifeType_ProjectileDependent = 6,
+    EffectLifeType_BeforeNextSkill = 7,
+    EffectLifeType_CharacterGroggyEndTime = 8,
+    EffectLifeType_NextSkillDependent = 9,
+    EffectLifeType_LevelSequenceDependent = 10,
+    EffectLifeType_EquipmentDependent = 11,
+    EffectLifeType_LevelSequenceDependentWithoutPlayable = 12,
+    EffectLifeType_MAX = 13,
+};
+
+enum ESBEffectOverlap {
+    EffectOverlap_Overlap = 0,
+    EffectOverlap_Change = 1,
+    EffectOverlap_Unique = 2,
+    EffectOverlap_MAX = 3,
+};
+
+class USBCharacterCollisionData : public UDataAsset
+{
+    TArray<FString> ControlToBlockingCollisionNameArray;                              // 0x0030 (size: 0x10)
+    TArray<FSBCharacterCollisionShapeInfo> CollisionShapeInfoArray;                   // 0x0040 (size: 0x10)
+    TArray<FSBCharacterAttackedCollisionGroup> AttackedCollisionGroupArray;           // 0x0050 (size: 0x10)
+    TArray<FSBCharacterAttackCollisionGroup> AttackCollisionGroupArray;               // 0x0060 (size: 0x10)
+    TArray<FSBCharacterPhysicalMaterialInfo> PhysicalMaterialInfoArray;               // 0x0070 (size: 0x10)
+    TMap<class FName, class FSBCollisionAnimationTransform> CollisionAnimationTransformMap; // 0x0080 (size: 0x50)
+
+}; // Size: 0xD0
+
+class USBCollisionGroupComponent : public UActorComponent
+{
+    class USBCharacterCollisionData* pCollisionData;                                  // 0x00C0 (size: 0x8)
+    float ShapeScale;                                                                 // 0x00C8 (size: 0x4)
+    bool bIgnoreSingleShapeRecord;                                                    // 0x00CC (size: 0x1)
+    bool bRegisterdTick;                                                              // 0x00CD (size: 0x1)
+    TArray<class UShapeComponent*> CreatedShapeComponent;                             // 0x00D0 (size: 0x10)
+
+}; // Size: 0x2C0

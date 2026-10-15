@@ -6,7 +6,9 @@ from pathlib import Path
 parser = argparse.ArgumentParser()
 parser.add_argument("--utoc", type=Path, default=Path(r"D:\SteamLibrary\steamapps\common\StellarBlade\SB\Content\Paks\pakchunk0-WindowsNoEditor.utoc"))
 parser.add_argument("--output", type=Path, required=True)
+parser.add_argument("--match", action="append", help="Case-insensitive resource path substring; repeat for multiple matches")
 args = parser.parse_args()
+match_terms = tuple(s.lower() for s in (args.match or ("hitreact", "skillresulttable")))
 b = args.utoc.read_bytes()
 if b[:16] != b"-==--==--==--==-" or b[16] != 3:
     raise ValueError("Only the observed version-3 IoStore header is supported")
@@ -62,7 +64,7 @@ def visit(di, parent):
             seen_files.add(fi)
             fname, next_file, chunk = files[fi]
             full = path + names[fname]
-            if any(s in full.lower() for s in ("hitreact", "skillresulttable")):
+            if any(s in full.lower() for s in match_terms):
                 if chunk >= count:
                     raise ValueError("Invalid chunk index")
                 entry = header + count * 12 + chunk * 10

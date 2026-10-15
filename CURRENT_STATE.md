@@ -1,3 +1,76 @@
+最新 2026-10-15（MC生物AI方案第五轮：P1 NoAI来源准备项已实施/安装，完整AI仍未开启）：NativeEntities在现有setNoAi(true)前保存首次登记的原始NoAI=true/false标签；已有native但缺来源的旧实体记unknown，不根据强制保存值猜测。重载不覆盖已有来源标记，损坏/冲突不自动升级；不改旧运动/攻击/导航、协议或原生门禁。完整P1未完成，P2–P4未启用。
+
+新增NativeMobAiState和实际NBT内存重载回归；JAR构建/remap、成品保存顺序、既有命中/跳劈/世界事件/地图清理回归通过，均为离线。安装前无剑星/Java、QA0字节且核对旧七组件后，只备份替换JAR：B80FF7867A8E49B1A74BEA46B56368620731557488E28ECD3746C4958C222379，源/候选/部署一致；其余六组件不变。最新部署清单/回退见docs/mob-ai-p0-20261015/ai-state/manifest.json、before-install/；实施说明AI_STATE_IMPLEMENTATION.md。实际存档保存/重入未实机验收，未读写真实存档。
+
+P0另新增bindings模式10段/14锚点，明确CreateActor普通请求可能走事件出生，内部完整工厂含额外参数；完成回执只给请求ID+bool而非新GUID。同一effect ID可循环结算多个目标，stat入口还有通用效果/递归分支，不能当作唯一攻击序号或独立物理命中证明。证据：docs/mob-ai-p0-20261015/bindings/BINDING_FINDINGS.md及verification.json；四模式28/17/8/14锚点、错误版本/冲突模式拒绝通过。
+
+P0原生代理整体门槛仍未通过，SB主动攻击MC继续阻止生产接入；该门槛不妨碍MC端独立准备项。下一步优先推进MC导航快照/物理反馈及NoAI后续命令约束，再同步移除旧手写AI并恢复原版AI；不得单独解除NoAI。原生安全配置/线程寿命/真实命中→UUID继续认证。游戏测试暂停保持：未启动、输入、写QA或进入Boss；当前无剑星/Java，QA0字节。以下为历史记录。
+
+最新 2026-10-15（MC生物AI方案P0第四轮：默认效果消费者/姿态/组件）：扩展离线取证工具的components模式，完整解析Effect4227/CharacterStance252/TargetFilter1866行，加上原三表均精确EOF；解压四个实际Dummy/墙面蓝图，仅记录名称引用，不把NoCollision名称或CollisionGroup名称当作有效属性/受击认证。
+
+Passive_Immortal明确配置Infinite+Immortal27；exe HP路径实际查询27，将最低HP限制为1，另一伤害分支也检查27。UsePlayerAIPositioning104被定位流程读取，正值时改用管理器指定角色；不能扩大解释为所有移动都跟随Eve。Nikke姿态还禁止lock-on/auto-lock-on；普通Dummy姿态含BeachExplosion命令引用。Off_HUD与Off_Hud仅大小写差异，已修正取证别名解析。目标表仅4个Eve SwordAura模式显式开启bValidEngineHandle，不能将前轮条件外推至全部技能。
+
+证据：docs/mob-ai-p0-20261015/components/COMPONENT_FINDINGS.md、component-candidate-rows.json、table-evidence.json、lifecycle-evidence.json、verification.json。新增5段/8个CALL及数据锚点、旧资格17/生命周期28锚点、六表EOF、别名解析、错误exe/解码器及冲突模式拒绝、旧默认三表候选保持通过；均为离线核查。七份部署哈希保持shield-scale基线，QA0字节，无剑星/Java；未改生产/构建/部署/游戏资源，未启动或操作游戏。
+
+P0整体仍未通过，P1–P4未启用。下一步离线核对创建完整参数、蓝图组件属性/真实碰撞数据关联和effect受害者→MC UUID唯一事件映射；实际线程/双表寿命/感知命中仅在用户明确恢复后验证，游戏测试暂停保持，不写新QA指令。以下为历史记录。
+
+最新 2026-10-15（MC生物AI方案P0第三轮：原生目标资格与真实角色配置表）：新增资格模式14段有界反汇编/17锚点，确认方向性Tribe关系、引擎ControlGUID及隐藏Actor过滤；LOS桥在对象缺失时也返回0，不能用它单独认证视线。owner保留依赖关联角色/配置/世界状态，不能简化为HP或alive。
+
+新增 tools/inspect_native_mob_tables.py，固定本机UTOC/SDK版本、核查外置解码器哈希后离线解压解析Character644/Tribe19/Appearance211行，均精确到EOF；项目只保存候选行和元数据。N_Dummy的AttackTribe_All不代表Monster反向敌对；M_DummyA/B/C是Monster友军且有AI；M_Dummy_Nikke具备被Monster敌对的阵营线索，但引用墙面蓝图并带Passive_Immortal/玩家AI定位等效果，不能直接认证为移动代理。TrainingRoom只解压，数组格式未匹配，未采用配置猜测。
+
+证据：docs/mob-ai-p0-20261015/qualification/QUALIFICATION_FINDINGS.md、proxy-candidate-rows.json、table-evidence.json、verification.json。资格17及原生命周期28锚点、四工具语法、错误exe/解码器拒绝、资源索引旧默认42项逐字节保持通过；均为离线核查，非实机验收。七份部署哈希保持shield-scale基线，QA0字节，无剑星/Java进程；未修改生产、构建或部署，未启动/操作游戏，暂停保持。
+
+P0整体仍未通过，P1–P4未启用。下一步离线核对候选蓝图/碰撞命中组件、默认效果及创建完整参数；动态线程/双表寿命/实际命中→MC UUID仅在用户明确恢复后验证，不安排游戏测试。以下为历史记录。
+
+最新 2026-10-15（MC生物AI方案P0继续：原生创建/双表清理静态链已追出，生产认证仍未通过）：新增 tools/inspect_native_mob_lifecycle.py 和 docs/mob-ai-p0-20261015/lifecycle/。真实CreateActor RPC→请求执行→server owner初始化→原生角色配置/构造→GUID/ControlGUID/角色数组登记，与客户端创建重放的共用登记链已核对。移除是先加入+1D8队列，再进入原版Despawn/Destroy及角色索引清理；服务端owner另在+170表扫描清理，不能以删除Mesh/清角色表代替双表释放。
+
+补上RunAITask回调对象的静态构造、登记和类型ID索引证据；复核服务端stat调用与客户端重放的两个不同返回点及effect受害/来源owner关联。现有Eve hook仍严格限定watched/GUID/type100/线程/时效，不借此放开Mob伤害。36段有界反汇编、28个CALL/指针关联、工具语法和错误exe版本拒绝通过，均为离线取证；详见 lifecycle/LIFECYCLE_FINDINGS.md、lifecycle-evidence.json、verification.json。
+
+MC兼容战斗代理的合法配置/完整参数、两套登记实际寿命/线程，以及原生感知和真正命中→MC UUID的动态关联仍缺，P0整体未通过，P1–P4未启用；不能宣称已恢复原版AI或双向交战。当前无剑星/Java进程，七份部署哈希保持shield-scale-20261015基线、QA0字节；未修改生产逻辑、构建、部署、启动游戏或发送输入，游戏测试暂停保持。下一步核对兼容角色资格/资源、owner保留谓词和命中条件，动态门槛仅在用户明确恢复后验证；不安排游戏测试。以下为历史记录。
+
+最新 2026-10-15（按MC生物AI/双向仇恨方案执行P0；完整门槛未通过）：已新增 tools/inspect_mob_ai.py，只读本地1.20.1映射JAR、SDK和exe，导出15类实际字节码与原生调用链。确认NoAI挡住原版Goal/Brain/Navigation，noPhysics绕碰撞；现有CollisionField无生产写入、拾取高度场/25Hz位移反馈不足以导航，已明确PathNavigationRegion、WalkNodeEvaluator独立碰撞及Sensing视线读口和导航快照契约。旧登记实体没有保存原始NoAI，不能统一强行开启。
+
+原生DetectTarget已追到RunAITask队列、ControlGUID内部登记查表、服务端操作2及角色候选筛选；当前MC外观Mesh不在该角色表。SBCreateCharacter实际native exec只解析参数后返回，不能用作代理工厂；锁定RPC也不能替代敌人仇恨。合法原生战斗代理构造/注销、回调线程/寿命及实际命中受害者关联仍未认证，P0整体未通过，P1–P4未启用。不能宣称已恢复AI/绕障/双向交战。
+
+证据及复查：docs/mob-ai-p0-20261015/P0_FINDINGS.md、inputs.json、verification.json；专项计划顶部已更新。工具语法、错误exe版本拒绝和静态锚点核对通过；均为离线证据，无新JAR/DLL构建或部署。核对当前七份部署哈希保持shield-scale-20261015基线，QA0字节；没有启动游戏、输入或写QA，游戏测试继续暂停。下一步先离线追目标筛选的候选资格、合法角色构造/移除和命中桥，补齐P0后再按计划实施，不放宽ABI/身份/线程门禁。以下为历史记录。
+
+最新 2026-10-15（新增 MC 连续攻击→剑星原生硬直／Groggy 计划）：静态审查已找到原版 HitStun、ActorState_Groggy=7、ImmuneGroggy=16、Groggy_Start/Loop/End 与 GroggyEndTime 的 SDK 线索；当前只能确认存在这些机制，尚不能证明普通攻击若干次触发的确切原版条件或安全原生调用 ABI。现有 MC 单次 HP/盾伤、Light/Strong Show 不产生独立累计硬直；强 Show 实机尚未通过，Timed HitStun 调用尚未认证。分阶段 P0 原版连击触发源→P1 有效命中→P2 原生硬直/恢复→P3 兼容隔离→P4 离线回归计划详见 docs/PLAN_MC_COMBO_NATIVE_STAGGER_2026-10-15.md。本次只写文档，未改生产战斗、未构建/安装/启动游戏/QA；现有逐步削盾候选保持安装状态、游戏测试暂停保持。下一步按 P0 离线取证，禁止凭固定击数假硬直或强制改怪物状态；以下为历史记录。
+
+最新 2026-10-15（用户执行逐步削盾方案：已构建、离线通过并安装）：盾伤改为 min(currentShield, 实时MaxShield*mcDamage/tierBudget)，HP换算不变；替代此前“沿用HP系数”的原方案。保持本击破盾不溢出HP、下一击重取盾、无盾槽/回盾/免伤及全部ABI/身份/线程/读回/Show门禁，无新增倍率配置。
+
+用户真实样本44000HP/2160盾/伤害8/Elite预算100已先复现旧版测试失败，新版请求172.8盾伤；按静态确认的原生delta取整桩，首击剩1988，固定伤害无回盾时13击破盾且HP不变，下一击仍扣3520HP。10倍HP不改变盾伤、实时MaxShield变更、极小伤害取整不转扣HP及既有矩阵通过；3427战斗/Show和995玩家门禁字节变异、Lua路由去重/来源、实际DLL/Lua协议回归与构建通过，均为离线证据。
+
+核对无剑星/Java、QA0字节和旧七组件哈希后，只备份安装DLL：626E3F44A667969362B88D1E9D360D3A2C645A2F73440DDE90E2F1EA13704199，源/候选/部署一致；Lua/JAR等其余六组件不变。证据/回退：docs/shield-scale-20261015/IMPLEMENTATION.md、manifest.json、before-install/。未启动游戏/输入/写QA，测试暂停保持；新版数值及普通敌人/Boss破盾表现未实机验收，下一步等待用户按授权反馈。以下为历史记录。
+
+最新 2026-10-15（用户反馈一击破盾，现有日志确认换算数值原因）：只读当前日志，GUID3639/type205039001：Elite budget100、MaxHP44000、MaxShield2160、MC伤害8，原方案同一k计算盾伤3520，超过整条盾2160。event8盾2160→0而HP44000不变，event9无盾HP44000→40480；该样本未见溢出HP，不能将其当作重复扣盾。现有公式符合原方案，但满盾相对HP过小导致一击破盾。建议后续按实时MaxShield而非MaxHP换算盾伤（本例约172.8/击、原生整数截断），此建议尚未实施，等待用户确定数值方向；当前部署不变。证据：docs/shield-first-20261015/ONE_HIT_SHIELD_DIAGNOSIS.md、user-hit-combat-only.txt。没有游戏操作/QA/构建/部署，助手测试暂停保持。以下为历史记录。
+
+最新 2026-10-15（MC→原生敌人盾优先：已修复、离线通过并安装，实机未验收）：按 docs/PLAN_MC_NATIVE_SHIELD_FIRST_DAMAGE_2026-10-14.md 实施。每击认证并读取当前HP/Shield池；有盾仅一次原生stat=7扣盾，本击破盾不溢出HP，下一击无盾才扣HP；无盾槽正常扣血，回盾重新优先盾。异常/身份/线程/版本失败拒绝，不回退HP；调用后重查身份、读回盾与HP，盾路由要求HP不变。新增Shield字段/路由日志与仅掉盾受击上下文，保留全部Show/强击限制、玩家保护、伤害去重和v6布局，JAR未改。此前查询解包、Boss入伤加成与扫描profile保留。
+
+真实C++结算路径（只注入原生函数桩）、破盾/下一击/回盾/多目标/无盾/非法池/读取故障/身份变化/免伤/SEH、Shield上下文与去重通过；战斗/Show3427及玩家995字节变异拒绝、Lua战斗/1000次World查询/生命周期/F4/移动/台阶/语法、实际DLL/Lua新结果字段和v6事件/地图回归、DLL构建通过。stat=7 setter静态确认+134/+138与零盾分支，实际原生破盾事件/HUD/普通敌人/Boss换相及动画仍未验收，不能把桩当实机。
+
+确认无剑星/Java、QA0字节并核对旧七组件后，备份安装配套DLL+main.lua，源/候选/部署哈希一致：DLL 4193F7273D97D979128906AE96101CF95ADDC06D1649BDD4C12F114ED15A523F；main.lua 3EAF419F1FB60DECE99ACBA844BA190D79A78D2F8691AD24FEC7DA202786FA71。其余五组件不变。交付/证据/回退：docs/shield-first-20261015/IMPLEMENTATION.md、manifest.json、before-install/。未启动游戏/输入/写QA指令，游戏测试暂停保持；下一步仅在用户明确恢复后按授权验证普通有盾怪，Boss实测仍未授权。此前伤害恢复/不再崩溃的用户验收及重击/Timed HitStun未验收状态保留。以下为历史记录。
+
+最新 2026-10-14（用户确认伤害恢复；Boss 对 MC 玩家伤害小幅上调并安装）：用户反馈“可以了”，上一轮敌人登记/攻击伤害恢复按用户实测确认，不重复定位。本次只调整原生 Boss → MC 玩家：Elite（精英首领）、Alpha、Elder 三档经当前世界 Actor 地址/GUID/type/epoch 和 0.5 秒来源时效复核后，转发伤害乘 1.25，单次继续封顶 20 HP。Minion/Warrior/未知类不变；过期、歧义及身份不符来源无加成。仍由 MC 原有护甲/盾牌处理，ABI、线程和身份门禁未变。
+
+离线回归覆盖三档 Boss +25%、普通/未知类不变、上限、过期/错误类型/歧义来源无加成；既有唯一伤害/命中方向、1000 次地图查询、生命周期及移动回归、Lua 语法通过。确认无剑星/Java、QA0字节并核对旧七组件哈希后，仅备份安装 main.lua，源/候选/部署 SHA256 83B8756C3E877AC53A9F7A890EA6313CB3BF4ECD13302E38E58A777009A73BD8，其余六组件不变。证据及回退：docs/boss-incoming-damage-20261014/manifest.json、regression.txt、installed-before-main.lua。
+
+Boss 数值调整尚未实机验收；下次正常启动生效，后续以用户实际受击反馈判断强度。未启动游戏、发送输入或写 QA 指令，助手游戏测试暂停保持。此前用户确认的不再崩溃及伤害恢复保留。以下为历史记录。
+最新 2026-10-14（伤害回归：当前地图查询结果未解包，已修正安装，实机待确认）：用户报告无法伤害原生敌人。日志中候选50–102但nearby/published始终0；查询本身无异常。匹配d3d1004源码确认ObjectProperty数组元素为RemoteUnrealParam，须先:get()得到UObject。上轮遗漏元素解包，参数对象被Actor:IsValid的pcall过滤；测试替身直接返回Actor也漏测。本轮已在查询内部立即解包/验证，登记与命中复核均使用正确Actor，不保存参数包装，不恢复全局扫描/旧Actor缓存，不放宽任何伤害门禁。
+
+测试现返回真实形式的参数包装且禁止直接调用Actor方法；旧版在查询及完整战斗路由回归均失败，修正版通过1000次零全局扫描、对象变化/失效/异常、敌人发布和命中复核、唯一HP/跳劈样式/箭矢/TNT/来源/旧目标拒绝。移动/F4、台阶、生命周期及语法通过。证据/备份：docs/actor-query-unpack-20261014/DIAGNOSIS.md、regression.txt、manifest.json、installed-before-main.lua。
+
+确认无剑星/Java、QA0字节后仅安装main.lua，源/候选/部署SHA256 D330A12373CE5C7EF63880F13B21E081ADC5CE6F7891212675F437EFCE6088E6；其余六组件与map-clear-20261014一致。切图清空和EVE扫描优化保持，协议v6不变。未启动游戏、输入或写QA指令。用户已确认的不再崩溃保留；实际伤害恢复和扫描优化后的EVE流畅度仍待新实机日志，不以离线通过代替扣血。
+
+下一步由用户普通操作后只读candidates/nearby/published及唯一Combat HP，确认登记与伤害恢复，再核查EVE镜像扫描尖峰。助手游戏操作暂停仍生效，不重新索取已验收结论或放开ABI/身份/线程/时效限制。以下为历史记录。
+
+最新 2026-10-14（用户确认不再崩溃；EVE卡顿扫描修正已安装待实测）：用户明确当前复测没有崩溃，保留为已获用户确认的当前普通操作结果，不主动重开原崩溃定位。本轮只处理切回EVE的移动卡顿。最新日志显示相机正常恢复，EVE transform平均约0.02–0.04ms，但mirror每200ms扫描的峰值55–77ms；空/少角色地图同样有明显扫描耗时。
+
+已将collect_character_actors的全局FindAllOf回退改为引擎GameplayStatics.GetAllActorsOfClass当前World查询；本机SDK签名和匹配d3d1004的Lua数组出参回填源码已核对，保留5Hz发布/EVE联动和现有身份/伤害/epoch门禁，不缓存旧Actor。查询失败清空目标并限频报错，不恢复全局扫描。Profile补充nativeWorld阶段，供区分剩余实体/粒子耗时。1000次零全局扫描、空/改变/失败查询、失败目标清零与原战斗/移动/F4/台阶/生命周期回归和语法通过；旧版在同一测试失败。新反射调用和EVE移动改善尚未实机验证，不把离线当实际帧率。
+
+核查无剑星/Java、QA0字节后，仅备份安装main.lua，SHA256 3E3B1D28EBF467CACF2068190C98A43A058529340DAB42E519629620E1339A32；其余六组件与map-clear-20261014一致。证据/备份：docs/eve-stutter-20261014/DIAGNOSIS.md、manifest.json、installed-before-main.lua。未启动游戏、输入或写QA指令。切图清空和上一轮包装身份修复保持。
+
+下一步由用户普通操作后只读新Profile，确认mirror尖峰和EVE观感改善、无world character query unavailable；若仍卡按nativeWorld/publish新证据继续。用户已确认的“不再崩溃”不重复定位；历史旧条目中的“崩溃待验收”以本次用户反馈为准。助手游戏操作暂停仍有效。以下为历史记录。
+
 最新 2026-10-14（低帧率/刷日志回归已修正安装，帧率待实机）：用户报告帧数极低。只读当前日志：重力校准/RootMotion/移动接管各1176次、飞行开启345次，主要是每帧重复初始化而非持续tick异常。原因是上轮每帧新建Controller/Pawn包装，而接管逻辑用Lua包装不等判断切换；另有每Tick全局查控制器开销。已改为epoch+原生PC/Pawn地址判身份，胶囊/地面缓存也按地址；ACTIVE使用当前epoch上下文与Controller.Pawn，仍核对Pawn/World身份，仅REBINDING全局查找，并将Controller EndPlay纳入失效屏障。切图清空功能和全部生命周期/伤害门禁保留，未关闭EVE联动。
 
 新1000不同包装回归在旧源码失败、修正后保持单次接管和最初RootMotion保存值；1000次ACTIVE准备不增加全局扫描，Pawn/Controller销毁重绑、旧Tick、运动/飞行/F4、台阶及战斗回归/语法通过。只读日志时游戏已关闭，核查无剑星/Java后备份并仅安装main.lua，源/候选/部署SHA256 CBB283F7F30573FC083E615EFCA7D3058A4F59148C91724A43CF634682CB54E7；其余六组件与map-clear-20261014清单一致。证据/回退：docs/perf-wrapper-20261014/DIAGNOSIS.md、manifest.json、installed-before-main.lua。未启动游戏、输入或写QA指令。

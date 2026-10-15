@@ -1,0 +1,1160 @@
+net.minecraft.world.level.pathfinder.WalkNodeEvaluator
+Input SHA256: D5D5503DC29E1A076F89F5E8D19C6E0C3866F3D87EF3900E9D244D28891B3339
+  public int getNeighbors(net.minecraft.world.level.pathfinder.Node[], net.minecraft.world.level.pathfinder.Node);
+    Code:
+       0: iconst_0
+       1: istore_3
+       2: iconst_0
+       3: istore        4
+       5: aload_0
+       6: aload_0
+       7: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      10: aload_2
+      11: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+      14: aload_2
+      15: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+      18: iconst_1
+      19: iadd
+      20: aload_2
+      21: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+      24: invokevirtual #294                // Method getCachedBlockType:(Lnet/minecraft/world/entity/Mob;III)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      27: astore        5
+      29: aload_0
+      30: aload_0
+      31: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      34: aload_2
+      35: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+      38: aload_2
+      39: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+      42: aload_2
+      43: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+      46: invokevirtual #294                // Method getCachedBlockType:(Lnet/minecraft/world/entity/Mob;III)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      49: astore        6
+      51: aload_0
+      52: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      55: aload         5
+      57: invokevirtual #254                // Method net/minecraft/world/entity/Mob.getPathfindingMalus:(Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)F
+      60: fconst_0
+      61: fcmpl
+      62: iflt          89
+      65: aload         6
+      67: getstatic     #297                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.STICKY_HONEY:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      70: if_acmpeq     89
+      73: fconst_1
+      74: aload_0
+      75: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      78: invokevirtual #301                // Method net/minecraft/world/entity/Mob.maxUpStep:()F
+      81: invokestatic  #307                // Method java/lang/Math.max:(FF)F
+      84: invokestatic  #310                // Method net/minecraft/util/Mth.floor:(F)I
+      87: istore        4
+      89: aload_0
+      90: new           #9                  // class net/minecraft/core/BlockPos
+      93: dup
+      94: aload_2
+      95: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+      98: aload_2
+      99: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+     102: aload_2
+     103: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+     106: invokespecial #224                // Method net/minecraft/core/BlockPos."<init>":(III)V
+     109: invokevirtual #316                // Method getFloorLevel:(Lnet/minecraft/core/BlockPos;)D
+     112: dstore        7
+     114: aload_0
+     115: aload_2
+     116: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+     119: aload_2
+     120: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+     123: aload_2
+     124: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+     127: iconst_1
+     128: iadd
+     129: iload         4
+     131: dload         7
+     133: getstatic     #320                // Field net/minecraft/core/Direction.SOUTH:Lnet/minecraft/core/Direction;
+     136: aload         6
+     138: invokevirtual #324                // Method findAcceptedNode:(IIIIDLnet/minecraft/core/Direction;Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Lnet/minecraft/world/level/pathfinder/Node;
+     141: astore        9
+     143: aload_0
+     144: aload         9
+     146: aload_2
+     147: invokevirtual #328                // Method isNeighborValid:(Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;)Z
+     150: ifeq          161
+     153: aload_1
+     154: iload_3
+     155: iinc          3, 1
+     158: aload         9
+     160: aastore
+     161: aload_0
+     162: aload_2
+     163: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+     166: iconst_1
+     167: isub
+     168: aload_2
+     169: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+     172: aload_2
+     173: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+     176: iload         4
+     178: dload         7
+     180: getstatic     #331                // Field net/minecraft/core/Direction.WEST:Lnet/minecraft/core/Direction;
+     183: aload         6
+     185: invokevirtual #324                // Method findAcceptedNode:(IIIIDLnet/minecraft/core/Direction;Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Lnet/minecraft/world/level/pathfinder/Node;
+     188: astore        10
+     190: aload_0
+     191: aload         10
+     193: aload_2
+     194: invokevirtual #328                // Method isNeighborValid:(Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;)Z
+     197: ifeq          208
+     200: aload_1
+     201: iload_3
+     202: iinc          3, 1
+     205: aload         10
+     207: aastore
+     208: aload_0
+     209: aload_2
+     210: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+     213: iconst_1
+     214: iadd
+     215: aload_2
+     216: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+     219: aload_2
+     220: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+     223: iload         4
+     225: dload         7
+     227: getstatic     #334                // Field net/minecraft/core/Direction.EAST:Lnet/minecraft/core/Direction;
+     230: aload         6
+     232: invokevirtual #324                // Method findAcceptedNode:(IIIIDLnet/minecraft/core/Direction;Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Lnet/minecraft/world/level/pathfinder/Node;
+     235: astore        11
+     237: aload_0
+     238: aload         11
+     240: aload_2
+     241: invokevirtual #328                // Method isNeighborValid:(Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;)Z
+     244: ifeq          255
+     247: aload_1
+     248: iload_3
+     249: iinc          3, 1
+     252: aload         11
+     254: aastore
+     255: aload_0
+     256: aload_2
+     257: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+     260: aload_2
+     261: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+     264: aload_2
+     265: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+     268: iconst_1
+     269: isub
+     270: iload         4
+     272: dload         7
+     274: getstatic     #337                // Field net/minecraft/core/Direction.NORTH:Lnet/minecraft/core/Direction;
+     277: aload         6
+     279: invokevirtual #324                // Method findAcceptedNode:(IIIIDLnet/minecraft/core/Direction;Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Lnet/minecraft/world/level/pathfinder/Node;
+     282: astore        12
+     284: aload_0
+     285: aload         12
+     287: aload_2
+     288: invokevirtual #328                // Method isNeighborValid:(Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;)Z
+     291: ifeq          302
+     294: aload_1
+     295: iload_3
+     296: iinc          3, 1
+     299: aload         12
+     301: aastore
+     302: aload_0
+     303: aload_2
+     304: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+     307: iconst_1
+     308: isub
+     309: aload_2
+     310: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+     313: aload_2
+     314: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+     317: iconst_1
+     318: isub
+     319: iload         4
+     321: dload         7
+     323: getstatic     #337                // Field net/minecraft/core/Direction.NORTH:Lnet/minecraft/core/Direction;
+     326: aload         6
+     328: invokevirtual #324                // Method findAcceptedNode:(IIIIDLnet/minecraft/core/Direction;Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Lnet/minecraft/world/level/pathfinder/Node;
+     331: astore        13
+     333: aload_0
+     334: aload_2
+     335: aload         10
+     337: aload         12
+     339: aload         13
+     341: invokevirtual #341                // Method isDiagonalValid:(Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;)Z
+     344: ifeq          355
+     347: aload_1
+     348: iload_3
+     349: iinc          3, 1
+     352: aload         13
+     354: aastore
+     355: aload_0
+     356: aload_2
+     357: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+     360: iconst_1
+     361: iadd
+     362: aload_2
+     363: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+     366: aload_2
+     367: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+     370: iconst_1
+     371: isub
+     372: iload         4
+     374: dload         7
+     376: getstatic     #337                // Field net/minecraft/core/Direction.NORTH:Lnet/minecraft/core/Direction;
+     379: aload         6
+     381: invokevirtual #324                // Method findAcceptedNode:(IIIIDLnet/minecraft/core/Direction;Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Lnet/minecraft/world/level/pathfinder/Node;
+     384: astore        14
+     386: aload_0
+     387: aload_2
+     388: aload         11
+     390: aload         12
+     392: aload         14
+     394: invokevirtual #341                // Method isDiagonalValid:(Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;)Z
+     397: ifeq          408
+     400: aload_1
+     401: iload_3
+     402: iinc          3, 1
+     405: aload         14
+     407: aastore
+     408: aload_0
+     409: aload_2
+     410: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+     413: iconst_1
+     414: isub
+     415: aload_2
+     416: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+     419: aload_2
+     420: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+     423: iconst_1
+     424: iadd
+     425: iload         4
+     427: dload         7
+     429: getstatic     #320                // Field net/minecraft/core/Direction.SOUTH:Lnet/minecraft/core/Direction;
+     432: aload         6
+     434: invokevirtual #324                // Method findAcceptedNode:(IIIIDLnet/minecraft/core/Direction;Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Lnet/minecraft/world/level/pathfinder/Node;
+     437: astore        15
+     439: aload_0
+     440: aload_2
+     441: aload         10
+     443: aload         9
+     445: aload         15
+     447: invokevirtual #341                // Method isDiagonalValid:(Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;)Z
+     450: ifeq          461
+     453: aload_1
+     454: iload_3
+     455: iinc          3, 1
+     458: aload         15
+     460: aastore
+     461: aload_0
+     462: aload_2
+     463: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+     466: iconst_1
+     467: iadd
+     468: aload_2
+     469: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+     472: aload_2
+     473: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+     476: iconst_1
+     477: iadd
+     478: iload         4
+     480: dload         7
+     482: getstatic     #320                // Field net/minecraft/core/Direction.SOUTH:Lnet/minecraft/core/Direction;
+     485: aload         6
+     487: invokevirtual #324                // Method findAcceptedNode:(IIIIDLnet/minecraft/core/Direction;Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Lnet/minecraft/world/level/pathfinder/Node;
+     490: astore        16
+     492: aload_0
+     493: aload_2
+     494: aload         11
+     496: aload         9
+     498: aload         16
+     500: invokevirtual #341                // Method isDiagonalValid:(Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;)Z
+     503: ifeq          514
+     506: aload_1
+     507: iload_3
+     508: iinc          3, 1
+     511: aload         16
+     513: aastore
+     514: iload_3
+     515: ireturn
+
+
+  protected double getFloorLevel(net.minecraft.core.BlockPos);
+    Code:
+       0: aload_0
+       1: invokevirtual #119                // Method canFloat:()Z
+       4: ifne          14
+       7: aload_0
+       8: invokevirtual #418                // Method isAmphibious:()Z
+      11: ifeq          41
+      14: aload_0
+      15: getfield      #88                 // Field level:Lnet/minecraft/world/level/PathNavigationRegion;
+      18: aload_1
+      19: invokevirtual #421                // Method net/minecraft/world/level/PathNavigationRegion.getFluidState:(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;
+      22: getstatic     #426                // Field net/minecraft/tags/FluidTags.WATER:Lnet/minecraft/tags/TagKey;
+      25: invokevirtual #431                // Method net/minecraft/world/level/material/FluidState.is:(Lnet/minecraft/tags/TagKey;)Z
+      28: ifeq          41
+      31: aload_1
+      32: invokevirtual #174                // Method net/minecraft/core/BlockPos.getY:()I
+      35: i2d
+      36: ldc2_w        #23                 // double 0.5d
+      39: dadd
+      40: dreturn
+      41: aload_0
+      42: getfield      #88                 // Field level:Lnet/minecraft/world/level/PathNavigationRegion;
+      45: aload_1
+      46: invokestatic  #434                // Method getFloorLevel:(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)D
+      49: dreturn
+
+
+  public static double getFloorLevel(net.minecraft.world.level.BlockGetter, net.minecraft.core.BlockPos);
+    Code:
+       0: aload_1
+       1: invokevirtual #185                // Method net/minecraft/core/BlockPos.below:()Lnet/minecraft/core/BlockPos;
+       4: astore_2
+       5: aload_0
+       6: aload_2
+       7: invokeinterface #438,  2          // InterfaceMethod net/minecraft/world/level/BlockGetter.getBlockState:(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;
+      12: aload_0
+      13: aload_2
+      14: invokevirtual #442                // Method net/minecraft/world/level/block/state/BlockState.getCollisionShape:(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/phys/shapes/VoxelShape;
+      17: astore_3
+      18: aload_2
+      19: invokevirtual #174                // Method net/minecraft/core/BlockPos.getY:()I
+      22: i2d
+      23: aload_3
+      24: invokevirtual #447                // Method net/minecraft/world/phys/shapes/VoxelShape.isEmpty:()Z
+      27: ifeq          34
+      30: dconst_0
+      31: goto          41
+      34: aload_3
+      35: getstatic     #451                // Field net/minecraft/core/Direction$Axis.Y:Lnet/minecraft/core/Direction$Axis;
+      38: invokevirtual #454                // Method net/minecraft/world/phys/shapes/VoxelShape.max:(Lnet/minecraft/core/Direction$Axis;)D
+      41: dadd
+      42: dreturn
+
+
+  protected net.minecraft.world.level.pathfinder.Node findAcceptedNode(int, int, int, int, double, net.minecraft.core.Direction, net.minecraft.world.level.pathfinder.BlockPathTypes);
+    Code:
+       0: aconst_null
+       1: astore        9
+       3: new           #7                  // class net/minecraft/core/BlockPos$MutableBlockPos
+       6: dup
+       7: invokespecial #81                 // Method net/minecraft/core/BlockPos$MutableBlockPos."<init>":()V
+      10: astore        10
+      12: aload_0
+      13: aload         10
+      15: iload_1
+      16: iload_2
+      17: iload_3
+      18: invokevirtual #195                // Method net/minecraft/core/BlockPos$MutableBlockPos.set:(III)Lnet/minecraft/core/BlockPos$MutableBlockPos;
+      21: invokevirtual #316                // Method getFloorLevel:(Lnet/minecraft/core/BlockPos;)D
+      24: dstore        11
+      26: dload         11
+      28: dload         5
+      30: dsub
+      31: aload_0
+      32: invokevirtual #464                // Method getMobJumpHeight:()D
+      35: dcmpl
+      36: ifle          41
+      39: aconst_null
+      40: areturn
+      41: aload_0
+      42: aload_0
+      43: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      46: iload_1
+      47: iload_2
+      48: iload_3
+      49: invokevirtual #294                // Method getCachedBlockType:(Lnet/minecraft/world/entity/Mob;III)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      52: astore        13
+      54: aload_0
+      55: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      58: aload         13
+      60: invokevirtual #254                // Method net/minecraft/world/entity/Mob.getPathfindingMalus:(Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)F
+      63: fstore        14
+      65: aload_0
+      66: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+      69: invokevirtual #365                // Method net/minecraft/world/entity/Mob.getBbWidth:()F
+      72: f2d
+      73: ldc2_w        #382                // double 2.0d
+      76: ddiv
+      77: dstore        15
+      79: fload         14
+      81: fconst_0
+      82: fcmpl
+      83: iflt          99
+      86: aload_0
+      87: iload_1
+      88: iload_2
+      89: iload_3
+      90: aload         13
+      92: fload         14
+      94: invokevirtual #468                // Method getNodeAndUpdateCostToMax:(IIILnet/minecraft/world/level/pathfinder/BlockPathTypes;F)Lnet/minecraft/world/level/pathfinder/Node;
+      97: astore        9
+      99: aload         8
+     101: invokestatic  #470                // Method doesBlockHavePartialCollision:(Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Z
+     104: ifeq          134
+     107: aload         9
+     109: ifnull        134
+     112: aload         9
+     114: getfield      #258                // Field net/minecraft/world/level/pathfinder/Node.costMalus:F
+     117: fconst_0
+     118: fcmpl
+     119: iflt          134
+     122: aload_0
+     123: aload         9
+     125: invokevirtual #472                // Method canReachWithoutCollision:(Lnet/minecraft/world/level/pathfinder/Node;)Z
+     128: ifne          134
+     131: aconst_null
+     132: astore        9
+     134: aload         13
+     136: getstatic     #475                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WALKABLE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     139: if_acmpeq     157
+     142: aload_0
+     143: invokevirtual #418                // Method isAmphibious:()Z
+     146: ifeq          160
+     149: aload         13
+     151: getstatic     #477                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WATER:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     154: if_acmpne     160
+     157: aload         9
+     159: areturn
+     160: aload         9
+     162: ifnull        175
+     165: aload         9
+     167: getfield      #258                // Field net/minecraft/world/level/pathfinder/Node.costMalus:F
+     170: fconst_0
+     171: fcmpg
+     172: ifge          409
+     175: iload         4
+     177: ifle          409
+     180: aload         13
+     182: getstatic     #362                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.FENCE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     185: if_acmpne     195
+     188: aload_0
+     189: invokevirtual #480                // Method canWalkOverFences:()Z
+     192: ifeq          409
+     195: aload         13
+     197: getstatic     #483                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.UNPASSABLE_RAIL:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     200: if_acmpeq     409
+     203: aload         13
+     205: getstatic     #486                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.TRAPDOOR:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     208: if_acmpeq     409
+     211: aload         13
+     213: getstatic     #489                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.POWDER_SNOW:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     216: if_acmpeq     409
+     219: aload_0
+     220: iload_1
+     221: iload_2
+     222: iconst_1
+     223: iadd
+     224: iload_3
+     225: iload         4
+     227: iconst_1
+     228: isub
+     229: dload         5
+     231: aload         7
+     233: aload         8
+     235: invokevirtual #324                // Method findAcceptedNode:(IIIIDLnet/minecraft/core/Direction;Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Lnet/minecraft/world/level/pathfinder/Node;
+     238: astore        9
+     240: aload         9
+     242: ifnull        409
+     245: aload         9
+     247: getfield      #250                // Field net/minecraft/world/level/pathfinder/Node.type:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     250: getstatic     #265                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     253: if_acmpeq     267
+     256: aload         9
+     258: getfield      #250                // Field net/minecraft/world/level/pathfinder/Node.type:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     261: getstatic     #475                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WALKABLE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     264: if_acmpne     409
+     267: aload_0
+     268: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     271: invokevirtual #365                // Method net/minecraft/world/entity/Mob.getBbWidth:()F
+     274: fconst_1
+     275: fcmpg
+     276: ifge          409
+     279: iload_1
+     280: aload         7
+     282: invokevirtual #492                // Method net/minecraft/core/Direction.getStepX:()I
+     285: isub
+     286: i2d
+     287: ldc2_w        #23                 // double 0.5d
+     290: dadd
+     291: dstore        17
+     293: iload_3
+     294: aload         7
+     296: invokevirtual #495                // Method net/minecraft/core/Direction.getStepZ:()I
+     299: isub
+     300: i2d
+     301: ldc2_w        #23                 // double 0.5d
+     304: dadd
+     305: dstore        19
+     307: new           #205                // class net/minecraft/world/phys/AABB
+     310: dup
+     311: dload         17
+     313: dload         15
+     315: dsub
+     316: aload_0
+     317: aload         10
+     319: dload         17
+     321: iload_2
+     322: iconst_1
+     323: iadd
+     324: i2d
+     325: dload         19
+     327: invokevirtual #99                 // Method net/minecraft/core/BlockPos$MutableBlockPos.set:(DDD)Lnet/minecraft/core/BlockPos$MutableBlockPos;
+     330: invokevirtual #316                // Method getFloorLevel:(Lnet/minecraft/core/BlockPos;)D
+     333: ldc2_w        #496                // double 0.001d
+     336: dadd
+     337: dload         19
+     339: dload         15
+     341: dsub
+     342: dload         17
+     344: dload         15
+     346: dadd
+     347: aload_0
+     348: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     351: invokevirtual #500                // Method net/minecraft/world/entity/Mob.getBbHeight:()F
+     354: f2d
+     355: aload_0
+     356: aload         10
+     358: aload         9
+     360: getfield      #284                // Field net/minecraft/world/level/pathfinder/Node.x:I
+     363: i2d
+     364: aload         9
+     366: getfield      #287                // Field net/minecraft/world/level/pathfinder/Node.y:I
+     369: i2d
+     370: aload         9
+     372: getfield      #290                // Field net/minecraft/world/level/pathfinder/Node.z:I
+     375: i2d
+     376: invokevirtual #99                 // Method net/minecraft/core/BlockPos$MutableBlockPos.set:(DDD)Lnet/minecraft/core/BlockPos$MutableBlockPos;
+     379: invokevirtual #316                // Method getFloorLevel:(Lnet/minecraft/core/BlockPos;)D
+     382: dadd
+     383: ldc2_w        #501                // double 0.002d
+     386: dsub
+     387: dload         19
+     389: dload         15
+     391: dadd
+     392: invokespecial #505                // Method net/minecraft/world/phys/AABB."<init>":(DDDDDD)V
+     395: astore        21
+     397: aload_0
+     398: aload         21
+     400: invokevirtual #413                // Method hasCollisions:(Lnet/minecraft/world/phys/AABB;)Z
+     403: ifeq          409
+     406: aconst_null
+     407: astore        9
+     409: aload_0
+     410: invokevirtual #418                // Method isAmphibious:()Z
+     413: ifne          517
+     416: aload         13
+     418: getstatic     #477                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WATER:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     421: if_acmpne     517
+     424: aload_0
+     425: invokevirtual #119                // Method canFloat:()Z
+     428: ifne          517
+     431: aload_0
+     432: aload_0
+     433: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     436: iload_1
+     437: iload_2
+     438: iconst_1
+     439: isub
+     440: iload_3
+     441: invokevirtual #294                // Method getCachedBlockType:(Lnet/minecraft/world/entity/Mob;III)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     444: getstatic     #477                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WATER:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     447: if_acmpeq     453
+     450: aload         9
+     452: areturn
+     453: iload_2
+     454: aload_0
+     455: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     458: invokevirtual #177                // Method net/minecraft/world/entity/Mob.level:()Lnet/minecraft/world/level/Level;
+     461: invokevirtual #182                // Method net/minecraft/world/level/Level.getMinBuildHeight:()I
+     464: if_icmple     517
+     467: iinc          2, -1
+     470: aload_0
+     471: aload_0
+     472: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     475: iload_1
+     476: iload_2
+     477: iload_3
+     478: invokevirtual #294                // Method getCachedBlockType:(Lnet/minecraft/world/entity/Mob;III)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     481: astore        13
+     483: aload         13
+     485: getstatic     #477                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WATER:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     488: if_acmpne     514
+     491: aload_0
+     492: iload_1
+     493: iload_2
+     494: iload_3
+     495: aload         13
+     497: aload_0
+     498: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     501: aload         13
+     503: invokevirtual #254                // Method net/minecraft/world/entity/Mob.getPathfindingMalus:(Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)F
+     506: invokevirtual #468                // Method getNodeAndUpdateCostToMax:(IIILnet/minecraft/world/level/pathfinder/BlockPathTypes;F)Lnet/minecraft/world/level/pathfinder/Node;
+     509: astore        9
+     511: goto          453
+     514: aload         9
+     516: areturn
+     517: aload         13
+     519: getstatic     #265                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     522: if_acmpne     658
+     525: iconst_0
+     526: istore        17
+     528: iload_2
+     529: istore        18
+     531: aload         13
+     533: getstatic     #265                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     536: if_acmpne     658
+     539: iinc          2, -1
+     542: iload_2
+     543: aload_0
+     544: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     547: invokevirtual #177                // Method net/minecraft/world/entity/Mob.level:()Lnet/minecraft/world/level/Level;
+     550: invokevirtual #182                // Method net/minecraft/world/level/Level.getMinBuildHeight:()I
+     553: if_icmpge     565
+     556: aload_0
+     557: iload_1
+     558: iload         18
+     560: iload_3
+     561: invokevirtual #508                // Method getBlockedNode:(III)Lnet/minecraft/world/level/pathfinder/Node;
+     564: areturn
+     565: iload         17
+     567: iinc          17, 1
+     570: aload_0
+     571: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     574: invokevirtual #511                // Method net/minecraft/world/entity/Mob.getMaxFallDistance:()I
+     577: if_icmplt     588
+     580: aload_0
+     581: iload_1
+     582: iload_2
+     583: iload_3
+     584: invokevirtual #508                // Method getBlockedNode:(III)Lnet/minecraft/world/level/pathfinder/Node;
+     587: areturn
+     588: aload_0
+     589: aload_0
+     590: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     593: iload_1
+     594: iload_2
+     595: iload_3
+     596: invokevirtual #294                // Method getCachedBlockType:(Lnet/minecraft/world/entity/Mob;III)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     599: astore        13
+     601: aload_0
+     602: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+     605: aload         13
+     607: invokevirtual #254                // Method net/minecraft/world/entity/Mob.getPathfindingMalus:(Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)F
+     610: fstore        14
+     612: aload         13
+     614: getstatic     #265                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     617: if_acmpeq     643
+     620: fload         14
+     622: fconst_0
+     623: fcmpl
+     624: iflt          643
+     627: aload_0
+     628: iload_1
+     629: iload_2
+     630: iload_3
+     631: aload         13
+     633: fload         14
+     635: invokevirtual #468                // Method getNodeAndUpdateCostToMax:(IIILnet/minecraft/world/level/pathfinder/BlockPathTypes;F)Lnet/minecraft/world/level/pathfinder/Node;
+     638: astore        9
+     640: goto          658
+     643: fload         14
+     645: fconst_0
+     646: fcmpg
+     647: ifge          531
+     650: aload_0
+     651: iload_1
+     652: iload_2
+     653: iload_3
+     654: invokevirtual #508                // Method getBlockedNode:(III)Lnet/minecraft/world/level/pathfinder/Node;
+     657: areturn
+     658: aload         13
+     660: invokestatic  #470                // Method doesBlockHavePartialCollision:(Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Z
+     663: ifeq          703
+     666: aload         9
+     668: ifnonnull     703
+     671: aload_0
+     672: iload_1
+     673: iload_2
+     674: iload_3
+     675: invokevirtual #274                // Method getNode:(III)Lnet/minecraft/world/level/pathfinder/Node;
+     678: astore        9
+     680: aload         9
+     682: iconst_1
+     683: putfield      #356                // Field net/minecraft/world/level/pathfinder/Node.closed:Z
+     686: aload         9
+     688: aload         13
+     690: putfield      #250                // Field net/minecraft/world/level/pathfinder/Node.type:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     693: aload         9
+     695: aload         13
+     697: invokevirtual #514                // Method net/minecraft/world/level/pathfinder/BlockPathTypes.getMalus:()F
+     700: putfield      #258                // Field net/minecraft/world/level/pathfinder/Node.costMalus:F
+     703: aload         9
+     705: areturn
+
+
+  private boolean hasCollisions(net.minecraft.world.phys.AABB);
+    Code:
+       0: aload_0
+       1: getfield      #47                 // Field collisionCache:Lit/unimi/dsi/fastutil/objects/Object2BooleanMap;
+       4: aload_1
+       5: aload_0
+       6: aload_1
+       7: invokedynamic #544,  0            // InvokeDynamic #0:getBoolean:(Lnet/minecraft/world/level/pathfinder/WalkNodeEvaluator;Lnet/minecraft/world/phys/AABB;)Lit/unimi/dsi/fastutil/objects/Object2BooleanFunction;
+      12: invokeinterface #548,  3          // InterfaceMethod it/unimi/dsi/fastutil/objects/Object2BooleanMap.computeIfAbsent:(Ljava/lang/Object;Lit/unimi/dsi/fastutil/objects/Object2BooleanFunction;)Z
+      17: ireturn
+
+
+  public net.minecraft.world.level.pathfinder.BlockPathTypes getBlockPathType(net.minecraft.world.level.BlockGetter, int, int, int, net.minecraft.world.entity.Mob);
+    Code:
+       0: ldc_w         #262                // class net/minecraft/world/level/pathfinder/BlockPathTypes
+       3: invokestatic  #555                // Method java/util/EnumSet.noneOf:(Ljava/lang/Class;)Ljava/util/EnumSet;
+       6: astore        6
+       8: getstatic     #525                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.BLOCKED:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      11: astore        7
+      13: aload_0
+      14: aload_1
+      15: iload_2
+      16: iload_3
+      17: iload         4
+      19: aload         6
+      21: aload         7
+      23: aload         5
+      25: invokevirtual #159                // Method net/minecraft/world/entity/Mob.blockPosition:()Lnet/minecraft/core/BlockPos;
+      28: invokevirtual #559                // Method getBlockPathTypes:(Lnet/minecraft/world/level/BlockGetter;IIILjava/util/EnumSet;Lnet/minecraft/world/level/pathfinder/BlockPathTypes;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      31: astore        7
+      33: aload         6
+      35: getstatic     #362                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.FENCE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      38: invokevirtual #562                // Method java/util/EnumSet.contains:(Ljava/lang/Object;)Z
+      41: ifeq          48
+      44: getstatic     #362                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.FENCE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      47: areturn
+      48: aload         6
+      50: getstatic     #483                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.UNPASSABLE_RAIL:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      53: invokevirtual #562                // Method java/util/EnumSet.contains:(Ljava/lang/Object;)Z
+      56: ifeq          63
+      59: getstatic     #483                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.UNPASSABLE_RAIL:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      62: areturn
+      63: getstatic     #525                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.BLOCKED:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      66: astore        8
+      68: aload         6
+      70: invokevirtual #566                // Method java/util/EnumSet.iterator:()Ljava/util/Iterator;
+      73: astore        9
+      75: aload         9
+      77: invokeinterface #571,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      82: ifeq          137
+      85: aload         9
+      87: invokeinterface #575,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      92: checkcast     #262                // class net/minecraft/world/level/pathfinder/BlockPathTypes
+      95: astore        10
+      97: aload         5
+      99: aload         10
+     101: invokevirtual #254                // Method net/minecraft/world/entity/Mob.getPathfindingMalus:(Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)F
+     104: fconst_0
+     105: fcmpg
+     106: ifge          112
+     109: aload         10
+     111: areturn
+     112: aload         5
+     114: aload         10
+     116: invokevirtual #254                // Method net/minecraft/world/entity/Mob.getPathfindingMalus:(Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)F
+     119: aload         5
+     121: aload         8
+     123: invokevirtual #254                // Method net/minecraft/world/entity/Mob.getPathfindingMalus:(Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)F
+     126: fcmpl
+     127: iflt          134
+     130: aload         10
+     132: astore        8
+     134: goto          75
+     137: aload         7
+     139: getstatic     #265                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     142: if_acmpne     169
+     145: aload         5
+     147: aload         8
+     149: invokevirtual #254                // Method net/minecraft/world/entity/Mob.getPathfindingMalus:(Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)F
+     152: fconst_0
+     153: fcmpl
+     154: ifne          169
+     157: aload_0
+     158: getfield      #578                // Field entityWidth:I
+     161: iconst_1
+     162: if_icmpgt     169
+     165: getstatic     #265                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     168: areturn
+     169: aload         8
+     171: areturn
+
+
+  protected net.minecraft.world.level.pathfinder.BlockPathTypes getBlockPathType(net.minecraft.world.entity.Mob, net.minecraft.core.BlockPos);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: invokevirtual #190                // Method net/minecraft/core/BlockPos.getX:()I
+       6: aload_2
+       7: invokevirtual #174                // Method net/minecraft/core/BlockPos.getY:()I
+      10: aload_2
+      11: invokevirtual #192                // Method net/minecraft/core/BlockPos.getZ:()I
+      14: invokevirtual #294                // Method getCachedBlockType:(Lnet/minecraft/world/entity/Mob;III)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      17: areturn
+
+
+  public net.minecraft.world.level.pathfinder.BlockPathTypes getBlockPathType(net.minecraft.world.level.BlockGetter, int, int, int);
+    Code:
+       0: aload_1
+       1: new           #7                  // class net/minecraft/core/BlockPos$MutableBlockPos
+       4: dup
+       5: iload_2
+       6: iload_3
+       7: iload         4
+       9: invokespecial #640                // Method net/minecraft/core/BlockPos$MutableBlockPos."<init>":(III)V
+      12: invokestatic  #644                // Method getBlockPathTypeStatic:(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos$MutableBlockPos;)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      15: areturn
+
+
+  public static net.minecraft.world.level.pathfinder.BlockPathTypes getBlockPathTypeStatic(net.minecraft.world.level.BlockGetter, net.minecraft.core.BlockPos$MutableBlockPos);
+    Code:
+       0: aload_1
+       1: invokevirtual #645                // Method net/minecraft/core/BlockPos$MutableBlockPos.getX:()I
+       4: istore_2
+       5: aload_1
+       6: invokevirtual #646                // Method net/minecraft/core/BlockPos$MutableBlockPos.getY:()I
+       9: istore_3
+      10: aload_1
+      11: invokevirtual #647                // Method net/minecraft/core/BlockPos$MutableBlockPos.getZ:()I
+      14: istore        4
+      16: aload_0
+      17: aload_1
+      18: invokestatic  #651                // Method getBlockPathTypeRaw:(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      21: astore        5
+      23: aload         5
+      25: getstatic     #265                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      28: if_acmpne     167
+      31: iload_3
+      32: aload_0
+      33: invokeinterface #652,  1          // InterfaceMethod net/minecraft/world/level/BlockGetter.getMinBuildHeight:()I
+      38: iconst_1
+      39: iadd
+      40: if_icmplt     167
+      43: aload_0
+      44: aload_1
+      45: iload_2
+      46: iload_3
+      47: iconst_1
+      48: isub
+      49: iload         4
+      51: invokevirtual #195                // Method net/minecraft/core/BlockPos$MutableBlockPos.set:(III)Lnet/minecraft/core/BlockPos$MutableBlockPos;
+      54: invokestatic  #651                // Method getBlockPathTypeRaw:(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      57: astore        6
+      59: aload         6
+      61: getstatic     #475                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WALKABLE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      64: if_acmpeq     91
+      67: aload         6
+      69: getstatic     #265                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      72: if_acmpeq     91
+      75: aload         6
+      77: getstatic     #477                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WATER:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      80: if_acmpeq     91
+      83: aload         6
+      85: getstatic     #655                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.LAVA:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      88: if_acmpne     97
+      91: getstatic     #265                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      94: goto          100
+      97: getstatic     #475                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WALKABLE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     100: astore        5
+     102: aload         6
+     104: getstatic     #658                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DAMAGE_FIRE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     107: if_acmpne     115
+     110: getstatic     #658                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DAMAGE_FIRE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     113: astore        5
+     115: aload         6
+     117: getstatic     #661                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DAMAGE_OTHER:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     120: if_acmpne     128
+     123: getstatic     #661                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DAMAGE_OTHER:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     126: astore        5
+     128: aload         6
+     130: getstatic     #297                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.STICKY_HONEY:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     133: if_acmpne     141
+     136: getstatic     #297                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.STICKY_HONEY:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     139: astore        5
+     141: aload         6
+     143: getstatic     #489                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.POWDER_SNOW:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     146: if_acmpne     154
+     149: getstatic     #664                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DANGER_POWDER_SNOW:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     152: astore        5
+     154: aload         6
+     156: getstatic     #667                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DAMAGE_CAUTIOUS:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     159: if_acmpne     167
+     162: getstatic     #667                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DAMAGE_CAUTIOUS:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     165: astore        5
+     167: aload         5
+     169: getstatic     #475                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WALKABLE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     172: if_acmpne     191
+     175: aload_0
+     176: aload_1
+     177: iload_2
+     178: iload_3
+     179: iload         4
+     181: invokevirtual #195                // Method net/minecraft/core/BlockPos$MutableBlockPos.set:(III)Lnet/minecraft/core/BlockPos$MutableBlockPos;
+     184: aload         5
+     186: invokestatic  #671                // Method checkNeighbourBlocks:(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos$MutableBlockPos;Lnet/minecraft/world/level/pathfinder/BlockPathTypes;)Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     189: astore        5
+     191: aload         5
+     193: areturn
+
+
+  public static net.minecraft.world.level.pathfinder.BlockPathTypes checkNeighbourBlocks(net.minecraft.world.level.BlockGetter, net.minecraft.core.BlockPos$MutableBlockPos, net.minecraft.world.level.pathfinder.BlockPathTypes);
+    Code:
+       0: aload_1
+       1: invokevirtual #645                // Method net/minecraft/core/BlockPos$MutableBlockPos.getX:()I
+       4: istore_3
+       5: aload_1
+       6: invokevirtual #646                // Method net/minecraft/core/BlockPos$MutableBlockPos.getY:()I
+       9: istore        4
+      11: aload_1
+      12: invokevirtual #647                // Method net/minecraft/core/BlockPos$MutableBlockPos.getZ:()I
+      15: istore        5
+      17: iconst_m1
+      18: istore        6
+      20: iload         6
+      22: iconst_1
+      23: if_icmpgt     184
+      26: iconst_m1
+      27: istore        7
+      29: iload         7
+      31: iconst_1
+      32: if_icmpgt     178
+      35: iconst_m1
+      36: istore        8
+      38: iload         8
+      40: iconst_1
+      41: if_icmpgt     172
+      44: iload         6
+      46: ifne          54
+      49: iload         8
+      51: ifeq          166
+      54: aload_1
+      55: iload_3
+      56: iload         6
+      58: iadd
+      59: iload         4
+      61: iload         7
+      63: iadd
+      64: iload         5
+      66: iload         8
+      68: iadd
+      69: invokevirtual #195                // Method net/minecraft/core/BlockPos$MutableBlockPos.set:(III)Lnet/minecraft/core/BlockPos$MutableBlockPos;
+      72: pop
+      73: aload_0
+      74: aload_1
+      75: invokeinterface #438,  2          // InterfaceMethod net/minecraft/world/level/BlockGetter.getBlockState:(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;
+      80: astore        9
+      82: aload         9
+      84: getstatic     #674                // Field net/minecraft/world/level/block/Blocks.CACTUS:Lnet/minecraft/world/level/block/Block;
+      87: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+      90: ifne          104
+      93: aload         9
+      95: getstatic     #677                // Field net/minecraft/world/level/block/Blocks.SWEET_BERRY_BUSH:Lnet/minecraft/world/level/block/Block;
+      98: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+     101: ifeq          108
+     104: getstatic     #680                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DANGER_OTHER:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     107: areturn
+     108: aload         9
+     110: invokestatic  #684                // Method isBurningBlock:(Lnet/minecraft/world/level/block/state/BlockState;)Z
+     113: ifeq          120
+     116: getstatic     #687                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DANGER_FIRE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     119: areturn
+     120: aload_0
+     121: aload_1
+     122: invokeinterface #688,  2          // InterfaceMethod net/minecraft/world/level/BlockGetter.getFluidState:(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;
+     127: getstatic     #426                // Field net/minecraft/tags/FluidTags.WATER:Lnet/minecraft/tags/TagKey;
+     130: invokevirtual #431                // Method net/minecraft/world/level/material/FluidState.is:(Lnet/minecraft/tags/TagKey;)Z
+     133: ifeq          140
+     136: getstatic     #691                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WATER_BORDER:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     139: areturn
+     140: aload         9
+     142: getstatic     #694                // Field net/minecraft/world/level/block/Blocks.WITHER_ROSE:Lnet/minecraft/world/level/block/Block;
+     145: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+     148: ifne          162
+     151: aload         9
+     153: getstatic     #697                // Field net/minecraft/world/level/block/Blocks.POINTED_DRIPSTONE:Lnet/minecraft/world/level/block/Block;
+     156: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+     159: ifeq          166
+     162: getstatic     #667                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DAMAGE_CAUTIOUS:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     165: areturn
+     166: iinc          8, 1
+     169: goto          38
+     172: iinc          7, 1
+     175: goto          29
+     178: iinc          6, 1
+     181: goto          20
+     184: aload_2
+     185: areturn
+
+
+  protected static net.minecraft.world.level.pathfinder.BlockPathTypes getBlockPathTypeRaw(net.minecraft.world.level.BlockGetter, net.minecraft.core.BlockPos);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokeinterface #438,  2          // InterfaceMethod net/minecraft/world/level/BlockGetter.getBlockState:(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;
+       7: astore_2
+       8: aload_2
+       9: invokevirtual #617                // Method net/minecraft/world/level/block/state/BlockState.getBlock:()Lnet/minecraft/world/level/block/Block;
+      12: astore_3
+      13: aload_2
+      14: invokevirtual #162                // Method net/minecraft/world/level/block/state/BlockState.isAir:()Z
+      17: ifeq          24
+      20: getstatic     #265                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      23: areturn
+      24: aload_2
+      25: getstatic     #704                // Field net/minecraft/tags/BlockTags.TRAPDOORS:Lnet/minecraft/tags/TagKey;
+      28: invokevirtual #705                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/tags/TagKey;)Z
+      31: ifne          54
+      34: aload_2
+      35: getstatic     #708                // Field net/minecraft/world/level/block/Blocks.LILY_PAD:Lnet/minecraft/world/level/block/Block;
+      38: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+      41: ifne          54
+      44: aload_2
+      45: getstatic     #711                // Field net/minecraft/world/level/block/Blocks.BIG_DRIPLEAF:Lnet/minecraft/world/level/block/Block;
+      48: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+      51: ifeq          58
+      54: getstatic     #486                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.TRAPDOOR:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      57: areturn
+      58: aload_2
+      59: getstatic     #713                // Field net/minecraft/world/level/block/Blocks.POWDER_SNOW:Lnet/minecraft/world/level/block/Block;
+      62: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+      65: ifeq          72
+      68: getstatic     #489                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.POWDER_SNOW:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      71: areturn
+      72: aload_2
+      73: getstatic     #674                // Field net/minecraft/world/level/block/Blocks.CACTUS:Lnet/minecraft/world/level/block/Block;
+      76: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+      79: ifne          92
+      82: aload_2
+      83: getstatic     #677                // Field net/minecraft/world/level/block/Blocks.SWEET_BERRY_BUSH:Lnet/minecraft/world/level/block/Block;
+      86: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+      89: ifeq          96
+      92: getstatic     #661                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DAMAGE_OTHER:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+      95: areturn
+      96: aload_2
+      97: getstatic     #716                // Field net/minecraft/world/level/block/Blocks.HONEY_BLOCK:Lnet/minecraft/world/level/block/Block;
+     100: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+     103: ifeq          110
+     106: getstatic     #297                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.STICKY_HONEY:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     109: areturn
+     110: aload_2
+     111: getstatic     #719                // Field net/minecraft/world/level/block/Blocks.COCOA:Lnet/minecraft/world/level/block/Block;
+     114: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+     117: ifeq          124
+     120: getstatic     #721                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.COCOA:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     123: areturn
+     124: aload_2
+     125: getstatic     #694                // Field net/minecraft/world/level/block/Blocks.WITHER_ROSE:Lnet/minecraft/world/level/block/Block;
+     128: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+     131: ifne          144
+     134: aload_2
+     135: getstatic     #697                // Field net/minecraft/world/level/block/Blocks.POINTED_DRIPSTONE:Lnet/minecraft/world/level/block/Block;
+     138: invokevirtual #132                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+     141: ifeq          148
+     144: getstatic     #667                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DAMAGE_CAUTIOUS:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     147: areturn
+     148: aload_0
+     149: aload_1
+     150: invokeinterface #688,  2          // InterfaceMethod net/minecraft/world/level/BlockGetter.getFluidState:(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;
+     155: astore        4
+     157: aload         4
+     159: getstatic     #723                // Field net/minecraft/tags/FluidTags.LAVA:Lnet/minecraft/tags/TagKey;
+     162: invokevirtual #431                // Method net/minecraft/world/level/material/FluidState.is:(Lnet/minecraft/tags/TagKey;)Z
+     165: ifeq          172
+     168: getstatic     #655                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.LAVA:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     171: areturn
+     172: aload_2
+     173: invokestatic  #684                // Method isBurningBlock:(Lnet/minecraft/world/level/block/state/BlockState;)Z
+     176: ifeq          183
+     179: getstatic     #658                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DAMAGE_FIRE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     182: areturn
+     183: aload_3
+     184: instanceof    #725                // class net/minecraft/world/level/block/DoorBlock
+     187: ifeq          237
+     190: aload_3
+     191: checkcast     #725                // class net/minecraft/world/level/block/DoorBlock
+     194: astore        5
+     196: aload_2
+     197: getstatic     #728                // Field net/minecraft/world/level/block/DoorBlock.OPEN:Lnet/minecraft/world/level/block/state/properties/BooleanProperty;
+     200: invokevirtual #732                // Method net/minecraft/world/level/block/state/BlockState.getValue:(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;
+     203: checkcast     #734                // class java/lang/Boolean
+     206: invokevirtual #737                // Method java/lang/Boolean.booleanValue:()Z
+     209: ifeq          216
+     212: getstatic     #610                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DOOR_OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     215: areturn
+     216: aload         5
+     218: invokevirtual #740                // Method net/minecraft/world/level/block/DoorBlock.type:()Lnet/minecraft/world/level/block/state/properties/BlockSetType;
+     221: invokevirtual #745                // Method net/minecraft/world/level/block/state/properties/BlockSetType.canOpenByHand:()Z
+     224: ifeq          233
+     227: getstatic     #371                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DOOR_WOOD_CLOSED:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     230: goto          236
+     233: getstatic     #374                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.DOOR_IRON_CLOSED:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     236: areturn
+     237: aload_3
+     238: instanceof    #619                // class net/minecraft/world/level/block/BaseRailBlock
+     241: ifeq          248
+     244: getstatic     #613                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.RAIL:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     247: areturn
+     248: aload_3
+     249: instanceof    #747                // class net/minecraft/world/level/block/LeavesBlock
+     252: ifeq          259
+     255: getstatic     #750                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.LEAVES:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     258: areturn
+     259: aload_2
+     260: getstatic     #753                // Field net/minecraft/tags/BlockTags.FENCES:Lnet/minecraft/tags/TagKey;
+     263: invokevirtual #705                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/tags/TagKey;)Z
+     266: ifne          302
+     269: aload_2
+     270: getstatic     #756                // Field net/minecraft/tags/BlockTags.WALLS:Lnet/minecraft/tags/TagKey;
+     273: invokevirtual #705                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/tags/TagKey;)Z
+     276: ifne          302
+     279: aload_3
+     280: instanceof    #758                // class net/minecraft/world/level/block/FenceGateBlock
+     283: ifeq          306
+     286: aload_2
+     287: getstatic     #759                // Field net/minecraft/world/level/block/FenceGateBlock.OPEN:Lnet/minecraft/world/level/block/state/properties/BooleanProperty;
+     290: invokevirtual #732                // Method net/minecraft/world/level/block/state/BlockState.getValue:(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;
+     293: checkcast     #734                // class java/lang/Boolean
+     296: invokevirtual #737                // Method java/lang/Boolean.booleanValue:()Z
+     299: ifne          306
+     302: getstatic     #362                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.FENCE:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     305: areturn
+     306: aload_2
+     307: aload_0
+     308: aload_1
+     309: getstatic     #168                // Field net/minecraft/world/level/pathfinder/PathComputationType.LAND:Lnet/minecraft/world/level/pathfinder/PathComputationType;
+     312: invokevirtual #172                // Method net/minecraft/world/level/block/state/BlockState.isPathfindable:(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/pathfinder/PathComputationType;)Z
+     315: ifne          322
+     318: getstatic     #525                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.BLOCKED:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     321: areturn
+     322: aload         4
+     324: getstatic     #426                // Field net/minecraft/tags/FluidTags.WATER:Lnet/minecraft/tags/TagKey;
+     327: invokevirtual #431                // Method net/minecraft/world/level/material/FluidState.is:(Lnet/minecraft/tags/TagKey;)Z
+     330: ifeq          337
+     333: getstatic     #477                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.WATER:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     336: areturn
+     337: getstatic     #265                // Field net/minecraft/world/level/pathfinder/BlockPathTypes.OPEN:Lnet/minecraft/world/level/pathfinder/BlockPathTypes;
+     340: areturn
+
+
+  private boolean method_29305(net.minecraft.world.phys.AABB, java.lang.Object);
+    Code:
+       0: aload_0
+       1: getfield      #88                 // Field level:Lnet/minecraft/world/level/PathNavigationRegion;
+       4: aload_0
+       5: getfield      #65                 // Field mob:Lnet/minecraft/world/entity/Mob;
+       8: aload_1
+       9: invokevirtual #788                // Method net/minecraft/world/level/PathNavigationRegion.noCollision:(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Z
+      12: ifne          19
+      15: iconst_1
+      16: goto          20
+      19: iconst_0
+      20: ireturn
+}

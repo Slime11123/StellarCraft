@@ -1,0 +1,30 @@
+class                                  tier          maxHp   hit@7mc     hits
+--------------------------------------------------------------------------------
+Creeper (Minion)                       Minion          384       134     2.86  
+Thornhead (Minion)                     Minion         1200       420     2.86  
+Skull Gunner (Warrior)                 Warrior        5040       882     5.71  
+Cannon Guardian                        Warrior        3360       588     5.71  
+Juggernaut (Elite)                     Elite        117000      8190    14.29  
+Democrawler (Elite)                    Elite        276000     19320    14.29  
+Raven (Alpha)                          Alpha        336000     11760    28.57  
+Unidentified (no _Blueprint_C suffix)  Alpha        306000     10710    28.57  
+Elder Naytiba (true form)              Elder        366000     12810    28.57  
+UNKNOWN class                          Warrior        8500      1488     5.71  
+
+TNT (56 raw MC damage) on each tier:
+  Minion   maxHp=2800     native=2800      = 100.0% of the bar
+  Warrior  maxHp=8500     native=8500      = 100.0% of the bar
+  Elite    maxHp=100000   native=56000     =  56.0% of the bar
+  Alpha    maxHp=130000   native=36400     =  28.0% of the bar
+  Elder    maxHp=228750   native=64050     =  28.0% of the bar
+
+ALL TIER LOOKUPS OK
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=1 serial=22 route=shield HP 1000.0 -> 1000.0 / 1000.0 Shield 80.0 -> 55.0 / 80.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=1 serial=22 route=shield HP 1000.0 -> 1000.0 / 1000.0 Shield 10.0 -> 0.0 / 80.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=1 serial=22 route=hp HP 1000.0 -> 975.0 / 1000.0 Shield 80.0 -> 80.0 / 80.0: nil
+
+[StellarCraft-Combat] guid=901 type=501 world=55 epoch=1 serial=22 route=refused HP 1000.0 -> 1000.0 / 1000.0 Shield 80.0 -> 80.0 / 80.0: nil
+
+PASS: actual damage_actor reports shield loss, break, HP and refused routes
