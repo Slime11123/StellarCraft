@@ -29,7 +29,7 @@
 Neither game is replaced or recreated. A **Minecraft Fabric mod**, a **Stellar Blade-side UE4SS/C++ integration**, and a **ReShade DirectX 12 add-on** coordinate through a shared-memory protocol. Minecraft supplies gameplay state; Stellar Blade remains the world and presentation environment.
 
 > [!IMPORTANT]
-> **Early alpha / research project — not a plug-and-play release.** Features described below have different validation levels, and there is currently no packaged public installer. Back up game saves before testing. This project is not affiliated with SHIFT UP, Sony, Mojang or Microsoft, and users must own their games.
+> **Early alpha / research project.** A local **v0.1.0-alpha.2 installer candidate** is packaged and has passed simulated-folder installation and restore checks, but it is **not yet a verified public Release or validated on another clean PC**. It still requires separately installed games and third-party runtimes. Back up your saves. StellarCraft is unofficial and not affiliated with SHIFT UP, Sony, Mojang or Microsoft.
 
 ## Screenshots
 
@@ -66,7 +66,7 @@ Neither game is replaced or recreated. A **Minecraft Fabric mod**, a **Stellar B
 
 ## Features
 
-The following statuses are based on project logs and owner-led in-game testing through **October 12, 2026**. “Tested” refers only to the stated scenario.
+Feature notes updated through **October 15, 2026**. Past in-game demonstrations are noted separately from offline checks; offline regression is not in-game acceptance.
 
 | System | Status | Current scope |
 |---|---|---|
@@ -77,13 +77,16 @@ The following statuses are based on project logs and owner-led in-game testing t
 | TNT visual effects | ✅ Tested visually | Pixelated explosion particles are visible in Stellar Blade; effects on registered MC blocks/entities were tested. |
 | Ordinary Stellar Blade enemy combat | ✅ Tested in part | Native enemy registration and actual HP reduction/death recorded in the Great Desert. Not every weapon, arrow or TNT damage path has been individually attributed and verified. |
 | Incoming damage & Eve protection | ✅ Tested in ordinary combat | Recent tests recorded 66 incoming-hit events; Minecraft survival HP changed while Eve's logged HP remained protected during the active lease. |
-| Minecraft shield blocking | 🛠 In progress | Shield can be raised, but a live test still lost HP because verified hit direction was missing; a source-direction fix awaits another in-game test. |
+| Minecraft shield blocking | 🧪 Partially verified | Shield input and incoming-damage rules have been improved. Consistent direction-based blocking still requires new in-game validation. |
+| Native shield-first damage | 🧪 Offline verified | MC hits now route to native Shield before HP, with tier-based live MaxShield scaling. Enemy/Boss damage and animations still await in-game acceptance. |
+| Vanilla mob AI and cross-faction aggro | 🛠 Prerequisites | Original NoAI provenance recorded and checked via NBT; full vanilla navigation, native combat proxy and aggro are NOT enabled yet. |
+| Repeated-hit native stagger / Groggy | 📋 Planned | Investigating original mechanics; no proven trigger or production implementation yet. |
 | Bow, arrows & advanced combat | 🧪 Partially implemented | Code and offline regression tests exist; projectile visuals, arrow hits and TNT damage to real enemies still need combined in-game acceptance. |
 | Elytra flight | 🧪 Partially tested | The maintainer confirmed basic Elytra flight and a visual improvement; dive, fireworks, durability and edge cases remain to be checked. |
 | Mob/hand/character visuals | 🧪 Partially tested | Texture and knockback fixes were locally accepted; some visual animation and model-switching cases still require validation. |
-| Stability & compatibility | 🛠 In progress | An ActorProxy renderer-null crash was identified and a fix built, but restart verification is pending. Map-transition and game-exit crashes are not confirmed fixed. |
+| Stability & compatibility | 🧪 Partial | The maintainer reported a previously reproducible map-switch crash no longer occurred in one retest. Recent EVE performance changes and other map/exit paths still need validation. |
 
-**Evidence:** [Current status](CURRENT_STATE.md) · [Native combat progress](docs/PLAN_NATIVE_COMBAT_2026-10-12.md) · [Visual/combat worklist](docs/PLAN_VISUAL_COMBAT_2026-10-12.md).
+**Evidence:** [Current status](CURRENT_STATE.md) · [Shield-first damage](docs/PLAN_MC_NATIVE_SHIELD_FIRST_DAMAGE_2026-10-14.md) · [Stagger investigation](docs/PLAN_MC_COMBO_NATIVE_STAGGER_2026-10-15.md) · [Native combat](docs/PLAN_NATIVE_COMBAT_2026-10-12.md).
 
 **Scope note:** Screenshots document rendering and UI, not automatically successful shield blocks or native TNT damage. Performance numbers and acceptance tests are scene-specific.
 
@@ -96,7 +99,7 @@ The following statuses are based on project logs and owner-led in-game testing t
 | Minecraft | **Java Edition 1.20.1** |
 | Mod loader | **Fabric Loader 0.19.5** |
 | Fabric API | **0.92.2+1.20.1** |
-| Java | **JDK 21** for current source/build configuration |
+| Java | **Java 21** runtime; JDK 21 for source development |
 | Graphics integration | DirectX 12; compatible **ReShade add-on runtime** (tested with 6.8.0) |
 | Native integration | Compatible UE4SS setup; locally generated SDK headers may be needed for a full native build |
 | C++ development | Visual Studio 2022 C++ tools; xmake for the native project |
@@ -106,22 +109,26 @@ The following statuses are based on project logs and owner-led in-game testing t
 
 ## Installation / Developer Setup
 
-**There is no public one-click package yet.** These are development-oriented steps, not a guarantee of a working installation on a clean PC.
+### Alpha 2 package status
 
-1. **Back up** Stellar Blade saves and your Minecraft worlds. Keep the original game files available for restoration.
-2. Install **Minecraft Java 1.20.1**, **Fabric Loader 0.19.5**, **Fabric API 0.92.2+1.20.1**, and **Java 21**.
-3. Clone this repository, including MinHook:
+A **v0.1.0-alpha.2 Windows x64 installer ZIP** has been built **locally**. It is NOT YET a verified public release. Once independently tested and published, packages will be listed on the [GitHub Releases page](https://github.com/Slime11123/StellarCraft/releases). GitHub auto-generated source-code ZIP files are not installers.
 
-   ```powershell
-   git clone --recurse-submodules https://github.com/Slime11123/StellarCraft.git
-   cd StellarCraft
-   ```
+The local candidate contains a Fabric JAR, native shared-memory DLL, ReShade DX12 add-on, five Lua modules, shader and configuration, an installer with SHA-256 checking, and a backup restoration script. **It does not include** either game, game assets, the extracted SDK, Java, Fabric API, UE4SS, or a ReShade runtime.
 
-4. Build the Fabric mod and the ReShade add-on using the instructions below. Native integration requires a compatible locally configured UE4SS environment.
-5. Follow [the ReShade add-on deployment and verification notes](sb-mod/reshade-addon/README.md) to configure the compatible ReShade **add-on** runtime, shader and mod components. Paths in that document are examples from a developer machine, **not** universal install locations.
-6. On a properly configured development setup, start the Minecraft instance and launch Stellar Blade through Steam. Use **F4** to change modes.
+**Prerequisites:** Windows x64; legitimately owned Stellar Blade PC and Minecraft Java 1.20.1; Fabric Loader 0.19.5 and a compatible Fabric API for 1.20.1; Java 21; separately installed compatible [UE4SS](https://github.com/UE4SS-RE/RE-UE4SS) and a full [ReShade add-on runtime](https://reshade.me/). Back up both games and close them before installation.
 
-If a build or launch step fails, consult the [current project state](CURRENT_STATE.md), [design document](docs/DESIGN.md), and [issue tracker](https://github.com/Slime11123/StellarCraft/issues). The project does not yet provide fully reproducible end-user packaging.
+**When a verified ZIP becomes available:** extract it, read the included Chinese/English installation guide, run Install.cmd and select the Stellar Blade SB/Binaries/Win64 folder and Minecraft Fabric mods folder. The installer checks payload hashes, adjusts Lua to the selected location, copies only StellarCraft-owned components and backs up overwritten files. Restore-Backup.cmd can restore the recorded backup if installed files have not been subsequently modified.
+
+The **Alpha 2 prototype** passed ZIP integrity, payload hashes, and simulated-folder install/configuration/path/restore tests only. **No clean-machine real-game acceptance or full clean-checkout JAR build** has been completed; this is not a stable, dependency-free one-click installer.
+
+### Developer source setup
+
+For development, clone the source and submodules:
+
+    git clone --recurse-submodules https://github.com/Slime11123/StellarCraft.git
+    cd StellarCraft
+
+Follow [the build instructions below](#building-from-source) and the [ReShade integration guide](sb-mod/reshade-addon/README.md). Some local builds use a previous base JAR, mapping caches and local UE4SS configuration, so a clean-machine build is not guaranteed. Start a matching Minecraft Fabric instance and Stellar Blade via Steam; press F4 to switch. See [current state](CURRENT_STATE.md) and [issues](https://github.com/Slime11123/StellarCraft/issues).
 
 ## Controls
 
@@ -193,30 +200,28 @@ The native xmake target has an optional SDK-dependent configuration. **The gener
 
 ## Roadmap
 
-- [x] Establish shared-memory protocol and in-process DX12 UI compositing
-- [x] Demonstrate Eve/Minecraft switching, interactive creative inventory and registered block placement
-- [x] Demonstrate native-rendered entities, lighting, pearls and visible TNT particles in selected scenes
-- [x] Verify ordinary enemy registration, real native HP reduction and survival-mode incoming damage with Eve protection
-- [x] Demonstrate basic Elytra flight (some behaviors still unverified)
-- [ ] Verify shield-facing/blocked damage and the new hit-source-direction fix in-game
-- [ ] Re-test the ActorProxy renderer fix after restart; validate arrows, bow visuals and enemy TNT damage
-- [ ] Address outstanding model/hand animation edge cases and extend mob behavior
-- [ ] Resolve remaining map-transition and exit crashes; complete regression coverage
-- [ ] Verify Elytra dive/fireworks/durability and expand entity/physics parity
-- [ ] Provide reproducible clean builds, packaged installer and public Releases
+- [x] Demonstrate shared-memory protocol, DX12 UI, Eve/Minecraft switching, inventory and selected world features
+- [x] Verify basic movement, Elytra flight, ordinary native enemy HP interaction and selected survival damage cases
+- [x] Prepare a local **v0.1.0-alpha.2** installation candidate with hash verification and simulated-folder install/restore tests
+- [x] Implement native shield-first damage and live MaxShield scaling with offline checks
+- [x] Preserve original NoAI provenance for vanilla mob AI work with offline NBT validation
+- [ ] Verify Shield-first behavior with real ordinary enemies/Bosses and shield phase transitions in game
+- [ ] Authenticate native mob proxies and implement vanilla navigation, AI and cross-faction combat
+- [ ] Investigate and implement real native multi-hit stagger/Groggy without additional damage
+- [ ] Finish acceptance of hit reactions, arrow/TNT paths, advanced flight and map/exit stability
+- [ ] Reproduce full builds from a clean checkout and verify an installer on another clean PC
+- [ ] Publish a documented GitHub **pre-release** after real-game acceptance
 
-Latest progress: [CURRENT_STATE.md](CURRENT_STATE.md) · [Native combat work](docs/PLAN_NATIVE_COMBAT_2026-10-12.md) · [Visual combat validation](docs/PLAN_VISUAL_COMBAT_2026-10-12.md).
+See [current progress](CURRENT_STATE.md), [shield-first plan](docs/PLAN_MC_NATIVE_SHIELD_FIRST_DAMAGE_2026-10-14.md) and [stagger study](docs/PLAN_MC_COMBO_NATIVE_STAGGER_2026-10-15.md).
 
 ## Known limitations
 
-- Not ready for general end-user installation; expected bugs and incomplete features.
-- Some game map transitions and exit paths remain unstable; a Minecraft ActorProxy renderer-null crash has a code fix pending in-game restart verification.
-- Shield direction/blocking, native-enemy TNT damage and several bow/arrow scenarios remain unverified or incomplete.
-- Basic Elytra flight has been demonstrated, but advanced flying mechanics and durability scenarios are not fully accepted.
-- Full vanilla mob AI, boats on water and some character/hand animation cases are not yet supported or fully verified.
-- Native texture/material behavior may differ between Stellar Blade areas.
-- Native builds requiring generated Stellar Blade SDK headers need separately obtained, lawfully usable dependencies.
-- No multiplayer support is claimed.
+- Alpha 2 is a **local installer candidate**, not a public, independently tested stable version. Games and third-party dependencies must be installed separately.
+- Shield-first damage and NoAI provenance pass offline checks, not full real-game Boss/shield validation or vanilla mob AI/aggro acceptance.
+- Authentic native repeated-hit stagger remains at the research and design stage.
+- A past map-switch crash was reported improved in one retest, but newer EVE performance work and broader transitions/exits still need acceptance.
+- Bow/arrow, TNT-to-native-enemy, heavy-hit visuals, advanced Elytra, boat physics and animations are not fully verified.
+- Some native SDK-dependent builds require separately obtained lawful dependencies. No multiplayer support is claimed.
 
 ## Contributing & Credits
 
